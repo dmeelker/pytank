@@ -37,35 +37,31 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
 
     def checkLeftCollisions(self):
         moveBackFunction = lambda coordinates, size: Vector(coordinates[0] + size[0], self.location.y)
-        start = Vector(self.boundingRectangle.left, self.boundingRectangle.top)
-        end = Vector(start.x, self.boundingRectangle.bottom - 1)
-        increment = Vector(0, playfield.blockSize)
-
-        self.checkLineTileCollisions(start, end, increment, moveBackFunction)
-        self.checkLineEntityCollisions(start, end, moveBackFunction)
+        self.checkVerticalCollisions(self.boundingRectangle.left, moveBackFunction)
 
     def checkRightCollisions(self):
         moveBackFunction = lambda coordinates, size: Vector(coordinates[0] - self.size.x, self.location.y)
-        start = Vector(self.boundingRectangle.right - 1, self.boundingRectangle.top)
-        end = Vector(start.x, self.boundingRectangle.bottom - 1)
+        self.checkVerticalCollisions(self.boundingRectangle.right - 1, moveBackFunction)
+
+    def checkTopCollisions(self):
+        moveBackFunction = lambda coordinates, size: Vector(self.location.x, coordinates[1] + size[1])
+        self.checkHorizontalCollisions(self.boundingRectangle.top, moveBackFunction)
+
+    def checkBottomCollisions(self):
+        moveBackFunction = lambda coordinates, size: Vector(self.location.x, coordinates[1] - self.size.y)
+        self.checkHorizontalCollisions(self.boundingRectangle.bottom - 1, moveBackFunction)
+
+    def checkVerticalCollisions(self, x, moveBackFunction):
+        start = Vector(x, self.boundingRectangle.top)
+        end = start.add(Vector(0, self.size.y - 1))
         increment = Vector(0, playfield.blockSize)
 
         self.checkLineTileCollisions(start, end, increment, moveBackFunction)
         self.checkLineEntityCollisions(start, end, moveBackFunction)
 
-    def checkTopCollisions(self):
-        moveBackFunction = lambda coordinates, size: Vector(self.location.x, coordinates[1] + size[1])
-        start = Vector(self.boundingRectangle.left, self.boundingRectangle.top)
-        end = Vector(self.boundingRectangle.right - 1, start.y)
-        increment = Vector(playfield.blockSize, 0)
-
-        self.checkLineTileCollisions(start, end, increment, moveBackFunction)
-        self.checkLineEntityCollisions(start, end, moveBackFunction)
-
-    def checkBottomCollisions(self):
-        moveBackFunction = lambda coordinates, size: Vector(self.location.x, coordinates[1] - self.size.y)
-        start = Vector(self.boundingRectangle.left, self.boundingRectangle.bottom - 1)
-        end = Vector(self.boundingRectangle.right - 1, start.y)
+    def checkHorizontalCollisions(self, y, moveBackFunction):
+        start = Vector(self.boundingRectangle.left, y)
+        end = start.add(Vector(self.size.x - 1, 0))
         increment = Vector(playfield.blockSize, 0)
 
         self.checkLineTileCollisions(start, end, increment, moveBackFunction)
@@ -85,9 +81,9 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
 
     def checkLineEntityCollisions(self, start, end, moveBackFunction):
         area = pygame.Rect(start.x, start.y, max(end.x - start.x, 1), max(end.y - start.y, 1))
-
         collidingEntities = entities.manager.findEntitiesInRectangle(area, exceptEntity=self, typeFilter=entities.Blocking)
-        for entity in collidingEntities:
+        entity = next(collidingEntities, None)
+        if not entity == None:
             self.setLocation(moveBackFunction(entity.location.toIntTuple(), entity.size.toIntTuple()))
             return
 
@@ -135,3 +131,8 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
 
     def destroy(self):
         self.markDisposable()
+
+class Collision:
+    def __init__(self, location, size):
+        self.location = location
+        self.size = size
