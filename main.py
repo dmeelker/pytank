@@ -28,7 +28,7 @@ def initialize():
     global screen,clock,tank
     pygame.init()
     pygame.display.set_caption("Pytank")
-    screen = pygame.display.set_mode((800, 600))
+    screen = pygame.display.set_mode((320, 240)) #, pygame.FULLSCREEN)
     pygame.key.set_repeat(100, 50)
 
     loadImages()
