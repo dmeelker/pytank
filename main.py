@@ -1,6 +1,7 @@
 import pygame
 
 import images
+import vector
 import playfield
 import entities
 import entities.manager
@@ -35,8 +36,10 @@ def initialize():
     playfield.initialize(20, 20)
     playfield.setTile(10, 10, playfield.Tile(images.get('tank')))
 
-    tank = entities.tank.Tank() 
+    tank = entities.tank.Tank(vector.Vector(100, 100))
     entities.manager.add(tank)
+
+    entities.manager.add(entities.tank.Tank(vector.Vector(100, 20)))
 
 def loadImages():
     images.load('projectile.png', 'projectile')
@@ -77,7 +80,6 @@ def render():
 
     playfield.render(screen, (0, 0))
     entities.manager.render(screen, (0, 0))
-    screen.blit(images.get('tank'), (0, 0))
 
     pygame.display.flip()
 

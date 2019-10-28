@@ -16,13 +16,14 @@ class Entity:
 
     def setLocation(self, newLocation):
         self.location = newLocation
-        self.boundingRectangle.left = newLocation.x
-        self.boundingRectangle.top = newLocation.y
+        self.updateBoundingRectangle()
 
     def setSize(self, newSize):
         self.size = newSize
-        self.boundingRectangle.width = newSize.x
-        self.boundingRectangle.height = newSize.y
+        self.updateBoundingRectangle()
+
+    def updateBoundingRectangle(self):
+        self.boundingRectangle = pygame.Rect(self.location.x, self.location.y, self.size.x, self.size.y)
 
     def markDisposable(self):
         self.disposable = True
