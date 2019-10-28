@@ -34,3 +34,6 @@ class Entity:
 class ProjectileCollider:
     def hitByProjectile(self, projectile):
         pass
+
+class Blocking:
+    pass

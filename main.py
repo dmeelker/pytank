@@ -37,7 +37,7 @@ def initialize():
 
     for x in range(4, playfield.width - 8):
         for y in range(4, 4 + 2):
-            playfield.setTile(x, y, playfield.Tile(images.get('brick')))
+            playfield.setTile(x, y, playfield.Tile(images.get('brick'), blocksMovement=True, destroyable=True))
 
     tank = entities.tank.Tank(vector.Vector(100, 100))
     entities.manager.add(tank)

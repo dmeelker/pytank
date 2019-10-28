@@ -21,7 +21,13 @@ def render(screen, offset):
     for entity in entities:
         entity.render(screen, offset)
 
-def findEntitiesInRectangle(rectangle, exceptEntity = None):
+def findEntitiesInRectangle(rectangle, typeFilter = None, exceptEntity = None):
     for entity in entities:
-        if entity != exceptEntity and entity.boundingRectangle.colliderect(rectangle):
+        if entity == exceptEntity:
+            continue
+
+        if not typeFilter == None and not isinstance(entity, typeFilter):
+            continue
+        
+        if entity.boundingRectangle.colliderect(rectangle):
             yield entity

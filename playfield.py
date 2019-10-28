@@ -53,16 +53,24 @@ def render(screen, offset):
         for y in range(height):
             tile = tiles[x][y]
 
-            if not tile is None:
+            if not tile is None and not tile.image is None:
                 screen.blit(tile.image, ((x * blockSize) + offset[0], (y * blockSize) + offset[1]))
 
 class Tile:
     blocksMovement = True
+    destroyable = False
     image = None
+    hitpoints = 1
 
-    def __init__(self, image, blocksMovement = True):
+    def __init__(self, image, blocksMovement = True, destroyable = False, hitpoints = 1):
         self.image = image
         self.blocksMovement = blocksMovement
+        self.destroyable = destroyable
+        self.hitpoint = hitpoints
 
     def hitByProjectile(self, projectile):
-        pass
+        if self.destroyable:
+            self.hitpoints -= projectile.power
+            if self.hitpoints <= 0:
+                self.blocksMovement = False
+                self.image = None

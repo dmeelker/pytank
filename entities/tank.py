@@ -1,4 +1,5 @@
 import math
+import pygame
 
 import entities
 import entities.projectile
@@ -6,7 +7,7 @@ import playfield
 import images
 from vector import *
 
-class Tank(entities.Entity, entities.ProjectileCollider):
+class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
     aimVector = Vector(0, -1)
     move = False
     hitpoints = 10
@@ -35,38 +36,42 @@ class Tank(entities.Entity, entities.ProjectileCollider):
         pass
 
     def checkLeftCollisions(self):
-        moveBackFunction = lambda tileCoordinates: Vector((tileCoordinates[0] + 1) * playfield.blockSize, self.location.y)
+        moveBackFunction = lambda coordinates, size: Vector(coordinates[0] + size[0], self.location.y)
         start = Vector(self.boundingRectangle.left, self.boundingRectangle.top)
         end = Vector(start.x, self.boundingRectangle.bottom - 1)
         increment = Vector(0, playfield.blockSize)
 
-        self.checkLinePixelCollisions(start, end, increment, moveBackFunction)
+        self.checkLineTileCollisions(start, end, increment, moveBackFunction)
+        self.checkLineEntityCollisions(start, end, moveBackFunction)
 
     def checkRightCollisions(self):
-        moveBackFunction = lambda tileCoordinates: Vector((tileCoordinates[0] * playfield.blockSize) - self.size.x, self.location.y)
+        moveBackFunction = lambda coordinates, size: Vector(coordinates[0] - self.size.x, self.location.y)
         start = Vector(self.boundingRectangle.right - 1, self.boundingRectangle.top)
         end = Vector(start.x, self.boundingRectangle.bottom - 1)
         increment = Vector(0, playfield.blockSize)
 
-        self.checkLinePixelCollisions(start, end, increment, moveBackFunction)
+        self.checkLineTileCollisions(start, end, increment, moveBackFunction)
+        self.checkLineEntityCollisions(start, end, moveBackFunction)
 
     def checkTopCollisions(self):
-        moveBackFunction = lambda tileCoordinates: Vector(self.location.x, (tileCoordinates[1] + 1) * playfield.blockSize)
+        moveBackFunction = lambda coordinates, size: Vector(self.location.x, coordinates[1] + size[1])
         start = Vector(self.boundingRectangle.left, self.boundingRectangle.top)
         end = Vector(self.boundingRectangle.right - 1, start.y)
         increment = Vector(playfield.blockSize, 0)
 
-        self.checkLinePixelCollisions(start, end, increment, moveBackFunction)
+        self.checkLineTileCollisions(start, end, increment, moveBackFunction)
+        self.checkLineEntityCollisions(start, end, moveBackFunction)
 
     def checkBottomCollisions(self):
-        moveBackFunction = lambda tileCoordinates: Vector(self.location.x, (tileCoordinates[1] * playfield.blockSize) - self.size.y)
+        moveBackFunction = lambda coordinates, size: Vector(self.location.x, coordinates[1] - self.size.y)
         start = Vector(self.boundingRectangle.left, self.boundingRectangle.bottom - 1)
         end = Vector(self.boundingRectangle.right - 1, start.y)
         increment = Vector(playfield.blockSize, 0)
 
-        self.checkLinePixelCollisions(start, end, increment, moveBackFunction)
+        self.checkLineTileCollisions(start, end, increment, moveBackFunction)
+        self.checkLineEntityCollisions(start, end, moveBackFunction)
 
-    def checkLinePixelCollisions(self, start, end, increment, moveBackFunction):
+    def checkLineTileCollisions(self, start, end, increment, moveBackFunction):
         steps = int(math.ceil(self.size.y / playfield.blockSize)) + 1
         location = start
 
@@ -78,10 +83,20 @@ class Tank(entities.Entity, entities.ProjectileCollider):
                 location.y = min(location.y, end.y)
                 location.x = min(location.x, end.x)
 
+    def checkLineEntityCollisions(self, start, end, moveBackFunction):
+        area = pygame.Rect(start.x, start.y, max(end.x - start.x, 1), max(end.y - start.y, 1))
+
+        collidingEntities = entities.manager.findEntitiesInRectangle(area, exceptEntity=self, typeFilter=entities.Blocking)
+        for entity in collidingEntities:
+            self.setLocation(moveBackFunction(entity.location.toIntTuple(), entity.size.toIntTuple()))
+            return
+
     def checkTileCollisions(self, pixelCoordinates, moveBackFunction):
         if self.pixelBlocked(pixelCoordinates):
             tileCoordinates = playfield.convertPixelToTileCoordinates(pixelCoordinates.toIntTuple())
-            self.setLocation(moveBackFunction(tileCoordinates))
+            tilePixelCoordinates = (tileCoordinates[0] * playfield.blockSize, tileCoordinates[1] * playfield.blockSize)
+            size = (playfield.blockSize, playfield.blockSize)
+            self.setLocation(moveBackFunction(tilePixelCoordinates, size))
             return True
         else:
             return False
@@ -115,3 +130,8 @@ class Tank(entities.Entity, entities.ProjectileCollider):
 
     def hitByProjectile(self, projectile):
         self.hitpoints -= projectile.power
+        if self.hitpoints <= 0:
+            self.destroy()
+
+    def destroy(self):
+        self.markDisposable()
