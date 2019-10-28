@@ -21,81 +21,92 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
 
     def update(self, time, timePassed):
         if self.move:
-            self.setLocation(self.location.add(self.aimVector.multiplyScalar(self.movementSpeed * timePassed * 0.2)))
+            movementVector = self.aimVector.multiplyScalar(self.movementSpeed * timePassed * 0.2)
+            self.setLocation(self.location.add(movementVector))
             
-            if self.aimVector.x < 0:
-                self.checkLeftCollisions()
-            elif self.aimVector.x > 0:
-                self.checkRightCollisions()
-            elif self.aimVector.y < 0:
-                self.checkTopCollisions()
-            elif self.aimVector.y > 0:
-                self.checkBottomCollisions()
+            if movementVector.x < 0:
+                self.handleLeftCollisions()
+            elif movementVector.x > 0:
+                self.handleRightCollisions()
+            elif movementVector.y < 0:
+                self.handleTopCollisions()
+            elif movementVector.y > 0:
+                self.handleBottomCollisions()
 
         self.move = False
         pass
 
-    def checkLeftCollisions(self):
-        moveBackFunction = lambda coordinates, size: Vector(coordinates[0] + size[0], self.location.y)
-        self.checkVerticalCollisions(self.boundingRectangle.left, moveBackFunction)
+    def handleLeftCollisions(self):
+        collision = self.checkVerticalCollisions(self.boundingRectangle.left)
+        if not collision is None:
+            self.setLocation(Vector(collision.location[0] + collision.size[0], self.location.y))
 
-    def checkRightCollisions(self):
-        moveBackFunction = lambda coordinates, size: Vector(coordinates[0] - self.size.x, self.location.y)
-        self.checkVerticalCollisions(self.boundingRectangle.right - 1, moveBackFunction)
+    def handleRightCollisions(self):
+        collision = self.checkVerticalCollisions(self.boundingRectangle.right - 1)
+        if not collision is None:
+            self.setLocation(Vector(collision.location[0] - self.size.x, self.location.y))
 
-    def checkTopCollisions(self):
-        moveBackFunction = lambda coordinates, size: Vector(self.location.x, coordinates[1] + size[1])
-        self.checkHorizontalCollisions(self.boundingRectangle.top, moveBackFunction)
+    def handleTopCollisions(self):
+        collision = self.checkHorizontalCollisions(self.boundingRectangle.top)
+        if not collision is None:
+            self.setLocation(Vector(self.location.x, collision.location[1] + collision.size[1]))
 
-    def checkBottomCollisions(self):
-        moveBackFunction = lambda coordinates, size: Vector(self.location.x, coordinates[1] - self.size.y)
-        self.checkHorizontalCollisions(self.boundingRectangle.bottom - 1, moveBackFunction)
+    def handleBottomCollisions(self):
+        collision = self.checkHorizontalCollisions(self.boundingRectangle.bottom - 1)
+        if not collision is None:
+            self.setLocation(Vector(self.location.x, collision.location[1] - self.size.y))
 
-    def checkVerticalCollisions(self, x, moveBackFunction):
+    def checkVerticalCollisions(self, x):
         start = Vector(x, self.boundingRectangle.top)
         end = start.add(Vector(0, self.size.y - 1))
         increment = Vector(0, playfield.blockSize)
 
-        self.checkLineTileCollisions(start, end, increment, moveBackFunction)
-        self.checkLineEntityCollisions(start, end, moveBackFunction)
+        return self.checkLineCollisions(start, end, increment)
 
-    def checkHorizontalCollisions(self, y, moveBackFunction):
+    def checkHorizontalCollisions(self, y):
         start = Vector(self.boundingRectangle.left, y)
         end = start.add(Vector(self.size.x - 1, 0))
         increment = Vector(playfield.blockSize, 0)
 
-        self.checkLineTileCollisions(start, end, increment, moveBackFunction)
-        self.checkLineEntityCollisions(start, end, moveBackFunction)
+        return self.checkLineCollisions(start, end, increment)
 
-    def checkLineTileCollisions(self, start, end, increment, moveBackFunction):
+    def checkLineCollisions(self, start, end, increment):
+        collision = self.checkLineTileCollisions(start, end, increment)
+        if not collision == None:
+            return collision
+        else:
+            return self.checkLineEntityCollisions(start, end)
+
+    def checkLineTileCollisions(self, start, end, increment):
         steps = int(math.ceil(self.size.y / playfield.blockSize)) + 1
         location = start
 
         for _ in range(steps):
-            if self.checkTileCollisions(location, moveBackFunction):
-                return
+            collision = self.checkTileCollisions(location)
+            if not collision is None:
+                return collision
             else:
                 location = location.add(increment)
                 location.y = min(location.y, end.y)
                 location.x = min(location.x, end.x)
 
-    def checkLineEntityCollisions(self, start, end, moveBackFunction):
+    def checkLineEntityCollisions(self, start, end):
         area = pygame.Rect(start.x, start.y, max(end.x - start.x, 1), max(end.y - start.y, 1))
         collidingEntities = entities.manager.findEntitiesInRectangle(area, exceptEntity=self, typeFilter=entities.Blocking)
         entity = next(collidingEntities, None)
         if not entity == None:
-            self.setLocation(moveBackFunction(entity.location.toIntTuple(), entity.size.toIntTuple()))
-            return
+            return Collision(entity.location.toIntTuple(), entity.size.toIntTuple())
+        else:
+            return None
 
-    def checkTileCollisions(self, pixelCoordinates, moveBackFunction):
+    def checkTileCollisions(self, pixelCoordinates):
         if self.pixelBlocked(pixelCoordinates):
             tileCoordinates = playfield.convertPixelToTileCoordinates(pixelCoordinates.toIntTuple())
             tilePixelCoordinates = (tileCoordinates[0] * playfield.blockSize, tileCoordinates[1] * playfield.blockSize)
             size = (playfield.blockSize, playfield.blockSize)
-            self.setLocation(moveBackFunction(tilePixelCoordinates, size))
-            return True
+            return Collision(tilePixelCoordinates, size)
         else:
-            return False
+            return None
 
     def pixelBlocked(self, coordinates):
         tile = playfield.getTileAtPixel(coordinates.x, coordinates.y)
