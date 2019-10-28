@@ -30,6 +30,12 @@ class Vector:
     def toUnit(self):
         length = self.length()
         return Vector(self.x / length, self.y / length)
+
+    def toTuple(self):
+        return (self.x, self.y)
+
+    def toIntTuple(self):
+        return (int(self.x), int(self.y))
     
     def length(self):
         return math.sqrt((self.x * self.x) + (self.y * self.y))

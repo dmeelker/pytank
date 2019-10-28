@@ -22,10 +22,6 @@ def render(screen, offset):
         entity.render(screen, offset)
 
 def findEntitiesInRectangle(rectangle, exceptEntity = None):
-    result = []
-
     for entity in entities:
         if entity != exceptEntity and entity.boundingRectangle.colliderect(rectangle):
-            result.append(entity)
-
-    return result
+            yield entity

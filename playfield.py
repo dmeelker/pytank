@@ -3,7 +3,7 @@ width = 0
 height = 0
 pixelWidth = 0
 pixelHeight = 0
-blockSize = 15
+blockSize = 8
 
 def initialize(w, h):
     global width, height, pixelWidth, pixelHeight
@@ -38,6 +38,9 @@ def getTileAtPixel(x, y):
         return None
 
     return tiles[tileX][tileY]
+
+def convertPixelToTileCoordinates(pixelCoordinates):
+    return (int(pixelCoordinates[0] / blockSize), int(pixelCoordinates[1] / blockSize))
 
 def containsTileCoordinates(x, y):
     return not (x < 0 or x >= width or y < 0 or y >= height)

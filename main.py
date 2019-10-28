@@ -29,21 +29,26 @@ def initialize():
     pygame.init()
     pygame.display.set_caption("Pytank")
     screen = pygame.display.set_mode((320, 240)) #, pygame.FULLSCREEN)
-    pygame.key.set_repeat(100, 50)
+    pygame.key.set_repeat(50, 50)
 
     loadImages()
 
-    playfield.initialize(20, 20)
-    playfield.setTile(10, 10, playfield.Tile(images.get('tank')))
+    playfield.initialize(40, 30)
+
+    for x in range(4, playfield.width - 8):
+        for y in range(4, 4 + 2):
+            playfield.setTile(x, y, playfield.Tile(images.get('brick')))
 
     tank = entities.tank.Tank(vector.Vector(100, 100))
     entities.manager.add(tank)
 
-    entities.manager.add(entities.tank.Tank(vector.Vector(100, 20)))
+    entities.manager.add(entities.tank.Tank(vector.Vector(100, 50)))
 
 def loadImages():
     images.load('projectile.png', 'projectile')
     images.load('tank.png', 'tank')
+    images.load('brick.png', 'brick')
+    images.load('concrete.png', 'concrete')
 
 def update():
     global lastUpdateTime
