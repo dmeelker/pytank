@@ -18,6 +18,9 @@ class Entity:
         self.location = newLocation
         self.updateBoundingRectangle()
 
+    def move(self, movementVector):
+        self.setLocation(self.location.add(movementVector))
+
     def setSize(self, newSize):
         self.size = newSize
         self.updateBoundingRectangle()

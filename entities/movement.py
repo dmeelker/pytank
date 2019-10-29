@@ -10,39 +10,59 @@ class MovementHandler:
         self.entity = entity
 
     def moveEntity(self, movementVector):
+        collisions = []
+
+        def addIfNotNone(collision):
+            if not collision is None:
+                collisions.append(collision)
+
         if movementVector.x != 0:
-            self.entity.setLocation(self.entity.location.add(Vector(movementVector.x, 0)))
+            self.entity.move(Vector(movementVector.x, 0))
             if movementVector.x < 0:
-                self.handleLeftCollisions()
+                addIfNotNone(self.handleLeftCollisions())
             elif movementVector.x > 0:
-                self.handleRightCollisions()
+                addIfNotNone(self.handleRightCollisions())
 
         if movementVector.y != 0:
-            self.entity.setLocation(self.entity.location.add(Vector(0, movementVector.y)))
+            self.entity.move(Vector(0, movementVector.y))
             if movementVector.y < 0:
-                self.handleTopCollisions()
+                addIfNotNone(self.handleTopCollisions())
             elif movementVector.y > 0:
-                self.handleBottomCollisions()
+                addIfNotNone(self.handleBottomCollisions())
+        
+        return collisions
 
     def handleLeftCollisions(self):
         collision = self.checkVerticalCollisions(self.entity.boundingRectangle.left)
         if not collision is None:
             self.entity.setLocation(Vector(collision.location[0] + collision.size[0], self.entity.location.y))
+            return collision
+        else:
+            return None
 
     def handleRightCollisions(self):
         collision = self.checkVerticalCollisions(self.entity.boundingRectangle.right - 1)
         if not collision is None:
             self.entity.setLocation(Vector(collision.location[0] - self.entity.size.x, self.entity.location.y))
+            return collision
+        else:
+            return None
 
     def handleTopCollisions(self):
         collision = self.checkHorizontalCollisions(self.entity.boundingRectangle.top)
         if not collision is None:
             self.entity.setLocation(Vector(self.entity.location.x, collision.location[1] + collision.size[1]))
+            return collision
+        else:
+            return None
 
     def handleBottomCollisions(self):
         collision = self.checkHorizontalCollisions(self.entity.boundingRectangle.bottom - 1)
         if not collision is None:
             self.entity.setLocation(Vector(self.entity.location.x, collision.location[1] - self.entity.size.y))
+            return collision
+        else:
+            return None
 
     def checkVerticalCollisions(self, x):
         start = Vector(x, self.entity.boundingRectangle.top)
@@ -83,24 +103,26 @@ class MovementHandler:
         collidingEntities = entities.manager.findEntitiesInRectangle(area, exceptEntity=self.entity, typeFilter=entities.Blocking)
         entity = next(collidingEntities, None)
         if not entity == None:
-            return Collision(entity.location.toIntTuple(), entity.size.toIntTuple())
+            return Collision(entity.location.toIntTuple(), entity.size.toIntTuple(), entity)
         else:
             return None
 
     def checkTileCollisions(self, pixelCoordinates):
-        if self.pixelBlocked(pixelCoordinates):
+        tile = playfield.getTileAtPixel(pixelCoordinates.x, pixelCoordinates.y)
+
+        if self.tileBlocked(tile):
             tileCoordinates = playfield.convertPixelToTileCoordinates(pixelCoordinates.toIntTuple())
             tilePixelCoordinates = (tileCoordinates[0] * playfield.blockSize, tileCoordinates[1] * playfield.blockSize)
             size = (playfield.blockSize, playfield.blockSize)
-            return Collision(tilePixelCoordinates, size)
+            return Collision(tilePixelCoordinates, size, tile)
         else:
             return None
 
-    def pixelBlocked(self, coordinates):
-        tile = playfield.getTileAtPixel(coordinates.x, coordinates.y)
+    def tileBlocked(self, tile):
         return not tile is None and tile.blocksMovement
 
 class Collision:
-    def __init__(self, location, size):
+    def __init__(self, location, size, collidedObject):
         self.location = location
         self.size = size
+        self.collidedObject = collidedObject

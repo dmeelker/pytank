@@ -1,12 +1,15 @@
 import entities
 import entities.manager
+from entities.movement import MovementHandler
 import playfield
 import images
 import vector
 
+
 class Projectile(entities.Entity):
     directionVector = vector.Vector(0, 0)
     source = None
+    movementHandler = None
     power = 1
 
     def __init__(self, location, directionVector, source, power = 1):
@@ -16,32 +19,23 @@ class Projectile(entities.Entity):
         self.directionVector = directionVector
         self.source = source
         self.power = power
+        self.movementHandler = MovementHandler(self)
 
     def update(self, time, timePassed):
-        self.setLocation(self.location.add(self.directionVector.multiplyScalar(timePassed * 0.25)))
-        self.checkEntityCollisions()
-        self.checkPlayfieldCollisions()
+        movementVector = self.directionVector.multiplyScalar(timePassed * 0.25)
+        collisions = self.movementHandler.moveEntity(movementVector)
+        self.handleCollisions(collisions)
 
-    def checkEntityCollisions(self):
-        collidingEntities = entities.manager.findEntitiesInRectangle(self.boundingRectangle, exceptEntity=self)
-
-        for collidingEntity in collidingEntities:
-            if isinstance(collidingEntity, entities.ProjectileCollider) and collidingEntity != self.source:
-                collidingEntity.hitByProjectile(self)
+    def handleCollisions(self, collisions):
+        if len(collisions) > 0:
+            collision = collisions[0]
+            if isinstance(collision.collidedObject, playfield.Tile):
+                collision.collidedObject.hitByProjectile(self)
+                self.markDisposable()
+            elif isinstance(collision.collidedObject, entities.ProjectileCollider) and collision.collidedObject != self.source:
+                collision.collidedObject.hitByProjectile(self)
                 self.markDisposable()
                 return
 
-    def checkPlayfieldCollisions(self):
-        if not playfield.containsPixelCoordinates(self.location.x + 2, self.location.y + 2):
-            self.markDisposable()
-            return
-
-        tile = playfield.getTileAtPixel(self.location.x + 2, self.location.y + 2)
-
-        if not tile is None and tile.blocksMovement:
-            tile.hitByProjectile(self)
-            self.markDisposable()
-
     def render(self, screen, offset):
         screen.blit(self.image, (offset[0] + self.location.x, offset[1] + self.location.y))
-

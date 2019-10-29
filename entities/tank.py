@@ -11,7 +11,7 @@ from vector import Vector
 
 class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
     heading = Vector(0, -1)
-    move = False
+    moving = False
     hitpoints = 10
     movementSpeed = 1
     movementHandler = None
@@ -31,11 +31,11 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
         self.setHeading(heading)
 
     def update(self, time, timePassed):
-        if self.move:
+        if self.moving:
             movementVector = self.heading.multiplyScalar(self.movementSpeed * timePassed * 0.2)
             self.movementHandler.moveEntity(movementVector)
 
-        self.move = False
+        self.moving = False
         pass
 
     def render(self, screen, offset):
@@ -55,10 +55,10 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
 
     def moveToVector(self, vector):
         self.setHeading(vector)
-        self.move = True
+        self.moving = True
 
     def fire(self):
-        projectile = entities.projectile.Projectile(self.location, self.heading.toUnit(), self)
+        projectile = entities.projectile.Projectile(self.location.add(self.heading.toUnit().multiplyScalar(8)), self.heading.toUnit(), self)
         entities.manager.add(projectile)
 
     def hitByProjectile(self, projectile):
