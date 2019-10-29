@@ -42,21 +42,12 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
     def render(self, screen, offset):
         screen.blit(self.image, (offset[0] + self.location.x, offset[1] + self.location.y))
 
-    def moveLeft(self):
-        self.moveToVector(Vector(-1, 0))
-
-    def moveRight(self):
-        self.moveToVector(Vector(1, 0))
-
-    def moveUp(self):
-        self.moveToVector(Vector(0, -1))
-
-    def moveDown(self):
-        self.moveToVector(Vector(0, 1))
-
-    def moveToVector(self, vector):
-        self.setHeading(vector)
+    def moveInDirection(self, direction):
+        self.setHeading(direction)
         self.moving = True
+
+    def canMoveInDirection(self, direction):
+        self.movementHandler.canMove(direction)
 
     def fire(self):
         projectile = entities.projectile.Projectile(self.location.add(self.heading.toUnit().multiplyScalar(8)), self.heading.toUnit(), self)

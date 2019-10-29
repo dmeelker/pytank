@@ -46,3 +46,8 @@ class Vector:
     def limitLength(self, maxLength):
         length = self.length()
         return self.toUnit().multiplyScalar(min(length, maxLength))
+
+left = Vector(-1, 0)
+right = Vector(1, 0)
+up = Vector(0, -1)
+down = Vector(0, 1)

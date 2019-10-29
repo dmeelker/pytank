@@ -39,6 +39,26 @@ class MovementHandler:
         
         return collisions
 
+    def canMove(self, movementVector):
+        if movementVector.x != 0:
+            self.entity.move(Vector(movementVector.x, 0))
+            if movementVector.x < 0:
+                if not self.handleLeftCollisions() is None:
+                    return False
+            elif movementVector.x > 0:
+                if not self.handleRightCollisions() is None:
+                    return False
+
+        if movementVector.y != 0:
+            self.entity.move(Vector(0, movementVector.y))
+            if movementVector.y < 0:
+                if not self.handleTopCollisions() is None:
+                    return False
+            elif movementVector.y > 0:
+                if not self.handleBottomCollisions() is None:
+                    return False
+        return True
+
     def handleLeftCollisions(self):
         collision = self.checkVerticalCollisions(self.entity.boundingRectangle.left)
         if not collision is None:

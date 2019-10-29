@@ -92,13 +92,13 @@ def handleEvents():
             if event.key == pygame.K_ESCAPE:
                 running = False
             if event.key == pygame.K_LEFT:
-                tank.moveLeft()
+                tank.moveInDirection(vector.left)
             if event.key == pygame.K_RIGHT:
-                tank.moveRight()
+                tank.moveInDirection(vector.right)
             if event.key == pygame.K_UP:
-                tank.moveUp()
+                tank.moveInDirection(vector.up)
             if event.key == pygame.K_DOWN:
-                tank.moveDown()
+                tank.moveInDirection(vector.down)
             if event.key == pygame.K_SPACE:
                 tank.fire()
 
