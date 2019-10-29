@@ -45,8 +45,11 @@ def initialize():
 
 def loadImages():
     images.load('projectile.png', 'projectile')
+    
     images.load('brick.png', 'brick')
     images.load('concrete.png', 'concrete')
+    images.load('tree.png', 'tree')
+    images.load('water.png', 'water')
     images.load('base.png', 'base')
 
     images.generateRotatedImages('tank.png', 'tank')
@@ -59,9 +62,13 @@ def loadLevel(levelString):
             character = lines[y][x]
 
             if character == 'B':
-                playfield.setTile(x, y, playfield.Tile(images.get('brick'), blocksMovement=True, destroyable=True))
+                playfield.setTile(x, y, playfield.Tile(images.get('brick'), blocksMovement=True, blocksProjectiles=True, destroyable=True))
             elif character == 'C':
-                playfield.setTile(x, y, playfield.Tile(images.get('concrete'), blocksMovement=True, destroyable=True, hitpoints=5))
+                playfield.setTile(x, y, playfield.Tile(images.get('concrete'), blocksMovement=True, blocksProjectiles=True, destroyable=True, hitpoints=5))
+            elif character == '~':
+                playfield.setTile(x, y, playfield.Tile(images.get('water'), blocksMovement=True, destroyable=False))
+            elif character == '^':
+                playfield.setTile(x, y, playfield.Tile(images.get('tree'), blocksMovement=False, destroyable=False, layer=1))
             elif character == 'X':
                 entities.manager.add(entities.base.Base(vector.Vector(x * playfield.blockSize, y * playfield.blockSize)))
 
@@ -84,22 +91,23 @@ def handleEvents():
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 running = False
-            elif event.key == pygame.K_LEFT:
+            if event.key == pygame.K_LEFT:
                 tank.moveLeft()
-            elif event.key == pygame.K_RIGHT:
+            if event.key == pygame.K_RIGHT:
                 tank.moveRight()
-            elif event.key == pygame.K_UP:
+            if event.key == pygame.K_UP:
                 tank.moveUp()
-            elif event.key == pygame.K_DOWN:
+            if event.key == pygame.K_DOWN:
                 tank.moveDown()
-            elif event.key == pygame.K_SPACE:
+            if event.key == pygame.K_SPACE:
                 tank.fire()
 
 def render():
     screen.fill((0, 0, 0))
 
-    playfield.render(screen, (0, 0))
+    playfield.render(screen, (0, 0), layer=0)
     entities.manager.render(screen, (0, 0))
+    playfield.render(screen, (0, 0), layer=1)
 
     pygame.display.flip()
 

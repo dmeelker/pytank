@@ -26,7 +26,8 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
         self.imageSouth = images.get('tank_south')
         self.imageWest = images.get('tank_west')
 
-        self.movementHandler = MovementHandler(self)
+        tileBlockedFunction = lambda tile: not tile is None and tile.blocksMovement
+        self.movementHandler = MovementHandler(self, tileBlockedFunction)
         self.setLocation(location)
         self.setHeading(heading)
 

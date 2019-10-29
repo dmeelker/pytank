@@ -18,7 +18,9 @@ class Projectile(entities.Entity):
         self.directionVector = directionVector
         self.source = source
         self.power = power
-        self.movementHandler = MovementHandler(self)
+
+        tileBlockedFunction = lambda tile: not tile is None and tile.blocksProjectiles
+        self.movementHandler = MovementHandler(self, tileBlockedFunction)
 
     def update(self, time, timePassed):
         movementVector = self.directionVector.multiplyScalar(timePassed * 0.25)

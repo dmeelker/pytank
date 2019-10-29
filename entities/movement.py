@@ -12,8 +12,9 @@ class Collision:
         self.collidedObject = collidedObject
 
 class MovementHandler:
-    def __init__(self, entity):
+    def __init__(self, entity, tileBlockFunction):
         self.entity = entity
+        self.tileBlockFunction = tileBlockFunction
 
     def moveEntity(self, movementVector):
         collisions = []
@@ -116,13 +117,10 @@ class MovementHandler:
     def checkTileCollisions(self, pixelCoordinates):
         tile = playfield.getTileAtPixel(pixelCoordinates.x, pixelCoordinates.y)
 
-        if self.tileBlocked(tile):
+        if self.tileBlockFunction(tile):
             tileCoordinates = playfield.convertPixelToTileCoordinates(pixelCoordinates.toIntTuple())
             tilePixelCoordinates = (tileCoordinates[0] * playfield.blockSize, tileCoordinates[1] * playfield.blockSize)
             size = (playfield.blockSize, playfield.blockSize)
             return Collision(tilePixelCoordinates, size, tile)
         else:
             return None
-
-    def tileBlocked(self, tile):
-        return not tile is None and tile.blocksMovement

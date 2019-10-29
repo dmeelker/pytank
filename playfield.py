@@ -48,29 +48,34 @@ def containsTileCoordinates(x, y):
 def containsPixelCoordinates(x, y):
     return not (x < 0 or x >= pixelWidth or y < 0 or y >= pixelHeight)
 
-def render(screen, offset):
+def render(screen, offset, layer):
     for x in range(width):
         for y in range(height):
             tile = tiles[x][y]
 
-            if not tile is None and not tile.image is None:
+            if not tile is None and not tile.image is None and tile.layer == layer:
                 screen.blit(tile.image, ((x * blockSize) + offset[0], (y * blockSize) + offset[1]))
 
 class Tile:
     blocksMovement = True
+    blocksProjectiles = False
     destroyable = False
     image = None
     hitpoints = 1
+    layer = 0
 
-    def __init__(self, image, blocksMovement = True, destroyable = False, hitpoints = 1):
+    def __init__(self, image, blocksMovement = True, destroyable = False, blocksProjectiles = False, hitpoints = 1, layer = 0):
         self.image = image
         self.blocksMovement = blocksMovement
         self.destroyable = destroyable
+        self.blocksProjectiles = blocksProjectiles
         self.hitpoints = hitpoints
+        self.layer = layer
 
     def hitByProjectile(self, projectile):
         if self.destroyable:
             self.hitpoints -= projectile.power
             if self.hitpoints <= 0:
                 self.blocksMovement = False
+                self.blocksProjectiles = False
                 self.image = None
