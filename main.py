@@ -8,6 +8,7 @@ import entities
 import entities.manager
 import entities.tank
 import entities.base
+import tankcontroller
 
 # Pygame objects
 screen = None
@@ -41,7 +42,9 @@ def initialize():
     tank = entities.tank.Tank(vector.Vector(100, 100))
     entities.manager.add(tank)
 
-    entities.manager.add(entities.tank.Tank(vector.Vector(100, 50)))
+    computerTank = entities.tank.Tank(vector.Vector(100, 50))
+    computerTank.controller = tankcontroller.TankController(computerTank)
+    entities.manager.add(computerTank)
 
 def loadImages():
     images.load('projectile.png', 'projectile')

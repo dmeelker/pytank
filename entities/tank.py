@@ -19,6 +19,7 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
     imageEast = None
     imageSouth = None
     imageWest = None
+    controller = None
 
     def __init__(self, location, heading = Vector(1, 0)):
         self.imageNorth = images.get('tank_north')
@@ -32,6 +33,9 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
         self.setHeading(heading)
 
     def update(self, time, timePassed):
+        if self.controller != None:
+            self.controller.update(time, timePassed)
+
         if self.moving:
             movementVector = self.heading.multiplyScalar(self.movementSpeed * timePassed * 0.2)
             self.movementHandler.moveEntity(movementVector)
