@@ -5,9 +5,24 @@ import playfield
 import entities
 from vector import Vector
 
-class CollisionHandler:
+class MovementHandler:
     def __init__(self, entity):
         self.entity = entity
+
+    def moveEntity(self, movementVector):
+        if movementVector.x != 0:
+            self.entity.setLocation(self.entity.location.add(Vector(movementVector.x, 0)))
+            if movementVector.x < 0:
+                self.handleLeftCollisions()
+            elif movementVector.x > 0:
+                self.handleRightCollisions()
+
+        if movementVector.y != 0:
+            self.entity.setLocation(self.entity.location.add(Vector(0, movementVector.y)))
+            if movementVector.y < 0:
+                self.handleTopCollisions()
+            elif movementVector.y > 0:
+                self.handleBottomCollisions()
 
     def handleLeftCollisions(self):
         collision = self.checkVerticalCollisions(self.entity.boundingRectangle.left)

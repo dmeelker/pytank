@@ -3,7 +3,7 @@ import pygame
 
 import entities
 import entities.projectile
-from entities.collisions import CollisionHandler
+from entities.movement import MovementHandler
 import playfield
 
 import images
@@ -14,7 +14,7 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
     move = False
     hitpoints = 10
     movementSpeed = 1
-    collisionHandler = None
+    movementHandler = None
     imageNorth = None
     imageEast = None
     imageSouth = None
@@ -26,23 +26,14 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
         self.imageSouth = images.get('tank_south')
         self.imageWest = images.get('tank_west')
 
-        self.collisionHandler = CollisionHandler(self)
+        self.movementHandler = MovementHandler(self)
         self.setLocation(location)
         self.setHeading(heading)
 
     def update(self, time, timePassed):
         if self.move:
             movementVector = self.heading.multiplyScalar(self.movementSpeed * timePassed * 0.2)
-            self.setLocation(self.location.add(movementVector))
-            
-            if movementVector.x < 0:
-                self.collisionHandler.handleLeftCollisions()
-            elif movementVector.x > 0:
-                self.collisionHandler.handleRightCollisions()
-            elif movementVector.y < 0:
-                self.collisionHandler.handleTopCollisions()
-            elif movementVector.y > 0:
-                self.collisionHandler.handleBottomCollisions()
+            self.movementHandler.moveEntity(movementVector)
 
         self.move = False
         pass
