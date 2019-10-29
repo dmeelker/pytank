@@ -17,9 +17,9 @@ def initializeTiles():
     global tiles
     tiles = []
 
-    for x in range(width):
+    for _ in range(width):
         column = []
-        for y in range(height):
+        for _ in range(height):
             column.append(None)
         
         tiles.append(column)
