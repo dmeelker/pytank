@@ -46,9 +46,10 @@ def initialize():
 
 def loadImages():
     images.load('projectile.png', 'projectile')
-    images.load('tank.png', 'tank')
     images.load('brick.png', 'brick')
     images.load('concrete.png', 'concrete')
+
+    images.generateRotatedImages('tank.png', 'tank')
 
 def update():
     global lastUpdateTime
