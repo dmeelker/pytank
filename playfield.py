@@ -66,7 +66,7 @@ class Tile:
         self.image = image
         self.blocksMovement = blocksMovement
         self.destroyable = destroyable
-        self.hitpoint = hitpoints
+        self.hitpoints = hitpoints
 
     def hitByProjectile(self, projectile):
         if self.destroyable:

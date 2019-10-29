@@ -5,6 +5,12 @@ import playfield
 import entities
 from vector import Vector
 
+class Collision:
+    def __init__(self, location, size, collidedObject):
+        self.location = location
+        self.size = size
+        self.collidedObject = collidedObject
+
 class MovementHandler:
     def __init__(self, entity):
         self.entity = entity
@@ -120,9 +126,3 @@ class MovementHandler:
 
     def tileBlocked(self, tile):
         return not tile is None and tile.blocksMovement
-
-class Collision:
-    def __init__(self, location, size, collidedObject):
-        self.location = location
-        self.size = size
-        self.collidedObject = collidedObject

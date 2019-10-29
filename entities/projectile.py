@@ -5,7 +5,6 @@ import playfield
 import images
 import vector
 
-
 class Projectile(entities.Entity):
     directionVector = vector.Vector(0, 0)
     source = None

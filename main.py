@@ -16,6 +16,39 @@ lastUpdateTime = 0
 
 tank = None
 
+level = \
+'''________________________________________
+________________________________________
+__BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB__
+__BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB__
+________________________________________
+________________________________________
+________________________________________
+_______C________________________________
+_______C________________________________
+_______C________________________________
+_______C________________________________
+_______C________________________________
+_______C________________________________
+_______C________________________________
+_______C________________________________
+_______C________________________________
+_______C________________________________
+_______C________________________________
+_______C________________________________
+_______C________________________________
+________________________________________
+________________________________________
+________________________________________
+__BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB__
+__BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB__
+________________________________________
+________________________________________
+________________________________________
+________________________________________
+________________________________________'''
+
+
 def start():
     initialize()
 
@@ -34,15 +67,28 @@ def initialize():
     loadImages()
 
     playfield.initialize(40, 30)
+    loadLevel(level)
 
-    for x in range(4, playfield.width - 8):
-        for y in range(4, 4 + 2):
-            playfield.setTile(x, y, playfield.Tile(images.get('brick'), blocksMovement=True, destroyable=True))
+    # for x in range(4, playfield.width - 8):
+    #     for y in range(4, 4 + 2):
+    #         playfield.setTile(x, y, playfield.Tile(images.get('brick'), blocksMovement=True, destroyable=True))
 
     tank = entities.tank.Tank(vector.Vector(100, 100))
     entities.manager.add(tank)
 
     entities.manager.add(entities.tank.Tank(vector.Vector(100, 50)))
+
+def loadLevel(levelString):
+    lines = levelString.split('\n')
+
+    for y in range(len(lines)):
+        for x in range(playfield.width):
+            character = lines[y][x]
+
+            if character == 'B':
+                playfield.setTile(x, y, playfield.Tile(images.get('brick'), blocksMovement=True, destroyable=True))
+            elif character == 'C':
+                playfield.setTile(x, y, playfield.Tile(images.get('concrete'), blocksMovement=True, destroyable=True, hitpoints=5))
 
 def loadImages():
     images.load('projectile.png', 'projectile')
