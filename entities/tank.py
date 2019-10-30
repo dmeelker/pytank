@@ -43,7 +43,7 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
             self.controller.update(time, timePassed)
 
         if self.moving:
-            movementVector = self.heading.multiplyScalar(self.movementSpeed * timePassed * 0.2)
+            movementVector = self.heading.multiplyScalar(self.movementSpeed * timePassed * 0.05)
             self.movementHandler.moveEntity(movementVector)
 
         self.moving = False

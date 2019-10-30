@@ -1,9 +1,9 @@
 import pygame
-import vector
+from utilities import Vector
 
 class Entity:
-    location = vector.Vector(0, 0)
-    size = vector.Vector(0, 0)
+    location = Vector(0, 0)
+    size = Vector(0, 0)
     boundingRectangle = pygame.Rect(0, 0, 0, 0)
     disposable = False
     disposed = False
