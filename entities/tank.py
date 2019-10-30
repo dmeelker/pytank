@@ -11,35 +11,29 @@ from utilities import Vector
 from utilities import Timer
 
 class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
-    heading = Vector(0, -1)
-    moving = False
-    hitpoints = 10
-    movementSpeed = 1
-    movementHandler = None
-    
-    imageNorth = None
-    imageEast = None
-    imageSouth = None
-    imageWest = None
-
-    controllerTimer = Timer(50)
-    controller = None
-
-    fireTimer = Timer(500)
-
     def __init__(self, location, heading = Vector(1, 0)):
+        super().__init__()
         self.imageNorth = images.get('tank_north')
         self.imageEast = images.get('tank_east')
         self.imageSouth = images.get('tank_south')
         self.imageWest = images.get('tank_west')
 
+        self.heading = Vector(0, -1)
+        self.moving = False
+        self.hitpoints = 10
+
+        self.controller = None
+        self.controllerTimer = Timer(50)
+        self.fireTimer = Timer(500)
+
         tileBlockedFunction = lambda tile: not tile is None and tile.blocksMovement
         self.movementHandler = MovementHandler(self, tileBlockedFunction)
+        self.movementSpeed = 1
         self.setLocation(location)
         self.setHeading(heading)
 
     def update(self, time, timePassed):
-        if self.controller != None and self.controllerTimer.update(time):
+        if self.controllerTimer.update(time):
             self.controller.update(time, timePassed)
 
         if self.moving:

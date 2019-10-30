@@ -3,12 +3,12 @@ import images
 from utilities import Vector
 
 class Base(entities.Entity, entities.ProjectileCollider, entities.Blocking):
-    hitpoints = 10
-
     def __init__(self, location):
+        super().__init__()
         self.image = images.get('base')
         self.setSize(Vector(self.image.get_width(), self.image.get_height()))
         self.setLocation(location)
+        self.hitpoints = 10
 
     def update(self, time, timePassed):
         pass

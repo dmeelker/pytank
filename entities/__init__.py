@@ -2,11 +2,12 @@ import pygame
 from utilities import Vector
 
 class Entity:
-    location = Vector(0, 0)
-    size = Vector(0, 0)
-    boundingRectangle = pygame.Rect(0, 0, 0, 0)
-    disposable = False
-    disposed = False
+    def __init__(self):
+        self.location = Vector(0, 0)
+        self.size = Vector(0, 0)
+        self.boundingRectangle = pygame.Rect(0, 0, 0, 0)
+        self.disposable = False
+        self.disposed = False
 
     def update(self, time, timePassed):
         pass

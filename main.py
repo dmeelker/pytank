@@ -3,6 +3,7 @@ import pygame
 import images
 import utilities
 from utilities import Vector
+
 import playfield
 import levels
 import entities
@@ -10,6 +11,7 @@ import entities.manager
 import entities.tank
 import entities.base
 import tankcontroller
+import input
 
 # Pygame objects
 screen = None
@@ -18,7 +20,8 @@ clock = pygame.time.Clock()
 running = True
 lastUpdateTime = 0
 
-tank = None
+playerTank = None
+playerTankController = None
 
 def start():
     initialize()
@@ -29,7 +32,7 @@ def start():
         clock.tick(60)
 
 def initialize():
-    global screen,clock,tank
+    global screen,clock,playerTank
     pygame.init()
     pygame.display.set_caption("Pytank")
     screen = pygame.display.set_mode((320, 240)) #, pygame.FULLSCREEN)
@@ -40,11 +43,14 @@ def initialize():
     playfield.initialize(40, 30)
     loadLevel(levels.level1)
 
-    tank = entities.tank.Tank(Vector(100, 100))
-    entities.manager.add(tank)
+    playerTank = entities.tank.Tank(Vector(100, 100))
+    playerTankController = tankcontroller.PlayerTankController(playerTank)
+    playerTank.controller = playerTankController
+    entities.manager.add(playerTank)
+    input.tankController = playerTankController
 
     computerTank = entities.tank.Tank(Vector(100, 50))
-    computerTank.controller = tankcontroller.TankController(computerTank)
+    computerTank.controller = tankcontroller.AiTankController(computerTank)
     entities.manager.add(computerTank)
 
 def loadImages():
@@ -92,19 +98,8 @@ def handleEvents():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                running = False
-            if event.key == pygame.K_LEFT:
-                tank.moveInDirection(utilities.vectorLeft)
-            if event.key == pygame.K_RIGHT:
-                tank.moveInDirection(utilities.vectorRight)
-            if event.key == pygame.K_UP:
-                tank.moveInDirection(utilities.vectorUp)
-            if event.key == pygame.K_DOWN:
-                tank.moveInDirection(utilities.vectorDown)
-            if event.key == pygame.K_SPACE:
-                tank.fire(pygame.time.get_ticks())
+        else:
+            input.handleEvent(event)
 
 def render():
     screen.fill((0, 0, 0))
@@ -116,3 +111,4 @@ def render():
     pygame.display.flip()
 
 start()
+

@@ -6,12 +6,8 @@ import images
 from utilities import Vector
 
 class Projectile(entities.Entity, entities.ProjectileCollider):
-    directionVector = Vector(0, 0)
-    source = None
-    movementHandler = None
-    power = 1
-
     def __init__(self, location, directionVector, source, power = 1):
+        super().__init__()
         self.image = images.get('projectile')
         self.setSize(Vector(self.image.get_width(), self.image.get_height()))
         self.setLocation(location)
