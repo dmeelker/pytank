@@ -47,7 +47,22 @@ class Vector:
         length = self.length()
         return self.toUnit().multiplyScalar(min(length, maxLength))
 
-left = Vector(-1, 0)
-right = Vector(1, 0)
-up = Vector(0, -1)
-down = Vector(0, 1)
+vectorLeft = Vector(-1, 0)
+vectorRight = Vector(1, 0)
+vectorUp = Vector(0, -1)
+vectorDown = Vector(0, 1)
+
+class Timer:
+    def __init__(self, interval):
+        self.interval = interval
+        self.lastIntervalTime = 0
+
+    def update(self, time):
+        if time - self.lastIntervalTime > self.interval:
+            self.lastIntervalTime = time
+            return True
+        else:
+            return False
+    
+    def setInterval(self, interval):
+        self.interval = interval

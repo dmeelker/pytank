@@ -1,6 +1,6 @@
 import entities
 import images
-from vector import Vector
+from utilities import Vector
 
 class Base(entities.Entity, entities.ProjectileCollider, entities.Blocking):
     hitpoints = 10

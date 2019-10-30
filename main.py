@@ -1,7 +1,8 @@
 import pygame
 
 import images
-import vector
+import utilities
+from utilities import Vector
 import playfield
 import levels
 import entities
@@ -39,10 +40,10 @@ def initialize():
     playfield.initialize(40, 30)
     loadLevel(levels.level1)
 
-    tank = entities.tank.Tank(vector.Vector(100, 100))
+    tank = entities.tank.Tank(Vector(100, 100))
     entities.manager.add(tank)
 
-    computerTank = entities.tank.Tank(vector.Vector(100, 50))
+    computerTank = entities.tank.Tank(Vector(100, 50))
     computerTank.controller = tankcontroller.TankController(computerTank)
     entities.manager.add(computerTank)
 
@@ -73,7 +74,7 @@ def loadLevel(levelString):
             elif character == '^':
                 playfield.setTile(x, y, playfield.Tile(images.get('tree'), blocksMovement=False, destroyable=False, layer=1))
             elif character == 'X':
-                entities.manager.add(entities.base.Base(vector.Vector(x * playfield.blockSize, y * playfield.blockSize)))
+                entities.manager.add(entities.base.Base(Vector(x * playfield.blockSize, y * playfield.blockSize)))
 
 def update():
     global lastUpdateTime
@@ -95,15 +96,15 @@ def handleEvents():
             if event.key == pygame.K_ESCAPE:
                 running = False
             if event.key == pygame.K_LEFT:
-                tank.moveInDirection(vector.left)
+                tank.moveInDirection(utilities.vectorLeft)
             if event.key == pygame.K_RIGHT:
-                tank.moveInDirection(vector.right)
+                tank.moveInDirection(utilities.vectorRight)
             if event.key == pygame.K_UP:
-                tank.moveInDirection(vector.up)
+                tank.moveInDirection(utilities.vectorUp)
             if event.key == pygame.K_DOWN:
-                tank.moveInDirection(vector.down)
+                tank.moveInDirection(utilities.vectorDown)
             if event.key == pygame.K_SPACE:
-                tank.fire()
+                tank.fire(pygame.time.get_ticks())
 
 def render():
     screen.fill((0, 0, 0))

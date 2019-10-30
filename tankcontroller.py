@@ -1,8 +1,10 @@
 import random
-import vector
+import utilities
+from utilities import Timer
 
 class TankController:
-    directions = [vector.up, vector.right, vector.down, vector.left]
+    directions = [utilities.vectorUp, utilities.vectorRight, utilities.vectorDown, utilities.vectorLeft]
+    fireTimer = Timer(500)
 
     def __init__(self, entity):
         self.entity = entity
@@ -13,7 +15,15 @@ class TankController:
         else:
             self.entity.moveInDirection(self.randomDirection())
 
-        pass
+        if self.fireTimer.update(time):
+            self.fire(time)
+
+    def fire(self, time):
+        self.entity.fire(time)
+        self.pickRandomFireTime()
+
+    def pickRandomFireTime(self):
+        self.fireTimer.setInterval(random.randint(400, 600))
 
     def randomDirection(self):
         return self.directions[random.randint(0, len(self.directions) - 1)]

@@ -7,7 +7,8 @@ from entities.movement import MovementHandler
 import playfield
 
 import images
-from vector import Vector
+from utilities import Vector
+from utilities import Timer
 
 class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
     heading = Vector(0, -1)
@@ -15,11 +16,16 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
     hitpoints = 10
     movementSpeed = 1
     movementHandler = None
+    
     imageNorth = None
     imageEast = None
     imageSouth = None
     imageWest = None
+
+    controllerTimer = Timer(50)
     controller = None
+
+    fireTimer = Timer(500)
 
     def __init__(self, location, heading = Vector(1, 0)):
         self.imageNorth = images.get('tank_north')
@@ -33,7 +39,7 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
         self.setHeading(heading)
 
     def update(self, time, timePassed):
-        if self.controller != None:
+        if self.controller != None and self.controllerTimer.update(time):
             self.controller.update(time, timePassed)
 
         if self.moving:
@@ -53,9 +59,10 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
     def canMoveInDirection(self, direction):
         return self.movementHandler.canMove(direction)
 
-    def fire(self):
-        projectile = entities.projectile.Projectile(self.location.add(self.heading.toUnit().multiplyScalar(8)), self.heading.toUnit(), self)
-        entities.manager.add(projectile)
+    def fire(self, time):
+        if self.fireTimer.update(time):
+            projectile = entities.projectile.Projectile(self.location.add(self.heading.toUnit().multiplyScalar(8)), self.heading.toUnit(), self)
+            entities.manager.add(projectile)
 
     def hitByProjectile(self, projectile):
         self.hitpoints -= projectile.power

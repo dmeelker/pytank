@@ -3,7 +3,7 @@ import pygame
 
 import playfield
 import entities
-from vector import Vector
+from utilities import Vector
 
 class Collision:
     def __init__(self, location, size, collidedObject):
