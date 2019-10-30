@@ -17,7 +17,7 @@ class TankSpawner:
     def spawn(self):
         tank = entities.tank.Tank(self.location)
         tank.setHeading(utilities.vectorDown)
-        tank.controller = tankcontroller.AiTankController(tank)
+        tank.setController(tankcontroller.AiTankController(tank))
         entities.manager.add(tank)
         self.resetTimer()
 

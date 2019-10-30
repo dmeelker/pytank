@@ -51,14 +51,14 @@ def initialize():
 
     playerTank = entities.tank.Tank(Vector(100, 100))
     playerTankController = tankcontroller.PlayerTankController(playerTank)
-    playerTank.controller = playerTankController
+    playerTank.setController(playerTankController)
     entities.manager.add(playerTank)
     input.tankController = playerTankController
 
     loadLevel(levels.level1)
 
     computerTank = entities.tank.Tank(Vector(100, 50))
-    computerTank.controller = tankcontroller.AiTankController(computerTank)
+    computerTank.setController(tankcontroller.AiTankController(computerTank))
     entities.manager.add(computerTank)
 
 def loadImages():

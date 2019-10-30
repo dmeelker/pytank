@@ -1,5 +1,6 @@
 import entities
 import entities.manager
+import entities.tank
 from entities.movement import MovementHandler
 import playfield
 import images
@@ -16,7 +17,7 @@ class Projectile(entities.Entity, entities.ProjectileCollider):
         self.power = power
 
         tileBlockedFunction = lambda tile: not tile is None and tile.blocksProjectiles
-        self.movementHandler = MovementHandler(self, tileBlockedFunction)
+        self.movementHandler = MovementHandler(self, tileBlockedFunction, entityIgnoreFunction=lambda entity: self.collisionIgnoreFunction(entity))
 
     def update(self, time, timePassed):
         movementVector = self.directionVector.multiplyScalar(timePassed * 0.25)
@@ -31,11 +32,22 @@ class Projectile(entities.Entity, entities.ProjectileCollider):
             elif isinstance(collision.collidedObject, playfield.Tile):
                 collision.collidedObject.hitByProjectile(self)
                 self.markDisposable()
-            elif isinstance(collision.collidedObject, entities.ProjectileCollider) and collision.collidedObject != self.source:
+            elif isinstance(collision.collidedObject, entities.ProjectileCollider):
                 collision.collidedObject.hitByProjectile(self)
                 self.markDisposable()
                 return
-    
+
+    def collisionIgnoreFunction(self, entity):
+        if isinstance(entity, entities.tank.Tank):
+            return self.shouldIgnoreTank(entity)
+        elif entity == self.source:
+            return True
+        
+        return False
+
+    def shouldIgnoreTank(self, tank):
+        return self.source.playerControlled == tank.playerControlled
+
     def hitByProjectile(self, projectile):
         self.markDisposable()
 

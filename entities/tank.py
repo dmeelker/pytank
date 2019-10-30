@@ -5,6 +5,7 @@ import entities
 import entities.projectile
 from entities.movement import MovementHandler
 import playfield
+import tankcontroller
 
 import images
 from utilities import Vector
@@ -32,6 +33,10 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
         self.setLocation(location)
         self.setHeading(heading)
 
+    def setController(self, controller):
+        self.controller = controller
+        self.playerControlled = isinstance(controller, tankcontroller.PlayerTankController)
+
     def update(self, time, timePassed):
         if self.controllerTimer.update(time):
             self.controller.update(time, timePassed)
@@ -55,7 +60,12 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
 
     def fire(self, time):
         if self.fireTimer.update(time):
-            projectile = entities.projectile.Projectile(self.location.add(self.heading.toUnit().multiplyScalar(8)), self.heading.toUnit(), self)
+            projectile = entities.projectile.Projectile(Vector(0, 0), self.heading.toUnit(), self)
+
+            centerLocation = self.getCenterLocation()
+            location = centerLocation.subtract(projectile.size.multiplyScalar(0.5)).add(self.heading.toUnit().multiplyScalar(6))
+            projectile.setLocation(location)
+
             entities.manager.add(projectile)
 
     def hitByProjectile(self, projectile):

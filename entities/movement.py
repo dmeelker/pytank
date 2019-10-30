@@ -12,9 +12,10 @@ class Collision:
         self.collidedObject = collidedObject
 
 class MovementHandler:
-    def __init__(self, entity, tileBlockFunction):
+    def __init__(self, entity, tileBlockFunction, entityIgnoreFunction = None):
         self.entity = entity
         self.tileBlockFunction = tileBlockFunction
+        self.entityIgnoreFunction = entityIgnoreFunction
 
     def moveEntity(self, movementVector):
         collisions = []
@@ -138,11 +139,18 @@ class MovementHandler:
     def checkLineEntityCollisions(self, start, end):
         area = pygame.Rect(start.x, start.y, max(end.x - start.x, 1), max(end.y - start.y, 1))
         collidingEntities = entities.manager.findEntitiesInRectangle(area, exceptEntity=self.entity, typeFilter=entities.Blocking)
-        entity = next(collidingEntities, None)
-        if not entity == None:
-            return Collision(entity.location.toIntTuple(), entity.size.toIntTuple(), entity)
+
+        for entity in collidingEntities:
+            if not(self.ignoreEntity(entity)):
+                return Collision(entity.location.toIntTuple(), entity.size.toIntTuple(), entity)
         else:
             return None
+
+    def ignoreEntity(self, entity):
+        if self.entityIgnoreFunction != None:
+            return self.entityIgnoreFunction(entity)
+        else:
+            return False
 
     def checkTileCollisions(self, pixelCoordinates):
         tileCoordinates = playfield.convertPixelToTileCoordinates(pixelCoordinates.toIntTuple())

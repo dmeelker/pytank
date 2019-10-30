@@ -19,6 +19,9 @@ class Entity:
         self.location = newLocation
         self.updateBoundingRectangle()
 
+    def getCenterLocation(self):
+        return self.location.add(self.size.multiplyScalar(0.5))
+
     def move(self, movementVector):
         self.setLocation(self.location.add(movementVector))
 
