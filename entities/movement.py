@@ -41,55 +41,65 @@ class MovementHandler:
 
     def canMove(self, movementVector):
         if movementVector.x != 0:
-            self.entity.move(Vector(movementVector.x, 0))
             if movementVector.x < 0:
-                if not self.handleLeftCollisions() is None:
+                if not self.checkLeftCollisions() is None:
                     return False
             elif movementVector.x > 0:
-                if not self.handleRightCollisions() is None:
+                if not self.checkRightCollisions() is None:
                     return False
 
         if movementVector.y != 0:
-            self.entity.move(Vector(0, movementVector.y))
             if movementVector.y < 0:
-                if not self.handleTopCollisions() is None:
+                if not self.checkTopCollisions() is None:
                     return False
             elif movementVector.y > 0:
-                if not self.handleBottomCollisions() is None:
+                if not self.checkBottomCollisions() is None:
                     return False
         return True
 
     def handleLeftCollisions(self):
-        collision = self.checkVerticalCollisions(self.entity.boundingRectangle.left)
+        collision = self.checkLeftCollisions()
         if not collision is None:
             self.entity.setLocation(Vector(collision.location[0] + collision.size[0], self.entity.location.y))
             return collision
         else:
             return None
 
+    def checkLeftCollisions(self):
+        return self.checkVerticalCollisions(self.entity.boundingRectangle.left - 1)
+
     def handleRightCollisions(self):
-        collision = self.checkVerticalCollisions(self.entity.boundingRectangle.right - 1)
+        collision = self.checkRightCollisions()
         if not collision is None:
             self.entity.setLocation(Vector(collision.location[0] - self.entity.size.x, self.entity.location.y))
             return collision
         else:
             return None
 
+    def checkRightCollisions(self):
+        return self.checkVerticalCollisions(self.entity.boundingRectangle.right)
+
     def handleTopCollisions(self):
-        collision = self.checkHorizontalCollisions(self.entity.boundingRectangle.top)
+        collision = self.checkTopCollisions()
         if not collision is None:
             self.entity.setLocation(Vector(self.entity.location.x, collision.location[1] + collision.size[1]))
             return collision
         else:
             return None
 
+    def checkTopCollisions(self):
+        return self.checkHorizontalCollisions(self.entity.boundingRectangle.top - 1)
+
     def handleBottomCollisions(self):
-        collision = self.checkHorizontalCollisions(self.entity.boundingRectangle.bottom - 1)
+        collision = self.checkBottomCollisions()
         if not collision is None:
             self.entity.setLocation(Vector(self.entity.location.x, collision.location[1] - self.entity.size.y))
             return collision
         else:
             return None
+    
+    def checkBottomCollisions(self):
+        return self.checkHorizontalCollisions(self.entity.boundingRectangle.bottom)
 
     def checkVerticalCollisions(self, x):
         start = Vector(x, self.entity.boundingRectangle.top)
@@ -135,11 +145,16 @@ class MovementHandler:
             return None
 
     def checkTileCollisions(self, pixelCoordinates):
+        tileCoordinates = playfield.convertPixelToTileCoordinates(pixelCoordinates.toIntTuple())
+        tilePixelCoordinates = (tileCoordinates[0] * playfield.blockSize, tileCoordinates[1] * playfield.blockSize)
+
+        if not playfield.containsPixelCoordinates(pixelCoordinates.x, pixelCoordinates.y):
+            size = (playfield.blockSize, playfield.blockSize)
+            return Collision(tilePixelCoordinates, size, None)
+
         tile = playfield.getTileAtPixel(pixelCoordinates.x, pixelCoordinates.y)
 
         if self.tileBlockFunction(tile):
-            tileCoordinates = playfield.convertPixelToTileCoordinates(pixelCoordinates.toIntTuple())
-            tilePixelCoordinates = (tileCoordinates[0] * playfield.blockSize, tileCoordinates[1] * playfield.blockSize)
             size = (playfield.blockSize, playfield.blockSize)
             return Collision(tilePixelCoordinates, size, tile)
         else:

@@ -51,7 +51,7 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
         self.moving = True
 
     def canMoveInDirection(self, direction):
-        self.movementHandler.canMove(direction)
+        return self.movementHandler.canMove(direction)
 
     def fire(self):
         projectile = entities.projectile.Projectile(self.location.add(self.heading.toUnit().multiplyScalar(8)), self.heading.toUnit(), self)

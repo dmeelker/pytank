@@ -30,7 +30,9 @@ class Projectile(entities.Entity):
     def handleCollisions(self, collisions):
         if len(collisions) > 0:
             collision = collisions[0]
-            if isinstance(collision.collidedObject, playfield.Tile):
+            if collision.collidedObject is None:
+                self.markDisposable()
+            elif isinstance(collision.collidedObject, playfield.Tile):
                 collision.collidedObject.hitByProjectile(self)
                 self.markDisposable()
             elif isinstance(collision.collidedObject, entities.ProjectileCollider) and collision.collidedObject != self.source:

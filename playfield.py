@@ -40,7 +40,8 @@ def getTileAtPixel(x, y):
     return tiles[tileX][tileY]
 
 def convertPixelToTileCoordinates(pixelCoordinates):
-    return (int(pixelCoordinates[0] / blockSize), int(pixelCoordinates[1] / blockSize))
+    # + 80 - 10 to make this work with negative coordinates too
+    return (int((pixelCoordinates[0] + 80) / blockSize) - 10, int((pixelCoordinates[1] + 80) / blockSize) - 10)
 
 def containsTileCoordinates(x, y):
     return not (x < 0 or x >= width or y < 0 or y >= height)
