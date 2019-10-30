@@ -11,6 +11,7 @@ import entities
 import entities.manager
 import entities.tank
 import entities.base
+from tankspawner import TankSpawner
 import tankcontroller
 import input
 
@@ -23,6 +24,8 @@ lastUpdateTime = 0
 
 playerTank = None
 playerTankController = None
+
+tankSpawners = []
 
 def start():
     initialize()
@@ -45,13 +48,14 @@ def initialize():
     loadImages()
 
     playfield.initialize(40, 30)
-    loadLevel(levels.level1)
 
     playerTank = entities.tank.Tank(Vector(100, 100))
     playerTankController = tankcontroller.PlayerTankController(playerTank)
     playerTank.controller = playerTankController
     entities.manager.add(playerTank)
     input.tankController = playerTankController
+
+    loadLevel(levels.level1)
 
     computerTank = entities.tank.Tank(Vector(100, 50))
     computerTank.controller = tankcontroller.AiTankController(computerTank)
@@ -69,11 +73,14 @@ def loadImages():
     images.generateRotatedImages('tank.png', 'tank')
 
 def loadLevel(levelString):
+    global tankSpawners
     lines = levelString.split('\n')
+    tankSpawners = []
 
     for y in range(len(lines)):
         for x in range(playfield.width):
             character = lines[y][x]
+            pixelLocation = Vector(x * playfield.blockSize, y * playfield.blockSize)
 
             if character == 'B':
                 playfield.setTile(x, y, playfield.Tile(images.get('brick'), blocksMovement=True, blocksProjectiles=True, destroyable=True))
@@ -84,7 +91,12 @@ def loadLevel(levelString):
             elif character == '^':
                 playfield.setTile(x, y, playfield.Tile(images.get('tree'), blocksMovement=False, destroyable=False, layer=1))
             elif character == 'X':
-                entities.manager.add(entities.base.Base(Vector(x * playfield.blockSize, y * playfield.blockSize)))
+                entities.manager.add(entities.base.Base(pixelLocation))
+            elif character == 'P':
+                playerTank.setLocation(pixelLocation)
+                playerTank.setHeading(utilities.vectorUp)
+            elif character == 'S':
+                tankSpawners.append(TankSpawner(pixelLocation))
 
 def update():
     global lastUpdateTime
@@ -96,6 +108,7 @@ def update():
     lastUpdateTime = time
 
     entities.manager.update(time, timePassed)
+    updateTankSpawners(time, timePassed)
     
 
 def handleEvents():
@@ -105,6 +118,10 @@ def handleEvents():
             running = False
         else:
             input.handleEvent(event)
+
+def updateTankSpawners(time, timePassed):
+    for tankSpawner in tankSpawners:
+        tankSpawner.update(time, timePassed)
 
 def render():
     screen.fill((0, 0, 0))
