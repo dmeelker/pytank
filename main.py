@@ -51,12 +51,6 @@ def initialize():
 
     playfield.initialize(40, 30)
 
-    playerTank = entities.tank.Tank(Vector(100, 100))
-    playerTankController = tankcontroller.PlayerTankController(playerTank)
-    playerTank.setController(playerTankController)
-    entities.manager.add(playerTank)
-    input.tankController = playerTankController
-
     loadLevel(levels.level1)
 
 def loadImages():
@@ -73,7 +67,14 @@ def loadImages():
 def loadLevel(levelString):
     global tankSpawners, base
     entities.manager.clear()
+    
+    playerTank = entities.tank.Tank(Vector(100, 100))
+    playerTank.fireTimer.setInterval(100)
+    playerTank.movementSpeed = 3
+    playerTankController = tankcontroller.PlayerTankController(playerTank)
+    playerTank.setController(playerTankController)
     entities.manager.add(playerTank)
+    input.tankController = playerTankController
 
     lines = levelString.split('\n')
     tankSpawners = []
