@@ -1,4 +1,5 @@
 import pygame
+import pygame.joystick
 
 import images
 import utilities
@@ -34,9 +35,12 @@ def start():
 def initialize():
     global screen,clock,playerTank
     pygame.init()
+    pygame.joystick.init()
     pygame.display.set_caption("Pytank")
     screen = pygame.display.set_mode((320, 240)) #, pygame.FULLSCREEN)
     pygame.key.set_repeat(50, 50)
+
+    input.initialize()
 
     loadImages()
 
@@ -85,6 +89,7 @@ def loadLevel(levelString):
 def update():
     global lastUpdateTime
     handleEvents()
+    input.update()
 
     time = pygame.time.get_ticks()
     timePassed = time - lastUpdateTime
