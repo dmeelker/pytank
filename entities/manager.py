@@ -6,6 +6,9 @@ def add(entity):
 def remove(entity):
     entities.remove(entity)
 
+def clear():
+    entities.clear()
+
 def update(time, timePassed):
     disposableEntities = []
 
@@ -15,6 +18,7 @@ def update(time, timePassed):
             disposableEntities.append(entity)
 
     for entity in disposableEntities:
+        entity.dispose()
         entities.remove(entity)
 
 def render(screen, offset):

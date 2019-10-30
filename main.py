@@ -25,7 +25,9 @@ lastUpdateTime = 0
 playerTank = None
 playerTankController = None
 
+# Level objects
 tankSpawners = []
+base = None
 
 def start():
     initialize()
@@ -57,10 +59,6 @@ def initialize():
 
     loadLevel(levels.level1)
 
-    computerTank = entities.tank.Tank(Vector(100, 50))
-    computerTank.setController(tankcontroller.AiTankController(computerTank))
-    entities.manager.add(computerTank)
-
 def loadImages():
     images.load('projectile.png', 'projectile')
     
@@ -73,7 +71,10 @@ def loadImages():
     images.generateRotatedImages('tank.png', 'tank')
 
 def loadLevel(levelString):
-    global tankSpawners
+    global tankSpawners, base
+    entities.manager.clear()
+    entities.manager.add(playerTank)
+
     lines = levelString.split('\n')
     tankSpawners = []
 
@@ -91,7 +92,8 @@ def loadLevel(levelString):
             elif character == '^':
                 playfield.setTile(x, y, playfield.Tile(images.get('tree'), blocksMovement=False, destroyable=False, layer=1))
             elif character == 'X':
-                entities.manager.add(entities.base.Base(pixelLocation))
+                base = entities.base.Base(pixelLocation)
+                entities.manager.add(base)
             elif character == 'P':
                 playerTank.setLocation(pixelLocation)
                 playerTank.setHeading(utilities.vectorUp)
@@ -110,6 +112,8 @@ def update():
     entities.manager.update(time, timePassed)
     updateTankSpawners(time, timePassed)
     
+    if base.disposed:
+        loadLevel(levels.level1)
 
 def handleEvents():
     global running
