@@ -12,7 +12,7 @@ class Entity:
     def update(self, time, timePassed):
         pass
 
-    def render(self, screen, offset):
+    def render(self, screen, offset, time):
         pass
 
     def setLocation(self, newLocation):
@@ -39,7 +39,7 @@ class Entity:
         self.disposed = True
 
 class ProjectileCollider:
-    def hitByProjectile(self, projectile):
+    def hitByProjectile(self, projectile, time):
         pass
 
 class Blocking:

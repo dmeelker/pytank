@@ -73,7 +73,7 @@ class Tile:
         self.hitpoints = hitpoints
         self.layer = layer
 
-    def hitByProjectile(self, projectile):
+    def hitByProjectile(self, projectile, time):
         if self.destroyable:
             self.hitpoints -= projectile.power
             if self.hitpoints <= 0:

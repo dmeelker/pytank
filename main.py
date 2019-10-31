@@ -132,7 +132,7 @@ def render():
     screen.fill((0, 0, 0))
 
     playfield.render(screen, (0, 0), layer=0)
-    entities.manager.render(screen, (0, 0))
+    entities.manager.render(screen, (0, 0), pygame.time.get_ticks())
     playfield.render(screen, (0, 0), layer=1)
 
     pygame.display.flip()

@@ -21,9 +21,9 @@ def update(time, timePassed):
         entity.dispose()
         entities.remove(entity)
 
-def render(screen, offset):
+def render(screen, offset, time):
     for entity in entities:
-        entity.render(screen, offset)
+        entity.render(screen, offset, time)
 
 def findEntitiesInRectangle(rectangle, typeFilter = None, exceptEntity = None):
     for entity in entities:
