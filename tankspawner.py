@@ -2,6 +2,7 @@ import random
 import entities
 import tankcontroller
 import utilities
+import tankfactory
 from utilities import Timer
 
 class TankSpawner:
@@ -15,10 +16,7 @@ class TankSpawner:
             self.spawn()
     
     def spawn(self):
-        tank = entities.tank.Tank(self.location)
-        tank.setHeading(utilities.vectorDown)
-        tank.setController(tankcontroller.AiTankController(tank))
-        entities.manager.add(tank)
+        tank = tankfactory.createTank(0, self.location)
         self.resetTimer()
 
     def resetTimer(self):

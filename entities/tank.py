@@ -21,15 +21,18 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
 
         self.heading = Vector(0, -1)
         self.moving = False
+
         self.hitpoints = 10
+        self.movementSpeed = 1
+        self.fireTimer = Timer(500)
+        self.firePower = 1
 
         self.controller = None
         self.controllerTimer = Timer(50)
-        self.fireTimer = Timer(500)
 
         tileBlockedFunction = lambda tile: not tile is None and tile.blocksMovement
         self.movementHandler = MovementHandler(self, tileBlockedFunction)
-        self.movementSpeed = 1
+        
         self.setLocation(location)
         self.setHeading(heading)
         self.lastHitTime = None
@@ -67,7 +70,7 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
 
     def fire(self, time):
         if self.fireTimer.update(time):
-            projectile = entities.projectile.Projectile(Vector(0, 0), self.heading.toUnit(), self)
+            projectile = entities.projectile.Projectile(Vector(0, 0), self.heading.toUnit(), source=self, power=self.firePower)
 
             centerLocation = self.getCenterLocation()
             location = centerLocation.subtract(projectile.size.multiplyScalar(0.5)).add(self.heading.toUnit().multiplyScalar(6))
