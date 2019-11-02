@@ -10,10 +10,6 @@ import levelcontroller
 import levels
 import entities
 import entities.manager
-import entities.tank
-import entities.base
-from tankspawner import TankSpawner
-import tankcontroller
 import input
 
 # Pygame objects
@@ -86,4 +82,3 @@ def render():
     pygame.display.flip()
 
 start()
-
