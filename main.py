@@ -7,7 +7,6 @@ from utilities import Vector
 
 import playfield
 import levelcontroller
-import levels
 import entities
 import entities.manager
 import input
@@ -39,7 +38,7 @@ def initialize():
 
     loadImages()
 
-    levelcontroller.loadLevel(levels.level1)
+    levelcontroller.loadFirstLevel()
 
 def loadImages():
     images.load('projectile.png', 'projectile')

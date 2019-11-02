@@ -1,9 +1,9 @@
 import random
+import os
 
 import images
 import input
 import playfield
-import levels
 import entities
 import entities.tank
 import entities.base
@@ -21,18 +21,42 @@ playerTank = None
 liveEnemyTanks = []
 spawnTimer = Timer(5000)
 
-def loadLevel(levelString):
-    global tankSpawnLocations, upcomingTankLevels, liveEnemyTanks, base
+def loadFirstLevel():
+    loadLevel(os.path.join('levels', 'level1.txt'))
+
+def loadLevel(fileName):
+    resetGame()
+    loadLevelFromFile(fileName)
+
+def resetGame():
+    global tankSpawnLocations, upcomingTankLevels, liveEnemyTanks
     entities.manager.clear()
-    playfield.initialize(40, 30)
     tankSpawnLocations = []
-    upcomingTankLevels = [0, 1, 2, 3, 4] # , 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    upcomingTankLevels = []
     liveEnemyTanks = []
     resetSpawnTimer()
+    playfield.initialize(40, 30)
     
     recreatePlayerTank()
 
-    lines = levelString.split('\n')
+def loadLevelFromFile(fileName):
+    file = open(fileName, 'rt', encoding="utf-8")
+    readTankSpawnOrderFromFile(file)
+    readLevelLayoutFromFile(file)
+ 
+    file.close()
+
+def readTankSpawnOrderFromFile(file):
+    global upcomingTankLevels
+
+    spawnOrderLine = file.readline()
+    tankLevelsAsString = spawnOrderLine.split(' ')
+    for levelString in tankLevelsAsString:
+        upcomingTankLevels.append(int(levelString))
+
+def readLevelLayoutFromFile(file):
+    global tankSpawnLocations, base
+    lines = file.readlines()
 
     for y in range(len(lines)):
         for x in range(playfield.width):
@@ -69,7 +93,7 @@ def recreatePlayerTank():
 
 def update(time, timePassed):
     pruneDeadEnemyTanks()
-    spawnTankIfPossible(time)
+    spawnNewTankIfPossible(time)
     checkForCompletedLevel()
     endGameIfBaseIsDestroyed()
 
@@ -88,10 +112,10 @@ def checkForCompletedLevel():
 
 def endGameIfBaseIsDestroyed():
     if base.disposed:
-        loadLevel(levels.level1)
+        loadFirstLevel()
 
 def levelCompleted():
-    loadLevel(levels.level1)
+    loadFirstLevel()
 
 def allTanksSpawned():
     return len(upcomingTankLevels) == 0
@@ -102,7 +126,7 @@ def enemyTanksLeft():
 def resetSpawnTimer():
     spawnTimer.setInterval(random.randint(4000, 6000))
 
-def spawnTankIfPossible(time):
+def spawnNewTankIfPossible(time):
     if not allTanksSpawned() and spawnTimer.update(time):
         spawnTank()
 
