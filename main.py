@@ -34,7 +34,6 @@ def initialize():
     screen = pygame.display.set_mode((320, 240)) #, pygame.FULLSCREEN)
     pygame.key.set_repeat(50, 50)
 
-    playfield.initialize()
     input.initialize()
 
     loadImages()
@@ -50,7 +49,9 @@ def loadImages():
     images.load('water.png', 'water')
     images.load('base.png', 'base')
 
-    images.generateRotatedImages('tank.png', 'tank')
+    images.generateRotatedImages('tank1.png', 'tank1')
+    images.generateRotatedImages('tank2.png', 'tank2')
+    images.generateRotatedImages('tank3.png', 'tank3')
     
 def update():
     global lastUpdateTime

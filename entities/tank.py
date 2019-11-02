@@ -12,12 +12,12 @@ from utilities import Vector
 from utilities import Timer
 
 class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
-    def __init__(self, location, heading = Vector(1, 0)):
+    def __init__(self, location, type, heading = Vector(1, 0)):
         super().__init__()
-        self.imageNorth = images.get('tank_north')
-        self.imageEast = images.get('tank_east')
-        self.imageSouth = images.get('tank_south')
-        self.imageWest = images.get('tank_west')
+        self.imageNorth = images.get(f'tank{type}_north')
+        self.imageEast = images.get(f'tank{type}_east')
+        self.imageSouth = images.get(f'tank{type}_south')
+        self.imageWest = images.get(f'tank{type}_west')
 
         self.heading = Vector(0, -1)
         self.moving = False

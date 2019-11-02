@@ -20,13 +20,19 @@ base = None
 playerTank = None
 liveEnemyTanks = []
 spawnTimer = Timer(5000)
+currentLevel = 1
 
 def loadFirstLevel():
-    loadLevel(os.path.join('levels', 'level1.txt'))
+    loadLevel(1)
 
-def loadLevel(fileName):
+def loadNextLevel():
+    loadLevel(currentLevel + 1)
+
+def loadLevel(levelNumber):
+    global currentLevel
     resetGame()
-    loadLevelFromFile(fileName)
+    loadLevelFromFile(os.path.join('levels', f'level{levelNumber}.txt'))
+    currentLevel = levelNumber
 
 def resetGame():
     global tankSpawnLocations, upcomingTankLevels, liveEnemyTanks
@@ -34,6 +40,7 @@ def resetGame():
     tankSpawnLocations = []
     upcomingTankLevels = []
     liveEnemyTanks = []
+    playfield.initialize()
     resetSpawnTimer()
     
     recreatePlayerTank()
@@ -84,14 +91,15 @@ def recreatePlayerTank():
     playerTank = createPlayerTank()
     playerTankController = tankcontroller.PlayerTankController(playerTank)
     playerTank.setController(playerTankController)
+    playerTank.hitpoints = 5
 
     entities.manager.add(playerTank)
     input.tankController = playerTankController
 
 def createPlayerTank():
-    tank = entities.tank.Tank(Vector(100, 100))
-    tank.fireTimer.setInterval(100)
-    tank.movementSpeed = 3
+    tank = entities.tank.Tank(Vector(100, 100), type=1)
+    tank.fireTimer.setInterval(1000)
+    tank.movementSpeed = 1
     return tank
 
 def update(time, timePassed):
@@ -122,7 +130,7 @@ def endGameIfBaseIsDestroyed():
         loadFirstLevel()
 
 def levelCompleted():
-    loadFirstLevel()
+    loadNextLevel()
 
 def allTanksSpawned():
     return len(upcomingTankLevels) == 0
