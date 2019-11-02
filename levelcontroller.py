@@ -35,7 +35,6 @@ def resetGame():
     upcomingTankLevels = []
     liveEnemyTanks = []
     resetSpawnTimer()
-    playfield.initialize(40, 30)
     
     recreatePlayerTank()
 
@@ -43,53 +42,57 @@ def loadLevelFromFile(fileName):
     file = open(fileName, 'rt', encoding="utf-8")
     readTankSpawnOrderFromFile(file)
     readLevelLayoutFromFile(file)
- 
     file.close()
 
 def readTankSpawnOrderFromFile(file):
     global upcomingTankLevels
-
     spawnOrderLine = file.readline()
     tankLevelsAsString = spawnOrderLine.split(' ')
     for levelString in tankLevelsAsString:
         upcomingTankLevels.append(int(levelString))
 
 def readLevelLayoutFromFile(file):
-    global tankSpawnLocations, base
     lines = file.readlines()
-
     for y in range(len(lines)):
         for x in range(playfield.width):
             character = lines[y][x]
-            pixelLocation = Vector(x * playfield.blockSize, y * playfield.blockSize)
+            interpretLevelLayoutCharacter(character, x, y)
 
-            if character == 'B':
-                playfield.setTile(x, y, playfield.Tile(images.get('brick'), blocksMovement=True, blocksProjectiles=True, destroyable=True))
-            elif character == 'C':
-                playfield.setTile(x, y, playfield.Tile(images.get('concrete'), blocksMovement=True, blocksProjectiles=True, destroyable=True, hitpoints=5))
-            elif character == '~':
-                playfield.setTile(x, y, playfield.Tile(images.get('water'), blocksMovement=True, destroyable=False))
-            elif character == '^':
-                playfield.setTile(x, y, playfield.Tile(images.get('tree'), blocksMovement=False, destroyable=False, layer=1))
-            elif character == 'X':
-                base = entities.base.Base(pixelLocation)
-                entities.manager.add(base)
-            elif character == 'P':
-                playerTank.setLocation(pixelLocation)
-                playerTank.setHeading(utilities.vectorUp)
-            elif character == 'S':
-                tankSpawnLocations.append(pixelLocation)
+def interpretLevelLayoutCharacter(character, x, y):
+    global tankSpawnLocations, base
+    pixelLocation = Vector(x * playfield.blockSize, y * playfield.blockSize)
+
+    if character == 'B':
+        playfield.setTile(x, y, playfield.Tile(images.get('brick'), blocksMovement=True, blocksProjectiles=True, destroyable=True))
+    elif character == 'C':
+        playfield.setTile(x, y, playfield.Tile(images.get('concrete'), blocksMovement=True, blocksProjectiles=True, destroyable=True, hitpoints=5))
+    elif character == '~':
+        playfield.setTile(x, y, playfield.Tile(images.get('water'), blocksMovement=True, destroyable=False))
+    elif character == '^':
+        playfield.setTile(x, y, playfield.Tile(images.get('tree'), blocksMovement=False, destroyable=False, layer=1))
+    elif character == 'X':
+        base = entities.base.Base(pixelLocation)
+        entities.manager.add(base)
+    elif character == 'P':
+        playerTank.setLocation(pixelLocation)
+        playerTank.setHeading(utilities.vectorUp)
+    elif character == 'S':
+        tankSpawnLocations.append(pixelLocation)
 
 def recreatePlayerTank():
     global playerTank
-
-    playerTank = entities.tank.Tank(Vector(100, 100))
-    playerTank.fireTimer.setInterval(100)
-    playerTank.movementSpeed = 3
+    playerTank = createPlayerTank()
     playerTankController = tankcontroller.PlayerTankController(playerTank)
     playerTank.setController(playerTankController)
+
     entities.manager.add(playerTank)
     input.tankController = playerTankController
+
+def createPlayerTank():
+    tank = entities.tank.Tank(Vector(100, 100))
+    tank.fireTimer.setInterval(100)
+    tank.movementSpeed = 3
+    return tank
 
 def update(time, timePassed):
     pruneDeadEnemyTanks()
@@ -98,14 +101,18 @@ def update(time, timePassed):
     endGameIfBaseIsDestroyed()
 
 def pruneDeadEnemyTanks():
-    deadTanks = []
+    disposedTanks = getDisposedTanks()
+
+    for disposedTank in disposedTanks:
+        liveEnemyTanks.remove(disposedTank)
+
+def getDisposedTanks():
+    disposedTanks = []
     for tank in liveEnemyTanks:
         if tank.disposed:
-            deadTanks.append(tank)
-
-    for deadTank in deadTanks:
-        liveEnemyTanks.remove(deadTank)
-
+            disposedTanks.append(tank)
+    return disposedTanks
+    
 def checkForCompletedLevel():
     if allTanksSpawned() and not enemyTanksLeft():
         levelCompleted()

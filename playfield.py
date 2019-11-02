@@ -1,16 +1,14 @@
 tiles = []
-width = 0
-height = 0
+width = 40
+height = 30
 pixelWidth = 0
 pixelHeight = 0
 blockSize = 8
 
-def initialize(w, h):
-    global width, height, pixelWidth, pixelHeight
-    width = w
-    height = h
-    pixelWidth = w * blockSize
-    pixelHeight = h * blockSize
+def initialize():
+    global pixelWidth, pixelHeight
+    pixelWidth = width * blockSize
+    pixelHeight = height * blockSize
     initializeTiles()
 
 def initializeTiles():

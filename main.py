@@ -34,6 +34,7 @@ def initialize():
     screen = pygame.display.set_mode((320, 240)) #, pygame.FULLSCREEN)
     pygame.key.set_repeat(50, 50)
 
+    playfield.initialize()
     input.initialize()
 
     loadImages()
