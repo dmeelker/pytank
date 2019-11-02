@@ -1,3 +1,5 @@
+import random
+
 import images
 import input
 import playfield
@@ -5,20 +7,24 @@ import levels
 import entities
 import entities.tank
 import entities.base
+import tankfactory
 import tankcontroller
-from tankspawner import TankSpawner
 
 import utilities
 from utilities import Vector
+from utilities import Timer
 
-tankSpawners = []
+tankSpawnLocations = []
 base = None
 playerTank = None
 
+spawnTimer = Timer(5000)
+
 def loadLevel(levelString):
-    global tankSpawners, base, playerTank
+    global tankSpawnLocations, base, playerTank
     entities.manager.clear()
     playfield.initialize(40, 30)
+    resetSpawnTimer()
     
     playerTank = entities.tank.Tank(Vector(100, 100))
     playerTank.fireTimer.setInterval(100)
@@ -29,7 +35,7 @@ def loadLevel(levelString):
     input.tankController = playerTankController
 
     lines = levelString.split('\n')
-    tankSpawners = []
+    tankSpawnLocations = []
 
     for y in range(len(lines)):
         for x in range(playfield.width):
@@ -51,15 +57,22 @@ def loadLevel(levelString):
                 playerTank.setLocation(pixelLocation)
                 playerTank.setHeading(utilities.vectorUp)
             elif character == 'S':
-                tankSpawners.append(TankSpawner(pixelLocation))
+                tankSpawnLocations.append(pixelLocation)
 
 def update(time, timePassed):
-    updateTankSpawners(time, timePassed)
-
+    if spawnTimer.update(time):
+        spawnTank()
     
     if base.disposed:
         loadLevel(levels.level1)
 
-def updateTankSpawners(time, timePassed):
-    for tankSpawner in tankSpawners:
-        tankSpawner.update(time, timePassed)
+def resetSpawnTimer():
+    spawnTimer.setInterval(random.randint(4000, 6000))
+
+def spawnTank():
+    location = getRandomTankSpawnLocation()
+    tank = tankfactory.createTank(0, location)
+    entities.manager.add(tank)
+
+def getRandomTankSpawnLocation():
+    return tankSpawnLocations[random.randint(0, len(tankSpawnLocations) -1)]
