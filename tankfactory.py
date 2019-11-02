@@ -1,6 +1,5 @@
-import entities.manager
-import entities.tank
 import utilities
+import entities.tank
 import tankcontroller
 
 class TankSpec:
@@ -33,6 +32,5 @@ def createTank(level, location):
     tank.hitpoints = tankSpec.hitpoints
     tank.setHeading(utilities.vectorDown)
     tank.setController(tankcontroller.AiTankController(tank))
-    entities.manager.add(tank)
 
     return tank

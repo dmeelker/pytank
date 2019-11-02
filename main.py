@@ -6,6 +6,7 @@ import utilities
 from utilities import Vector
 
 import playfield
+import levelcontroller
 import levels
 import entities
 import entities.manager
@@ -21,13 +22,6 @@ clock = pygame.time.Clock()
 
 running = True
 lastUpdateTime = 0
-
-playerTank = None
-playerTankController = None
-
-# Level objects
-tankSpawners = []
-base = None
 
 def start():
     initialize()
@@ -49,9 +43,7 @@ def initialize():
 
     loadImages()
 
-    playfield.initialize(40, 30)
-
-    loadLevel(levels.level1)
+    levelcontroller.loadLevel(levels.level1)
 
 def loadImages():
     images.load('projectile.png', 'projectile')
@@ -63,44 +55,7 @@ def loadImages():
     images.load('base.png', 'base')
 
     images.generateRotatedImages('tank.png', 'tank')
-
-def loadLevel(levelString):
-    global tankSpawners, base
-    entities.manager.clear()
     
-    playerTank = entities.tank.Tank(Vector(100, 100))
-    playerTank.fireTimer.setInterval(100)
-    playerTank.movementSpeed = 3
-    playerTankController = tankcontroller.PlayerTankController(playerTank)
-    playerTank.setController(playerTankController)
-    entities.manager.add(playerTank)
-    input.tankController = playerTankController
-
-    lines = levelString.split('\n')
-    tankSpawners = []
-
-    for y in range(len(lines)):
-        for x in range(playfield.width):
-            character = lines[y][x]
-            pixelLocation = Vector(x * playfield.blockSize, y * playfield.blockSize)
-
-            if character == 'B':
-                playfield.setTile(x, y, playfield.Tile(images.get('brick'), blocksMovement=True, blocksProjectiles=True, destroyable=True))
-            elif character == 'C':
-                playfield.setTile(x, y, playfield.Tile(images.get('concrete'), blocksMovement=True, blocksProjectiles=True, destroyable=True, hitpoints=5))
-            elif character == '~':
-                playfield.setTile(x, y, playfield.Tile(images.get('water'), blocksMovement=True, destroyable=False))
-            elif character == '^':
-                playfield.setTile(x, y, playfield.Tile(images.get('tree'), blocksMovement=False, destroyable=False, layer=1))
-            elif character == 'X':
-                base = entities.base.Base(pixelLocation)
-                entities.manager.add(base)
-            elif character == 'P':
-                playerTank.setLocation(pixelLocation)
-                playerTank.setHeading(utilities.vectorUp)
-            elif character == 'S':
-                tankSpawners.append(TankSpawner(pixelLocation))
-
 def update():
     global lastUpdateTime
     handleEvents()
@@ -111,10 +66,7 @@ def update():
     lastUpdateTime = time
 
     entities.manager.update(time, timePassed)
-    updateTankSpawners(time, timePassed)
-    
-    if base.disposed:
-        loadLevel(levels.level1)
+    levelcontroller.update(time, timePassed)
 
 def handleEvents():
     global running
@@ -123,10 +75,6 @@ def handleEvents():
             running = False
         else:
             input.handleEvent(event)
-
-def updateTankSpawners(time, timePassed):
-    for tankSpawner in tankSpawners:
-        tankSpawner.update(time, timePassed)
 
 def render():
     screen.fill((0, 0, 0))

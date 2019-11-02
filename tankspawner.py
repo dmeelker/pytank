@@ -17,6 +17,7 @@ class TankSpawner:
     
     def spawn(self):
         tank = tankfactory.createTank(0, self.location)
+        entities.manager.add(tank)
         self.resetTimer()
 
     def resetTimer(self):

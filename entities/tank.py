@@ -42,6 +42,9 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
         self.controller = controller
         self.playerControlled = isinstance(controller, tankcontroller.PlayerTankController)
 
+    def getController(self):
+        return self.controller
+
     def update(self, time, timePassed):
         if self.controllerTimer.update(time):
             self.controller.update(time, timePassed)
