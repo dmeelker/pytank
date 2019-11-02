@@ -6,7 +6,7 @@ import utilities
 from utilities import Vector
 
 import playfield
-import levelcontroller
+import gamecontroller
 import entities
 import entities.manager
 import input
@@ -35,10 +35,11 @@ def initialize():
     pygame.key.set_repeat(50, 50)
 
     input.initialize()
+    gamecontroller.initialize()
 
     loadImages()
 
-    levelcontroller.loadFirstLevel()
+    gamecontroller.loadFirstLevel()
 
 def loadImages():
     images.load('projectile.png', 'projectile')
@@ -63,7 +64,7 @@ def update():
     lastUpdateTime = time
 
     entities.manager.update(time, timePassed)
-    levelcontroller.update(time, timePassed)
+    gamecontroller.update(time, timePassed)
 
 def handleEvents():
     global running

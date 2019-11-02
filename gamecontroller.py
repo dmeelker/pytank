@@ -2,6 +2,7 @@ import random
 import os
 
 import images
+import bus
 import input
 import playfield
 import entities
@@ -14,13 +15,18 @@ import utilities
 from utilities import Vector
 from utilities import Timer
 
+playerTank = None
+score = 0
+
 tankSpawnLocations = []
 upcomingTankLevels = []
 base = None
-playerTank = None
 liveEnemyTanks = []
 spawnTimer = Timer(5000)
 currentLevel = 1
+
+def initialize():
+    bus.register(handleBusMessage)
 
 def loadFirstLevel():
     loadLevel(1)
@@ -98,28 +104,14 @@ def recreatePlayerTank():
 
 def createPlayerTank():
     tank = entities.tank.Tank(Vector(100, 100), type=1)
-    tank.fireTimer.setInterval(1000)
-    tank.movementSpeed = 1
+    tank.fireTimer.setInterval(100)
+    tank.movementSpeed = 3
     return tank
 
 def update(time, timePassed):
-    pruneDeadEnemyTanks()
     spawnNewTankIfPossible(time)
     checkForCompletedLevel()
     endGameIfBaseIsDestroyed()
-
-def pruneDeadEnemyTanks():
-    disposedTanks = getDisposedTanks()
-
-    for disposedTank in disposedTanks:
-        liveEnemyTanks.remove(disposedTank)
-
-def getDisposedTanks():
-    disposedTanks = []
-    for tank in liveEnemyTanks:
-        if tank.disposed:
-            disposedTanks.append(tank)
-    return disposedTanks
     
 def checkForCompletedLevel():
     if allTanksSpawned() and not enemyTanksLeft():
@@ -156,3 +148,24 @@ def spawnTank():
 
 def getRandomTankSpawnLocation():
     return tankSpawnLocations[random.randint(0, len(tankSpawnLocations) -1)]
+
+def handleBusMessage(message):
+    if isinstance(message, bus.TankDestroyedMessage):
+        processDestroyedTankMessage(message)
+
+def processDestroyedTankMessage(message):
+    print(f'Tank destroyed! {message.tank}')
+    if not message.tank.isPlayerControlled():
+        processDestroyedComputerTank(message.tank)    
+
+def processDestroyedComputerTank(tank):
+    removeTankFromLiveList(message.tank)
+    addScorePoints(message.tank.getScorePoints())
+
+def removeTankFromLiveList(tank):
+    liveEnemyTanks.remove(tank)
+
+def addScorePoints(points):
+    global score
+    score += points
+    print(f'New score: {score}')

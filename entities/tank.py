@@ -1,6 +1,7 @@
 import math
 import pygame
 
+import bus
 import entities
 import entities.projectile
 from entities.movement import MovementHandler
@@ -21,6 +22,7 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
 
         self.heading = Vector(0, -1)
         self.moving = False
+        self.type = type
 
         self.hitpoints = 10
         self.movementSpeed = 1
@@ -38,12 +40,18 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
         self.lastHitTime = None
         self.lastHitVector = Vector(0, 0)
 
+    def getScorePoints(self):
+        return self.type * 100
+
     def setController(self, controller):
         self.controller = controller
         self.playerControlled = isinstance(controller, tankcontroller.PlayerTankController)
 
     def getController(self):
         return self.controller
+
+    def isPlayerControlled(self):
+        return self.playerControlled
 
     def update(self, time, timePassed):
         if self.controllerTimer.update(time):
@@ -108,4 +116,5 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
             self.setImage(self.imageEast)
 
     def destroy(self):
+        bus.send(bus.TankDestroyedMessage(self))
         self.markDisposable()
