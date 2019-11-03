@@ -16,6 +16,7 @@ from utilities import Timer
 
 playerTank = None
 score = 0
+lives = 3
 
 tankSpawnLocations = []
 upcomingTankLevels = []
@@ -27,28 +28,34 @@ currentLevel = 1
 def initialize():
     pass
 
-def loadFirstLevel():
+def startNewGame():
+    global lives, score
+    lives = 3
+    score = 0
+    recreatePlayerTank()
     loadLevel(1)
 
 def loadNextLevel():
     loadLevel(currentLevel + 1)
 
+def reloadCurrentLevel():
+    loadLevel(currentLevel)
+
 def loadLevel(levelNumber):
     global currentLevel
-    resetGame()
+    resetLevelData()
     loadLevelFromFile(os.path.join('levels', f'level{levelNumber}.txt'))
     currentLevel = levelNumber
 
-def resetGame():
+def resetLevelData():
     global tankSpawnLocations, upcomingTankLevels, liveEnemyTanks
     entities.manager.clear()
+    entities.manager.add(playerTank)
     tankSpawnLocations = []
     upcomingTankLevels = []
     liveEnemyTanks = []
     playfield.initialize()
     resetSpawnTimer()
-    
-    recreatePlayerTank()
 
 def loadLevelFromFile(fileName):
     file = open(fileName, 'rt', encoding="utf-8")
@@ -97,6 +104,7 @@ def recreatePlayerTank():
     playerTankController = tankcontroller.PlayerTankController(playerTank)
     playerTank.setController(playerTankController)
     playerTank.hitpoints = 5
+    playerTank.setDestroyCallback(playerTankDestroyed)
 
     entities.manager.add(playerTank)
     input.tankController = playerTankController
@@ -110,15 +118,15 @@ def createPlayerTank():
 def update(time, timePassed):
     spawnNewTankIfPossible(time)
     checkForCompletedLevel()
-    endGameIfBaseIsDestroyed()
+    checkForDestroyedBase()
     
 def checkForCompletedLevel():
     if allTanksSpawned() and not enemyTanksLeft():
         levelCompleted()
 
-def endGameIfBaseIsDestroyed():
+def checkForDestroyedBase():
     if base.disposed:
-        loadFirstLevel()
+        reduceLivesByOne()
 
 def levelCompleted():
     loadNextLevel()
@@ -147,6 +155,22 @@ def spawnTank():
 
 def getRandomTankSpawnLocation():
     return tankSpawnLocations[random.randint(0, len(tankSpawnLocations) -1)] 
+
+def playerTankDestroyed():
+    reduceLivesByOne()
+
+def reduceLivesByOne():
+    global lives
+    if lives > 1:
+        lives -= 1
+        reloadCurrentLevel()
+        print(f'Lost a live, {lives} lives left')
+    else:
+        endGame()
+
+def endGame():
+    print(f'Game ended! Final score {score}')
+    startNewGame()
 
 def computerTankDestroyed(tank):
     removeTankFromLiveList(tank)

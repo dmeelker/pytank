@@ -39,7 +39,7 @@ def initialize():
 
     loadImages()
 
-    gamecontroller.loadFirstLevel()
+    gamecontroller.startNewGame()
 
 def loadImages():
     images.load('projectile.png', 'projectile')
