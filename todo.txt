@@ -1,0 +1,20 @@
+Tweak weapons
+- Basic weapon
+- Increased fire rate
+- Double power weapon
+- Destroy concrete
+
+- heavy weapons should destroy more blocks
+- concrete should only be destroyable by highest level weapon
+
+Powerups
+- Better weapon
+- Movement speed
+- Repair base
+- Shield
+- Destroy all tanks
+
+Display state of base
+Display score, lives and weapon power
+
+More levels
