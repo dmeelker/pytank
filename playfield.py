@@ -96,7 +96,7 @@ class Tile:
     def hitByProjectile(self, projectile, time):
         if self.tileType == TileType.BRICK:
             self.destroy()
-        elif self.tileType == TileType.CONCRETE and projectile.isConcreteBreaker():
+        elif self.tileType == TileType.CONCRETE and projectile.getBreaksConcrete():
             self.destroy()
 
     def destroy(self):

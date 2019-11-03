@@ -7,7 +7,7 @@ import images
 from utilities import Vector
 
 class Projectile(entities.Entity, entities.ProjectileCollider):
-    def __init__(self, location, directionVector, source, power = 1):
+    def __init__(self, location, directionVector, source, power = 1, breaksConcrete = False):
         super().__init__()
         self.image = images.get('projectile')
         self.setSize(Vector(self.image.get_width(), self.image.get_height()))
@@ -15,7 +15,7 @@ class Projectile(entities.Entity, entities.ProjectileCollider):
         self.directionVector = directionVector
         self.source = source
         self.power = power
-        self.concreteBreaker = False
+        self.breaksConcrete = breaksConcrete
 
         tileBlockedFunction = lambda tile: not tile is None and tile.blocksProjectiles
         self.movementHandler = MovementHandler(self, tileBlockedFunction, entityIgnoreFunction=lambda entity: self.collisionIgnoreFunction(entity))
@@ -55,8 +55,5 @@ class Projectile(entities.Entity, entities.ProjectileCollider):
     def render(self, screen, offset, time):
         screen.blit(self.image, (offset[0] + self.location.x, offset[1] + self.location.y))
 
-    def setConcreteBreaker(self):
-        self.concreteBreaker = True
-
-    def isConcreteBreaker(self):
-        return self.concreteBreaker
+    def getBreaksConcrete(self):
+        return self.breaksConcrete

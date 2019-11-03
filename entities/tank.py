@@ -117,6 +117,9 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
         elif self.heading.x > 0:
             self.setImage(self.imageEast)
 
+    def getWeapon(self):
+        return self.weapon
+
     def setWeapon(self, newWeapon):
         self.weapon = newWeapon
 
@@ -161,8 +164,6 @@ class Weapon:
             return
 
         self.lastFireTime = time
-        projectile = entities.projectile.Projectile(Vector(0, 0), vector.toUnit(), source=self.entity, power=self.power)
-        if self.breaksConcrete:
-            projectile.setConcreteBreaker(True)
+        projectile = entities.projectile.Projectile(Vector(0, 0), vector.toUnit(), source=self.entity, power=self.power, breaksConcrete=self.breaksConcrete)
         projectile.setLocation(location)
         entities.manager.add(projectile)
