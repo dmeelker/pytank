@@ -25,8 +25,8 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
 
         self.hitpoints = 10
         self.movementSpeed = 1
-        self.fireTimer = Timer(500)
-        self.firePower = 1
+
+        self.weapon = Weapon(self)
 
         self.controller = None
         self.controllerTimer = Timer(50)
@@ -80,14 +80,16 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
         return self.movementHandler.canMove(direction)
 
     def fire(self, time):
-        if self.fireTimer.update(time):
-            projectile = entities.projectile.Projectile(Vector(0, 0), self.heading.toUnit(), source=self, power=self.firePower)
+        if self.weapon.canFire(time):
+            location = self.getProjectileFireLocation()
+            self.weapon.fire(location, self.heading, time)
 
-            centerLocation = self.getCenterLocation()
-            location = centerLocation.subtract(projectile.size.multiplyScalar(0.5)).add(self.heading.toUnit().multiplyScalar(6))
-            projectile.setLocation(location)
-
-            entities.manager.add(projectile)
+    def getProjectileFireLocation(self):
+        halfProjectileSize = Vector(4, 4)
+        location = self.getCenterLocation()
+        location = location.subtract(halfProjectileSize)
+        location = location.add(self.heading.toUnit().multiplyScalar(self.size.y / 2))
+        return location
 
     def hitByProjectile(self, projectile, time):
         self.lastHitTime = time
@@ -115,6 +117,9 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
         elif self.heading.x > 0:
             self.setImage(self.imageEast)
 
+    def setWeapon(self, newWeapon):
+        self.weapon = newWeapon
+
     def setDestroyCallback(self, callback):
         self.destroyCallback = callback
 
@@ -125,3 +130,21 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
     def destroy(self):
         self.fireDestroyCallback()
         self.markDisposable()
+
+class Weapon:
+    def __init__(self, entity):
+        self.entity = entity
+        self.lastFireTime = 0
+        self.fireDelay = 500
+
+    def canFire(self, time):
+        return time - self.lastFireTime > self.fireDelay
+
+    def fire(self, location, vector, time):
+        if not self.canFire(time):
+            return
+
+        self.lastFireTime = time
+        projectile = entities.projectile.Projectile(Vector(0, 0), vector.toUnit(), source=self.entity, power=1)
+        projectile.setLocation(location)
+        entities.manager.add(projectile)
