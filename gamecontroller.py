@@ -2,7 +2,6 @@ import random
 import os
 
 import images
-import bus
 import input
 import playfield
 import entities
@@ -26,7 +25,7 @@ spawnTimer = Timer(5000)
 currentLevel = 1
 
 def initialize():
-    bus.register(handleBusMessage)
+    pass
 
 def loadFirstLevel():
     loadLevel(1)
@@ -142,25 +141,16 @@ def spawnTank():
     tankLevel = upcomingTankLevels.pop(0)
     print(f'Spawning tank of level {tankLevel}')
     tank = tankfactory.createTank(tankLevel, location)
-
+    tank.setDestroyCallback(computerTankDestroyed)
     liveEnemyTanks.append(tank)
     entities.manager.add(tank)
 
 def getRandomTankSpawnLocation():
-    return tankSpawnLocations[random.randint(0, len(tankSpawnLocations) -1)]
+    return tankSpawnLocations[random.randint(0, len(tankSpawnLocations) -1)] 
 
-def handleBusMessage(message):
-    if isinstance(message, bus.TankDestroyedMessage):
-        processDestroyedTankMessage(message)
-
-def processDestroyedTankMessage(message):
-    print(f'Tank destroyed! {message.tank}')
-    if not message.tank.isPlayerControlled():
-        processDestroyedComputerTank(message.tank)    
-
-def processDestroyedComputerTank(tank):
-    removeTankFromLiveList(message.tank)
-    addScorePoints(message.tank.getScorePoints())
+def computerTankDestroyed(tank):
+    removeTankFromLiveList(tank)
+    addScorePoints(tank.getScorePoints())
 
 def removeTankFromLiveList(tank):
     liveEnemyTanks.remove(tank)

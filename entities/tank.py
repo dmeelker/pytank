@@ -1,7 +1,6 @@
 import math
 import pygame
 
-import bus
 import entities
 import entities.projectile
 from entities.movement import MovementHandler
@@ -39,6 +38,7 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
         self.setHeading(heading)
         self.lastHitTime = None
         self.lastHitVector = Vector(0, 0)
+        self.destroyCallback = None
 
     def getScorePoints(self):
         return self.type * 100
@@ -115,6 +115,13 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
         elif self.heading.x > 0:
             self.setImage(self.imageEast)
 
+    def setDestroyCallback(self, callback):
+        self.destroyCallback = callback
+
+    def fireDestroyCallback(self):
+        if self.destroyCallback != None:
+            self.destroyCallback(self)
+
     def destroy(self):
-        bus.send(bus.TankDestroyedMessage(self))
+        self.fireDestroyCallback()
         self.markDisposable()
