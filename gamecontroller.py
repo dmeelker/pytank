@@ -82,13 +82,13 @@ def interpretLevelLayoutCharacter(character, x, y):
     pixelLocation = Vector(x * playfield.blockSize, y * playfield.blockSize)
 
     if character == 'B':
-        playfield.setTile(x, y, playfield.Tile(images.get('brick'), blocksMovement=True, blocksProjectiles=True, destroyable=True))
+        playfield.setTile(x, y, playfield.Tile(playfield.TileType.BRICK))
     elif character == 'C':
-        playfield.setTile(x, y, playfield.Tile(images.get('concrete'), blocksMovement=True, blocksProjectiles=True, destroyable=True, hitpoints=5))
+        playfield.setTile(x, y, playfield.Tile(playfield.TileType.CONCRETE))
     elif character == '~':
-        playfield.setTile(x, y, playfield.Tile(images.get('water'), blocksMovement=True, destroyable=False))
+        playfield.setTile(x, y, playfield.Tile(playfield.TileType.WATER))
     elif character == '^':
-        playfield.setTile(x, y, playfield.Tile(images.get('tree'), blocksMovement=False, destroyable=False, layer=1))
+        playfield.setTile(x, y, playfield.Tile(playfield.TileType.TREE))
     elif character == 'X':
         base = entities.base.Base(pixelLocation)
         entities.manager.add(base)
@@ -111,7 +111,6 @@ def recreatePlayerTank():
 
 def createPlayerTank():
     tank = entities.tank.Tank(Vector(100, 100), type=1)
-    tank.fireTimer.setInterval(100)
     tank.movementSpeed = 3
     return tank
 
@@ -156,7 +155,7 @@ def spawnTank():
 def getRandomTankSpawnLocation():
     return tankSpawnLocations[random.randint(0, len(tankSpawnLocations) -1)] 
 
-def playerTankDestroyed():
+def playerTankDestroyed(tank):
     reduceLivesByOne()
 
 def reduceLivesByOne():

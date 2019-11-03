@@ -1,3 +1,6 @@
+import enum
+import images
+
 blockSize = 8
 tiles = []
 width = 40
@@ -49,6 +52,13 @@ def render(screen, offset, layer):
             if not tile is None and not tile.image is None and tile.layer == layer:
                 screen.blit(tile.image, ((x * blockSize) + offset[0], (y * blockSize) + offset[1]))
 
+class TileType(enum.Enum):
+    EMPTY = 0
+    BRICK = 1
+    CONCRETE = 2
+    WATER = 3
+    TREE = 4
+
 class Tile:
     blocksMovement = True
     blocksProjectiles = False
@@ -57,18 +67,37 @@ class Tile:
     hitpoints = 1
     layer = 0
 
-    def __init__(self, image, blocksMovement = True, destroyable = False, blocksProjectiles = False, hitpoints = 1, layer = 0):
-        self.image = image
-        self.blocksMovement = blocksMovement
-        self.destroyable = destroyable
-        self.blocksProjectiles = blocksProjectiles
-        self.hitpoints = hitpoints
-        self.layer = layer
+    def __init__(self, tileType):
+        self.setTileType(tileType)
+
+    def setTileType(self, tileType):
+        self.image = None
+        self.tileType = tileType
+        self.blocksMovement = False
+        self.blocksProjectiles = False
+        self.layer = 0
+
+        if tileType == TileType.BRICK:
+            self.image = images.get('brick')
+            self.blocksMovement = True
+            self.blocksProjectiles = True
+        elif tileType == TileType.CONCRETE:
+            self.image = images.get('concrete')
+            self.blocksMovement = True
+            self.blocksProjectiles = True
+        elif tileType == TileType.WATER:
+            self.image = images.get('water')
+            self.blocksMovement = True
+            self.blocksProjectiles = True
+        elif tileType == TileType.TREE:
+            self.image = images.get('tree')
+            self.layer = 1
 
     def hitByProjectile(self, projectile, time):
-        if self.destroyable:
-            self.hitpoints -= projectile.power
-            if self.hitpoints <= 0:
-                self.blocksMovement = False
-                self.blocksProjectiles = False
-                self.image = None
+        if self.tileType == TileType.BRICK:
+            self.destroy()
+        elif self.tileType == TileType.CONCRETE and projectile.isConcreteBreaker():
+            self.destroy()
+
+    def destroy(self):
+        self.setTileType(TileType.EMPTY)

@@ -53,10 +53,10 @@ def initialize():
 
 def initializeTiles():
     global brickTile, concreteTile, waterTile, treeTile
-    brickTile = playfield.Tile(images.get('brick'))
-    concreteTile = playfield.Tile(images.get('concrete'))
-    waterTile = playfield.Tile(images.get('water'))
-    treeTile = playfield.Tile(images.get('tree'))
+    brickTile = playfield.Tile(playfield.TileType.BRICK)
+    concreteTile = playfield.Tile(playfield.TileType.CONCRETE)
+    waterTile = playfield.Tile(playfield.TileType.WATER)
+    treeTile = playfield.Tile(playfield.TileType.TREE)
     setActiveTile(treeTile)
 
 def setActiveTile(tile):

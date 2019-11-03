@@ -26,7 +26,7 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
         self.hitpoints = 10
         self.movementSpeed = 1
 
-        self.weapon = Weapon(self)
+        self.weapon = Weapon(self, level=1)
 
         self.controller = None
         self.controllerTimer = Timer(50)
@@ -132,10 +132,26 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
         self.markDisposable()
 
 class Weapon:
-    def __init__(self, entity):
+    def __init__(self, entity, level):
         self.entity = entity
         self.lastFireTime = 0
+        self.setLevel(level)
+
+    def getLevel(self):
+        return self.level
+
+    def setLevel(self, level):
+        self.level = level
         self.fireDelay = 500
+        self.power = 1
+        self.breaksConcrete = False
+
+        if level >= 2:
+            self.fireDelay = 300
+        if level >= 3:
+            self.power = 2
+        if level >= 4:
+            self.breaksConcrete = True
 
     def canFire(self, time):
         return time - self.lastFireTime > self.fireDelay
@@ -145,6 +161,8 @@ class Weapon:
             return
 
         self.lastFireTime = time
-        projectile = entities.projectile.Projectile(Vector(0, 0), vector.toUnit(), source=self.entity, power=1)
+        projectile = entities.projectile.Projectile(Vector(0, 0), vector.toUnit(), source=self.entity, power=self.power)
+        if self.breaksConcrete:
+            projectile.setConcreteBreaker(True)
         projectile.setLocation(location)
         entities.manager.add(projectile)
