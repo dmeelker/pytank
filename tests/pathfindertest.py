@@ -15,12 +15,19 @@ class TestPathFinder(unittest.TestCase):
         
         self.assertEqual([(0,0)], foundPath)
 
-    def test_freePath(self):
+    def test_freePathSingleStep(self):
         pathFinder = PathFinder(SearchGrid(5, 5))
 
         foundPath = pathFinder.find((0,0), (1,0))
         
         self.assertEqual([(0,0), (1,0)], foundPath)
+
+    def test_freePathMultipleSteps(self):
+        pathFinder = PathFinder(SearchGrid(5, 5))
+
+        foundPath = pathFinder.find((0,0), (3,0))
+        
+        self.assertEqual([(0,0), (1,0), (2,0), (3,0)], foundPath)
 
     def test_directPathBlockedByImpenetrable(self):
         grid = SearchGrid(5, 5)
