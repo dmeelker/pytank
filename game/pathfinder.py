@@ -59,18 +59,18 @@ class SearchGrid:
         return not (x < 0 or x >= self.width or y < 0 or y >= self.height)
 
     def getAdjacentCellCoordinates(self, x, y):
-        adjacentCells = []
+        adjacentCoordinates = []
 
         if x > 0:
-            adjacentCells.append((x-1, y))
+            adjacentCoordinates.append((x-1, y))
         if x < self.width - 1:
-            adjacentCells.append((x+1, y))
+            adjacentCoordinates.append((x+1, y))
         if y > 0:
-            adjacentCells.append((x, y-1))
+            adjacentCoordinates.append((x, y-1))
         if y < self.height - 1:
-            adjacentCells.append((x, y+1))
+            adjacentCoordinates.append((x, y+1))
 
-        return adjacentCells
+        return adjacentCoordinates
 
 class CoordinatesWithCost:
     def __init__(self, coordinates, cost):
@@ -80,11 +80,10 @@ class CoordinatesWithCost:
 class PathFinder:
     def __init__(self, searchSpace):
         self.searchSpace = searchSpace
-        self.openList = PriorityQueue()
-        self.closedList = set()
 
     def find(self, startLocation, endLocation):
-        self.openList.insert(Node(startLocation, 0, 0, None))
+        self.initializeOpenAndClosedLists()        
+        self.addStartLocationToOpenList(startLocation)
 
         while not self.openList.isEmpty():
             currentNode = self.getOpenNodeWithLowestCost()
@@ -96,6 +95,13 @@ class PathFinder:
             self.considerAdjacentCells(currentNode, endLocation)
 
         return None
+
+    def initializeOpenAndClosedLists(self):
+        self.openList = PriorityQueue()
+        self.closedList = set()
+
+    def addStartLocationToOpenList(self, coordinates):
+        self.openList.insert(Node(coordinates, 0, 0, None))
 
     def considerAdjacentCells(self, currentNode, endLocation):
         for adjacentCell in self.getAdjacentCells(currentNode):
