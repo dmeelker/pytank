@@ -44,7 +44,7 @@ def containsTileCoordinates(x, y):
 def containsPixelCoordinates(x, y):
     return not (x < 0 or x >= pixelWidth or y < 0 or y >= pixelHeight)
 
-def render(screen, offset, layer):
+def renderLayer(layer, screen, offset):
     for x in range(width):
         for y in range(height):
             tile = tiles[x][y]

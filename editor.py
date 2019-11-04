@@ -146,8 +146,8 @@ def render():
     screen.fill((0, 0, 0))
 
     screen.blit(images.get('base'), (baseLocation[0] * playfield.blockSize, baseLocation[1] * playfield.blockSize))
-    playfield.render(screen, (0, 0), layer=0)
-    playfield.render(screen, (0, 0), layer=1)
+    playfield.renderLayer(0, screen, (0, 0))
+    playfield.renderLayer(1, screen, (0, 0))
 
     for tankSpawner in tankSpawners:
         screen.blit(images.get('tank1'), (tankSpawner[0] * playfield.blockSize, tankSpawner[1] * playfield.blockSize))

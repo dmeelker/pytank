@@ -17,4 +17,10 @@ Powerups
 Display state of base
 Display score, lives and weapon power
 
+Different AI behaviours
+- Stupid random walker
+- Stalker (tracks the player)
+- Bulldozer (goes straight for the base by blasting through any walls that might be in the way)
+- Saboteur (finds quikest way to base and attempts to destroy it)
+
 More levels

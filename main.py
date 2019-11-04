@@ -27,7 +27,7 @@ def start():
         clock.tick(60)
 
 def initialize():
-    global screen,clock,playerTank
+    global screen,clock
     pygame.init()
     pygame.joystick.init()
     pygame.display.set_caption("Pytank")
@@ -77,9 +77,9 @@ def handleEvents():
 def render():
     screen.fill((0, 0, 0))
 
-    playfield.render(screen, (0, 0), layer=0)
+    playfield.renderLayer(0, screen, (0, 0))
     entities.manager.render(screen, (0, 0), pygame.time.get_ticks())
-    playfield.render(screen, (0, 0), layer=1)
+    playfield.renderLayer(1, screen, (0, 0))
 
     pygame.display.flip()
 
