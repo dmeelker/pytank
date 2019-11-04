@@ -7,7 +7,7 @@ from game.pathfinder import PathFinder
 INPENETRABLE = -1
 EXTRACOST = 1
 
-class TestStringMethods(unittest.TestCase):
+class TestPathFinder(unittest.TestCase):
     def test_startLocationIsSameAsEndLocation(self):
         pathFinder = PathFinder(SearchGrid(5, 5))
 
@@ -69,18 +69,6 @@ class TestPriorityQueue(unittest.TestCase):
         self.assertEqual(1, queue.getSmallest()[0])
         self.assertEqual(5, queue.getSmallest()[0])
         self.assertEqual(10, queue.getSmallest()[0])
-
-    def test_remove(self):
-        queue = PriorityQueue()
-        queue.insert(10)
-        queue.insert(1)
-        queue.insert(5)
-
-        queue.remove(5)
-
-        self.assertEqual(1, queue.getSmallest())
-        self.assertEqual(10, queue.getSmallest())
-        self.assertTrue(queue.isEmpty())
 
 class TestSearchGrid(unittest.TestCase):
     def test_sizeIsSet(self):
