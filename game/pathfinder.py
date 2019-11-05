@@ -34,6 +34,9 @@ class PriorityQueue:
     def isEmpty(self):
         return len(self.values) == 0
 
+    def getValues(self):
+        return self.values
+
 class SearchGrid:
     def __init__(self, width, height):
         self.width = width
@@ -119,7 +122,7 @@ class PathFinder:
         return coordinates in self.closedList
 
     def isCellImpenetrable(self, cellCost):
-        return cellCost < 0
+        return cellCost >= 100
 
     def considerAdjacentCell(self, currentNode, adjacentCell, endLocation):
         if self.canCellBeSkipped(adjacentCell):
@@ -128,7 +131,7 @@ class PathFinder:
             existingNode = self.findOpenNodeByLocation(adjacentCell.coordinates)
             if existingNode != None:
                 if self.isPathShorterViaOtherNode(currentNode, existingNode):
-                    self.updatePathToNode(currentNode, existingNode, cellCost)
+                    self.updatePathToNode(currentNode, existingNode)
             else:
                 self.addAdjacentCellToOpenList(currentNode, adjacentCell, endLocation)
     
@@ -161,7 +164,7 @@ class PathFinder:
         return (x*x) + (y*y)
 
     def findOpenNodeByLocation(self, location):
-        for node in self.openList.values: # Nope!
+        for node in self.openList.getValues():
             if node.location == location:
                 return node
         else:

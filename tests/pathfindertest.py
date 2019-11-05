@@ -4,7 +4,7 @@ from game.pathfinder import PriorityQueue
 from game.pathfinder import SearchGrid
 from game.pathfinder import PathFinder
 
-INPENETRABLE = -1
+INPENETRABLE = 100
 EXTRACOST = 1
 
 class TestPathFinder(unittest.TestCase):
