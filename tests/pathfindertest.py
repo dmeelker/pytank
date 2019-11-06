@@ -131,6 +131,5 @@ class TestSearchGrid(unittest.TestCase):
         self.assertTrue((4, 3) in result)
         self.assertTrue((3, 4) in result)
 
-
 if __name__ == '__main__':
     unittest.main()
