@@ -30,6 +30,18 @@ def createTank(level, location):
     tank.movementSpeed = tankSpec.movementSpeed
     tank.hitpoints = tankSpec.hitpoints
     tank.setHeading(utilities.vectorDown)
-    tank.setController(tankcontroller.AiTankController(tank))
+    tank.setController(getTankController(tank))
 
     return tank
+
+def getTankController(tank):
+    tankLevel = tank.getLevel()
+
+    if tankLevel == 1:
+        return tankcontroller.RandomMovementAiTankController(tank)
+    elif tankLevel == 2:
+        return tankcontroller.PlayerChargerAiTankController(tank)
+    elif tankLevel == 3:
+        return tankcontroller.BaseChargerAiTankController(tank)
+
+    return tankcontroller.RandomMovementAiTankController(tank)

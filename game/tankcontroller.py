@@ -40,8 +40,6 @@ class PlayerTankController(TankController):
             self.entity.fire(time)
 
 class AiTankController(TankController):
-    directions = [utilities.vectorUp, utilities.vectorRight, utilities.vectorDown, utilities.vectorLeft]
-    
     def __init__(self, entity):
         self.entity = entity
         self.fireTimer = Timer(500)
@@ -51,11 +49,6 @@ class AiTankController(TankController):
         self.planThread = None
     
     def update(self, time, timePassed):
-        if self.plannedPath is None or time - self.pathPlanTime > 5000:
-            self.plotPathToLocation(gamecontroller.base.location)
-        else:
-            self.moveAlongPath(time)
-
         if self.fireTimer.update(time):
             self.fire(time)
 
@@ -65,20 +58,22 @@ class AiTankController(TankController):
             for step in self.plannedPath.path:
                 screen.blit(image, (step[0] * 8, step[1] * 8))
 
-    def moveAlongPath(self, time):
-        if self.plannedPath.targetReached():
-            return
+    def pathRecalculationNeeded(self, time):
+        return time - self.pathPlanTime > 5000
 
+    def moveAlongPath(self, time):
         movementSteps = int((time - self.lastMovementTime ) / 50)
         if movementSteps > 0:
             for _ in range(movementSteps):
-                targetStep = self.toWorldSpaceTuple(self.plannedPath.getTargetStep())
-                self.moveTowardsLocation(targetStep)
-                self.plannedPath.moveToNextStepIfCurrentStepIsReached(self.entity.getLocation().toIntTuple())
-
+                self.stepTowardsTarget()
                 if self.plannedPath.targetReached():
                     break
             self.lastMovementTime = time
+
+    def stepTowardsTarget(self):
+        targetStep = self.toWorldSpaceTuple(self.plannedPath.getTargetStep())
+        self.moveTowardsLocation(targetStep)
+        self.plannedPath.moveToNextStepIfCurrentStepIsReached(self.entity.getLocation().toIntTuple())
 
     def fire(self, time):
         self.entity.fire(time)
@@ -86,9 +81,6 @@ class AiTankController(TankController):
 
     def pickRandomFireTime(self):
         self.fireTimer.setInterval(random.randint(400, 600))
-
-    def randomDirection(self):
-        return self.directions[random.randint(0, len(self.directions) - 1)]
 
     def plotPathToLocation(self, targetLocation):
         gridStart = pygame.time.get_ticks()
@@ -116,3 +108,70 @@ class AiTankController(TankController):
 
     def toWorldSpaceTuple(self, coordinates):
         return (int(coordinates[0] * 8), int(coordinates[1] * 8))
+
+class RandomMovementAiTankController(AiTankController):
+    directions = [utilities.vectorUp, utilities.vectorRight, utilities.vectorDown, utilities.vectorLeft]
+
+    def __init__(self, entity):
+        super().__init__(entity)
+    
+    def update(self, time, timePassed):
+        super().update(time, timePassed)
+        
+        self.move(time)
+
+        if self.fireTimer.update(time):
+            self.fire(time)
+
+    def move(self, time):
+        movementSteps = int((time - self.lastMovementTime ) / 50)
+        if movementSteps > 0:
+            for _ in range(movementSteps):
+                self.step()
+            self.lastMovementTime = time
+
+    def step(self):
+        heading = self.entity.getHeading()
+
+        if random.randint(0, 1000) < 5:
+            heading = self.randomFreeDirection()
+
+        if not self.entity.canMoveInDirection(heading):
+            heading = self.randomFreeDirection()
+
+        self.entity.moveSingleStep(heading)   
+
+    def randomFreeDirection(self):
+        for _ in range(5):
+            direction = self.randomDirection()
+            if self.entity.canMoveInDirection(direction):
+                return direction
+        else:
+            return utilities.vectorDown
+
+    def randomDirection(self):
+        return self.directions[random.randint(0, len(self.directions) - 1)]
+
+class PlayerChargerAiTankController(AiTankController):
+    def __init__(self, entity):
+        super().__init__(entity)
+    
+    def update(self, time, timePassed):
+        super().update(time, timePassed)
+
+        if self.plannedPath is None or self.pathRecalculationNeeded(time):
+            self.plotPathToLocation(gamecontroller.getPlayerTank().location)
+        elif not self.plannedPath.targetReached():
+            self.moveAlongPath(time)
+
+class BaseChargerAiTankController(AiTankController):
+    def __init__(self, entity):
+        super().__init__(entity)
+    
+    def update(self, time, timePassed):
+        super().update(time, timePassed)
+
+        if self.plannedPath is None or self.pathRecalculationNeeded(time):
+            self.plotPathToLocation(gamecontroller.base.location)
+        elif not self.plannedPath.targetReached():
+            self.moveAlongPath(time)

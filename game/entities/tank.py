@@ -113,6 +113,9 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
         self.image = image
         self.setSize(Vector(self.image.get_width(), self.image.get_height()))
 
+    def getHeading(self):
+        return self.heading
+
     def setHeading(self, newHeading):
         self.heading = newHeading
         self.updateImageBasedOnHeading()
@@ -139,6 +142,9 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
     def fireDestroyCallback(self):
         if self.destroyCallback != None:
             self.destroyCallback(self)
+
+    def getLevel(self):
+        return self.type
 
     def destroy(self):
         self.fireDestroyCallback()

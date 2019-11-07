@@ -155,6 +155,9 @@ def spawnTank():
 def getRandomTankSpawnLocation():
     return tankSpawnLocations[random.randint(0, len(tankSpawnLocations) -1)] 
 
+def getPlayerTank():
+    return playerTank
+
 def playerTankDestroyed(tank):
     reduceLivesByOne()
 
