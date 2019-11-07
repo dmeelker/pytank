@@ -11,6 +11,9 @@ def load(fileName, key):
 def get(key):
     return images[key]
 
+def set (key, image):
+    images[key] = image
+
 def loadImageFile(fileName):
     return pygame.image.load(os.path.join('images', fileName)).convert_alpha()
 
