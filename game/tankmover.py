@@ -41,11 +41,14 @@ class PathProgress():
     def getTargetStepIndex(self):
         return self.targetStepIndex
 
+    def getTargetStep(self):
+        return self.path[self.targetStepIndex]
+
 class SearchGridGenerator():
     @staticmethod
     def generateSearchGridFromPlayfield():
         grid = SearchGridGenerator.generateTerrainBasedGrid()
-        SearchGridGenerator.fillGaps(grid)
+        SearchGridGenerator.accountForDoubleSize(grid) # fillGaps(grid)
 
         return grid
 
@@ -58,6 +61,21 @@ class SearchGridGenerator():
                 grid.set(x, y, SearchGridGenerator.getSearchSpaceCellValueFromPlayfield(x, y))
 
         return grid
+
+    @staticmethod
+    def accountForDoubleSize(grid):
+        for y in range(grid.height):
+            for x in range(grid.width):
+                if x < grid.width - 1:
+                    values = [grid.get(x, y), grid.get(x + 1, y)]
+                    if values[1] > 0 and values[0] == 0:
+                        grid.set(x, y, values[1])
+
+                if y < grid.height - 1:
+                    values = [grid.get(x, y), grid.get(x, y + 1)]
+                    if values[1] > 0 and values[0] == 0:
+                        grid.set(x, y, values[1])
+                
 
     @staticmethod
     def fillGaps(grid):
@@ -108,7 +126,7 @@ class SearchGridGenerator():
         if tile is None:
             return 0
         elif tile.tileType == playfield.TileType.BRICK:
-            return 1
+            return 5
         elif tile.tileType == playfield.TileType.CONCRETE:
             return 100
         elif tile.tileType == playfield.TileType.WATER:

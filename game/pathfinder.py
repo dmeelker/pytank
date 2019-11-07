@@ -1,3 +1,4 @@
+import math
 import heapq
 
 class Node:
@@ -136,7 +137,7 @@ class PathFinder:
                 self.addAdjacentCellToOpenList(currentNode, adjacentCell, endLocation)
     
     def isPathShorterViaOtherNode(self, currentNode, nodeToCheck):
-        return currentNode.cost + 1 < nodeToCheck.cost
+        return currentNode.cost + nodeToCheck.cellCost + 1 < nodeToCheck.cost
 
     def updatePathToNode(self, fromNode, toNode):
         toNode.parent = fromNode
@@ -161,7 +162,7 @@ class PathFinder:
     def estimateDistance(self, startLocation, endLocation):
         x = abs(endLocation[0] - startLocation[0])
         y = abs(endLocation[1] - startLocation[1])
-        return (x*x) + (y*y)
+        return math.sqrt((x*x) + (y*y))
 
     def findOpenNodeByLocation(self, location):
         for node in self.openList.getValues():

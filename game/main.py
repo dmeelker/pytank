@@ -51,8 +51,8 @@ def loadImages():
     images.load('base.png', 'base')
 
     images.generateRotatedImages('tank1.png', 'tank1')
-    images.generateRotatedImages('tank2.png', 'tank2')
-    images.generateRotatedImages('tank3.png', 'tank3')
+    images.generateRotatedImages('tank1.png', 'tank2')
+    images.generateRotatedImages('tank1.png', 'tank3')
     
 def update():
     global lastUpdateTime

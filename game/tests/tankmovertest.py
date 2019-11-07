@@ -90,7 +90,7 @@ class TestSearchGridGenerator(unittest.TestCase):
         setupPlayfield(['B'])
 
         self.generateSearchGridAndAssert([ \
-            [1]])
+            [5]])
 
     def test_generateSearchGrid_waterIsImpassable(self):
         setupPlayfield(['W'])
@@ -102,27 +102,51 @@ class TestSearchGridGenerator(unittest.TestCase):
 
         self.generateSearchGridAndAssert([[0]])
 
-    def test_generateSearchGrid_horizontalGapsAreFilled(self):
+    def test_generateSearchGrid_WallsAreThickened_Center(self):
         setupPlayfield([\
             '---', \
-            'B-W', \
+            '-B-', \
             '---'])
 
         self.generateSearchGridAndAssert([ \
-            [0, 0, 0], \
-            [1, 1, 100], \
+            [0, 5, 0], \
+            [5, 5, 0], \
             [0, 0, 0]])
 
-    def test_generateSearchGrid_verticalGapsAreFilled(self):
+    def test_generateSearchGrid_WallsAreThickened_LeftEdge(self):
+        setupPlayfield([\
+            '---', \
+            'B--', \
+            '---'])
+
+        self.generateSearchGridAndAssert([ \
+            [5, 0, 0], \
+            [5, 0, 0], \
+            [0, 0, 0]])
+
+    def test_generateSearchGrid_WallsAreThickened_TopEdge(self):
         setupPlayfield([\
             '-B-', \
             '---', \
-            '-W-'])
+            '---'])
 
         self.generateSearchGridAndAssert([ \
-            [0, 1, 0], \
-            [0, 1, 0], \
-            [0, 100, 0]])
+            [5, 5, 0], \
+            [0, 0, 0], \
+            [0, 0, 0]])
+
+    def test_generateSearchGrid_randomShape(self):
+        setupPlayfield([\
+            '-W-T', \
+            '-W-C', \
+            '----', \
+            'BBBB'])
+
+        self.generateSearchGridAndAssert([ \
+            [100, 100, 0, 100], \
+            [100, 100, 100, 100], \
+            [5, 5, 5, 5], \
+            [5, 5, 5, 5]])
 
     def generateSearchGrid(self):
         return SearchGridGenerator.generateSearchGridFromPlayfield()

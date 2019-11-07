@@ -47,7 +47,7 @@ def initialize():
     pygame.init()
     pygame.display.set_caption("Pytank Editor")
     screen = pygame.display.set_mode((320, 240)) #, pygame.FULLSCREEN)
-    playfield.initialize()
+    playfield.initialize(40, 30)
     loadImages()
     initializeTiles()
 

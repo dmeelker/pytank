@@ -72,6 +72,12 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
         
         screen.blit(self.image, (offset[0] + extraOffset.x + self.location.x, offset[1] + extraOffset.y + self.location.y))
 
+        self.controller.render(screen)
+
+    def moveSingleStep(self, direction):
+        self.setHeading(direction)
+        self.movementHandler.moveEntity(direction.toUnit())
+
     def moveInDirection(self, direction):
         self.setHeading(direction)
         self.moving = True
@@ -87,9 +93,13 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
     def getProjectileFireLocation(self):
         halfProjectileSize = Vector(4, 4)
         location = self.getCenterLocation()
-        location = location.subtract(halfProjectileSize)
-        location = location.add(self.heading.toUnit().multiplyScalar(self.size.y / 2))
-        return location
+
+        return location.subtract(halfProjectileSize)
+        # halfProjectileSize = Vector(4, 4)
+        # location = self.getCenterLocation()
+        # location = location.subtract(halfProjectileSize)
+        # location = location.add(self.heading.toUnit().multiplyScalar(self.size.y / 2))
+        # return location
 
     def hitByProjectile(self, projectile, time):
         self.lastHitTime = time

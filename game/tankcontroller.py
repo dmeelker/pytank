@@ -5,9 +5,15 @@ import utilities
 from utilities import Timer
 import pathfinder
 import gamecontroller
+from tankmover import PathProgress
+
+import images
 
 class TankController:
     def update(self, time, timePassed):
+        pass
+
+    def render(self, screen):
         pass
 
 class PlayerTankController(TankController):
@@ -37,23 +43,39 @@ class AiTankController(TankController):
     def __init__(self, entity):
         self.entity = entity
         self.fireTimer = Timer(500)
-        self.targetLocation = None
+        self.lastMovementTime = pygame.time.get_ticks()
         self.plannedPath = None
-        self.pathStepIndex = None
+        self.pathPlanTime = 0
     
     def update(self, time, timePassed):
-        if self.targetLocation is None:
+        if self.plannedPath is None or time - self.pathPlanTime > 5000:
             self.plotPathToLocation(gamecontroller.base.location)
         else:
-            self.moveTankAlongPath()
-
-        # if self.entity.canMoveInDirection(self.entity.heading):
-        #     self.entity.moveInDirection(self.entity.heading)
-        # else:
-        #     self.entity.moveInDirection(self.randomDirection())
+            self.moveAlongPath(time)
 
         if self.fireTimer.update(time):
             self.fire(time)
+
+    def render(self, screen):
+        if self.plannedPath != None:
+            image = images.get('projectile')
+            for step in self.plannedPath.path:
+                screen.blit(image, (step[0] * 8, step[1] * 8))
+
+    def moveAlongPath(self, time):
+        if self.plannedPath.targetReached():
+            return
+
+        movementSteps = int((time - self.lastMovementTime ) / 50)
+        if movementSteps > 0:
+            for _ in range(movementSteps):
+                targetStep = self.toWorldSpaceTuple(self.plannedPath.getTargetStep())
+                self.moveTowardsLocation(targetStep)
+                self.plannedPath.moveToNextStepIfCurrentStepIsReached(self.entity.getLocation().toIntTuple())
+
+                if self.plannedPath.targetReached():
+                    break
+            self.lastMovementTime = time
 
     def fire(self, time):
         self.entity.fire(time)
@@ -66,97 +88,25 @@ class AiTankController(TankController):
         return self.directions[random.randint(0, len(self.directions) - 1)]
 
     def plotPathToLocation(self, targetLocation):
-        path = self.findPathToLocation(targetLocation)
-
-        if path != None:
-            self.targetLocation = targetLocation
-            self.plannedPath = path
-            self.pathStepIndex = 0
-
-    def moveTankAlongPath(self):
-        if self.arrivedAtTarget():
-            return
-
-        targetLocation = self.getCurrentTargetLocation()
-        self.moveTowardsLocation(targetLocation)
-        self.updateCurrentPathIndex()
-
-    def updateCurrentPathIndex(self):
-        targetLocation = self.getCurrentTargetLocation()
-
-        if self.locationReached(targetLocation):
-            self.pathStepIndex += 1
-
-    def getCurrentTargetLocation(self):
-        targetCell = self.plannedPath[self.pathStepIndex + 1]
-        return (targetCell[0] * 16, targetCell[1] * 16)
+        start = pygame.time.get_ticks()
+        self.plannedPath = PathProgress(self.toSearchSpaceCoordinateTuple(self.entity.getLocation()), self.toSearchSpaceCoordinateTuple(targetLocation))
+        end = pygame.time.get_ticks()
+        print(f'Pathfinding took {end - start}ms')
+        self.pathPlanTime = pygame.time.get_ticks()
 
     def moveTowardsLocation(self, targetLocation):
         location = self.entity.location
         if location.x < targetLocation[0]:
-            self.entity.moveInDirection(utilities.vectorRight)
+            self.entity.moveSingleStep(utilities.vectorRight)
         elif location.x > targetLocation[0]:
-            self.entity.moveInDirection(utilities.vectorLeft)
+            self.entity.moveSingleStep(utilities.vectorLeft)
         elif location.y < targetLocation[1]:
-            self.entity.moveInDirection(utilities.vectorDown)
+            self.entity.moveSingleStep(utilities.vectorDown)
         elif location.y > targetLocation[1]:
-            self.entity.moveInDirection(utilities.vectorUp)
-
-    def locationReached(self, targetLocation):
-        location = self.entity.location
-        
-        if abs(targetLocation[0] - location.x) > 1:
-            return False
-        elif abs(targetLocation[1] - location.y) > 1:
-            return False
-        else:
-            return True
-
-    def arrivedAtTarget(self):
-        return self.locationReached(self.plannedPath[-1])
-
-    
-
-    def findPathToLocation(self, targetLocation):
-        searchSpace = self.generateSearchSpace()
-        pathFinder = pathfinder.PathFinder(searchSpace)
-        return pathFinder.find(self.toSearchSpaceCoordinateTuple(self.entity.location), self.toSearchSpaceCoordinateTuple(targetLocation))
+            self.entity.moveSingleStep(utilities.vectorUp)
 
     def toSearchSpaceCoordinateTuple(self, coordinates):
-        return (int(coordinates.x / 16), int(coordinates.y / 16))
+        return (int(coordinates.x / 8), int(coordinates.y / 8))
 
-    def generateSearchSpace(self):
-        grid = pathfinder.SearchGrid(int(playfield.width / 2), int(playfield.height / 2))
-
-        for x in range(grid.width):
-            for y in range(grid.height):
-                grid.set(x, y, self.getSearchSpaceCellValueForTileQuad(x, y))
-
-        return grid
-
-    def getSearchSpaceCellValueForTileQuad(self, searchSpaceX, searchSpaceY):
-        tileSpaceX = searchSpaceX * 2
-        tileSpaceY = searchSpaceY * 2
-        
-        return max( \
-            self.getSearchSpaceCellValueFromPlayfield(tileSpaceX, tileSpaceY), \
-            self.getSearchSpaceCellValueFromPlayfield(tileSpaceX + 1, tileSpaceY), \
-            self.getSearchSpaceCellValueFromPlayfield(tileSpaceX, tileSpaceY + 1), \
-            self.getSearchSpaceCellValueFromPlayfield(tileSpaceX + 1, tileSpaceY + 1))
-
-    def getSearchSpaceCellValueFromPlayfield(self, x, y):
-        tile = playfield.getTile(x, y)
-        return self.getSearchSpaceCellValueForTile(tile)
-
-    def getSearchSpaceCellValueForTile(self, tile):
-        if tile is None:
-            return 0
-        elif tile.tileType == playfield.TileType.BRICK:
-            return 1
-        elif tile.tileType == playfield.TileType.CONCRETE:
-            return 100
-        elif tile.tileType == playfield.TileType.WATER:
-            return 100
-        else:
-            return 0
-        
+    def toWorldSpaceTuple(self, coordinates):
+        return (int(coordinates[0] * 8), int(coordinates[1] * 8))
