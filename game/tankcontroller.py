@@ -3,11 +3,13 @@ import random
 import playfield
 import utilities
 from utilities import Timer
-import pathfinder
-from pathfinder import SearchGrid
+#import pathfinder
+#from pathfinder import SearchGrid
 import gamecontroller
-from tankmover import PlannedPath
-from tankmover import SearchGridGenerator
+
+from pathfinding.plannedpath import PlannedPath
+from pathfinding.searchgridgenerator import SearchGridGenerator
+from pathfinding.searchgrid import SearchGrid
 
 import images
 
@@ -85,7 +87,7 @@ class AiTankController(TankController):
     def plotPathToLocation(self, targetLocation):
         gridStart = pygame.time.get_ticks()
         searchGrid = SearchGridGenerator.generateSearchGridFromPlayfield()
-        gridEnd =pygame.time.get_ticks()
+        gridEnd = pygame.time.get_ticks()
         startPlan = pygame.time.get_ticks()
         self.plannedPath = PlannedPath(searchGrid, self.toSearchSpaceCoordinateTuple(self.entity.getLocation()), self.toSearchSpaceCoordinateTuple(targetLocation))
         planEnd = pygame.time.get_ticks()

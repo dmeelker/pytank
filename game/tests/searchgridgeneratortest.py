@@ -6,8 +6,8 @@ from utilities import Vector
 
 from playfield import Tile
 from playfield import TileType
-from tankmover import PlannedPath
-from tankmover import SearchGridGenerator
+from pathfinding.plannedpath import PlannedPath
+from pathfinding.searchgridgenerator import SearchGridGenerator
 
 class TestSearchGridGenerator(unittest.TestCase):
     def setUp(self):
