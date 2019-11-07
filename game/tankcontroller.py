@@ -6,7 +6,7 @@ from utilities import Timer
 import pathfinder
 from pathfinder import SearchGrid
 import gamecontroller
-from tankmover import PathProgress
+from tankmover import PlannedPath
 from tankmover import SearchGridGenerator
 
 import images
@@ -87,7 +87,7 @@ class AiTankController(TankController):
         searchGrid = SearchGridGenerator.generateSearchGridFromPlayfield()
         gridEnd =pygame.time.get_ticks()
         startPlan = pygame.time.get_ticks()
-        self.plannedPath = PathProgress(searchGrid, self.toSearchSpaceCoordinateTuple(self.entity.getLocation()), self.toSearchSpaceCoordinateTuple(targetLocation))
+        self.plannedPath = PlannedPath(searchGrid, self.toSearchSpaceCoordinateTuple(self.entity.getLocation()), self.toSearchSpaceCoordinateTuple(targetLocation))
         planEnd = pygame.time.get_ticks()
         print(f'Grid took: {gridEnd - gridStart}ms Pathfinding took {planEnd - startPlan}ms')
         self.pathPlanTime = pygame.time.get_ticks()

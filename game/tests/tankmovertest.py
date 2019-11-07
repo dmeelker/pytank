@@ -6,7 +6,7 @@ from utilities import Vector
 
 from playfield import Tile
 from playfield import TileType
-from tankmover import PathProgress
+from tankmover import PlannedPath
 from tankmover import SearchGridGenerator
 
 class MockTank():
@@ -19,174 +19,55 @@ class MockTank():
     def setLocation(self, location):
         self.location = location
 
-class TestPathProgress(unittest.TestCase):
+class TestPlannedPath(unittest.TestCase):
     def setUp(self):
         self.tank = MockTank()
     
     def test_setInitialization(self):
-        tankMover = self.createPathProgress((0, 0), (1, 1))
-        self.assertEqual((1, 1), tankMover.getTarget())
+        path = self.createPath((0, 0), (1, 1))
+        self.assertEqual((1, 1), path.getTarget())
 
     def test_verifyPlottedPath(self):
         setupEmptyPlayField(2, 2)
-        tankMover = self.createPathProgress((0,0), (1,0))
+        path = self.createPath((0,0), (1,0))
 
-        self.assertEqual([(0,0), (1,0)], tankMover.getPath())
-        self.assertEqual(1, tankMover.getTargetStepIndex())
+        self.assertEqual([(0,0), (1,0)], path.getPath())
+        self.assertEqual(1, path.getTargetStepIndex())
 
     def test_checkIfNextPathStepIsReached_no(self):
         setupEmptyPlayField(2, 2)
-        tankMover = self.createPathProgress((0,0), (1,0))
+        path = self.createPath((0,0), (1,0))
 
-        self.assertFalse(tankMover.checkIfNextPathStepIsReached((0, 0)))
+        self.assertFalse(path.checkIfNextPathStepIsReached((0, 0)))
 
     def test_checkIfNextPathStepIsReached_yes(self):
         setupEmptyPlayField(2, 2)
-        tankMover = self.createPathProgress((0,0), (1,0))
+        path = self.createPath((0,0), (1,0))
 
-        self.assertTrue(tankMover.checkIfNextPathStepIsReached((8, 0)))
+        self.assertTrue(path.checkIfNextPathStepIsReached((8, 0)))
 
     def test_tankMovedToNextStep(self):
         setupEmptyPlayField(3, 1)
-        tankMover = self.createPathProgress((0,0), (2,0))
+        path = self.createPath((0,0), (2,0))
 
-        tankMover.moveToNextStepIfCurrentStepIsReached((8,0))
+        path.moveToNextStepIfCurrentStepIsReached((8,0))
 
-        self.assertEqual(2, tankMover.getTargetStepIndex())
+        self.assertEqual(2, path.getTargetStepIndex())
 
     def test_targetLocationReached(self):
         setupEmptyPlayField(2, 2)
-        tankMover = self.createPathProgress((0,0), (1,0))
+        path = self.createPath((0,0), (1,0))
 
-        tankMover.moveToNextStepIfCurrentStepIsReached((8,0))
+        path.moveToNextStepIfCurrentStepIsReached((8,0))
 
-        self.assertTrue(tankMover.targetReached())
+        self.assertTrue(path.targetReached())
 
-    def createPathProgress(self, startLocation, endLocation):
+    def createPath(self, startLocation, endLocation):
         searchGrid = SearchGridGenerator.generateSearchGridFromPlayfield()
-        return PathProgress(searchGrid, startLocation, endLocation)
-
-class TestSearchGridGenerator(unittest.TestCase):
-    def setUp(self):
-        images.set('brick', None)
-        images.set('concrete', None)
-        images.set('water', None)
-        images.set('tree', None)
-
-    def test_generateSearchGrid_initialization(self):
-        playfield.initialize(5, 5)
-
-        searchGrid = self.generateSearchGrid()
-        self.assertEqual(5, searchGrid.width)
-        self.assertEqual(5, searchGrid.height)
-
-    def test_generateSearchGrid_allPassable(self):
-        setupPlayfield([\
-            '--', \
-            '--'])
-
-        self.generateSearchGridAndAssert([ \
-            [0, 0], \
-            [0, 0]])
-
-    def test_generateSearchGrid_brickIsSemiPassable(self):
-        setupPlayfield(['B'])
-
-        self.generateSearchGridAndAssert([ \
-            [8]])
-
-    def test_generateSearchGrid_waterIsImpassable(self):
-        setupPlayfield(['W'])
-
-        self.generateSearchGridAndAssert([[100]])
-
-    def test_generateSearchGrid_treeIsPassable(self):
-        setupPlayfield(['T'])
-
-        self.generateSearchGridAndAssert([[0]])
-
-    def test_generateSearchGrid_WallsAreThickened_Center(self):
-        setupPlayfield([\
-            '---', \
-            '-B-', \
-            '---'])
-
-        self.generateSearchGridAndAssert([ \
-            [0, 8, 0], \
-            [8, 8, 0], \
-            [0, 0, 0]])
-
-    def test_generateSearchGrid_WallsAreThickened_LeftEdge(self):
-        setupPlayfield([\
-            '---', \
-            'B--', \
-            '---'])
-
-        self.generateSearchGridAndAssert([ \
-            [8, 0, 0], \
-            [8, 0, 0], \
-            [0, 0, 0]])
-
-    def test_generateSearchGrid_WallsAreThickened_TopEdge(self):
-        setupPlayfield([\
-            '-B-', \
-            '---', \
-            '---'])
-
-        self.generateSearchGridAndAssert([ \
-            [8, 8, 0], \
-            [0, 0, 0], \
-            [0, 0, 0]])
-
-    def test_generateSearchGrid_randomShape(self):
-        setupPlayfield([\
-            '-W-T', \
-            '-W-C', \
-            '----', \
-            'BBBB'])
-
-        self.generateSearchGridAndAssert([ \
-            [100, 100, 0, 100], \
-            [100, 100, 100, 100], \
-            [8, 8, 8, 8], \
-            [8, 8, 8, 8]])
-
-    def generateSearchGrid(self):
-        return SearchGridGenerator.generateSearchGridFromPlayfield()
-
-    def generateSearchGridAndAssert(self, expectedGrid):
-        searchGrid = self.generateSearchGrid()
-        self.assertSearchGrid(searchGrid, expectedGrid)
-
-    def assertSearchGrid(self, searchGrid, expectedGrid):
-        for x in range(searchGrid.width):
-            for y in range(searchGrid.height):
-                self.assertEqual(expectedGrid[y][x], searchGrid.get(x, y), f'Mismatching value at {x},{y}')
+        return PlannedPath(searchGrid, startLocation, endLocation)
 
 def setupEmptyPlayField(width, height):
     playfield.initialize(width, height)
-
-def setupPlayfield(data):
-    height = len(data)
-    width = len(data[0])
-    playfield.initialize(width, height)
-
-    for x in range(width):
-        for y in range(height):
-            tile = createTileFromCharacter(data[y][x])
-            playfield.setTile(x, y, tile)
-
-def createTileFromCharacter(chr):
-    if chr == ' ':
-        return '-'
-    elif chr == 'B':
-        return Tile(TileType.BRICK)
-    elif chr == 'C':
-        return Tile(TileType.CONCRETE)
-    elif chr == 'W':
-        return Tile(TileType.WATER)
-    elif chr == 'T':
-        return Tile(TileType.TREE)
 
 if __name__ == '__main__':
     unittest.main()

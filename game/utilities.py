@@ -1,4 +1,5 @@
 import math
+import heapq
 
 def radiansToDegrees(radians):
     return radians * (180/math.pi)
@@ -54,6 +55,25 @@ vectorLeft = Vector(-1, 0)
 vectorRight = Vector(1, 0)
 vectorUp = Vector(0, -1)
 vectorDown = Vector(0, 1)
+
+class PriorityQueue:
+    def __init__(self):
+        self.values = []
+
+    def insert(self, value):
+        heapq.heappush(self.values, value)
+
+    def heapify(self):
+        heapq.heapify(self.values)
+
+    def getSmallest(self):
+        return heapq.heappop(self.values)
+
+    def isEmpty(self):
+        return len(self.values) == 0
+
+    def getValues(self):
+        return self.values
 
 class Timer:
     def __init__(self, interval):

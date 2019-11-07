@@ -1,5 +1,5 @@
 import math
-import heapq
+from utilities import PriorityQueue
 
 class Node:
     def __init__(self, location, distance, estimatedDistance, parent, cellCost = 0):
@@ -18,25 +18,6 @@ class Node:
 
     def __str__(self):
         return f'{self.location}, dist: {self.distance}, estdist: {self.estimatedDistance}, cost: {self.cost}'
-
-class PriorityQueue:
-    def __init__(self):
-        self.values = []
-
-    def insert(self, value):
-        heapq.heappush(self.values, value)
-
-    def heapify(self):
-        heapq.heapify(self.values)
-
-    def getSmallest(self):
-        return heapq.heappop(self.values)
-
-    def isEmpty(self):
-        return len(self.values) == 0
-
-    def getValues(self):
-        return self.values
 
 class SearchGrid:
     def __init__(self, width, height):
@@ -156,7 +137,7 @@ class PathFinder:
     def estimateDistance(self, startLocation, endLocation):
         x = abs(endLocation[0] - startLocation[0])
         y = abs(endLocation[1] - startLocation[1])
-        return x + y # math.sqrt((x*x) + (y*y))
+        return x + y
 
     def findOpenNodeByLocation(self, location):
         for node in self.openList.getValues():

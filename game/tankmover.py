@@ -2,7 +2,7 @@ import playfield
 from pathfinder import PathFinder
 from pathfinder import SearchGrid
 
-class PathProgress():
+class PlannedPath():
     def __init__(self, searchGrid, startLocation, targetLocation):
         self.startLocation = startLocation
         self.targetLocation = targetLocation
