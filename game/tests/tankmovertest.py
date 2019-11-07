@@ -2,15 +2,66 @@ import unittest
 
 import playfield
 import images
+from utilities import Vector
+
 from playfield import Tile
 from playfield import TileType
-from tankmover import TankMover
+from tankmover import PathProgress
 from tankmover import SearchGridGenerator
 
-
-
 class MockTank():
-    pass
+    def __init__(self):
+        self.location = Vector(0, 0)
+
+    def getLocation(self):
+        return self.location
+
+    def setLocation(self, location):
+        self.location = location
+
+class TestPathProgress(unittest.TestCase):
+    def setUp(self):
+        self.tank = MockTank()
+    
+    def test_setInitialization(self):
+        tankMover = PathProgress((0, 0), (1, 1))
+        self.assertEqual((1, 1), tankMover.getTarget())
+
+    def test_verifyPlottedPath(self):
+        setupEmptyPlayField(2, 2)
+        tankMover = PathProgress((0,0), (1,0))
+
+        self.assertEqual([(0,0), (1,0)], tankMover.getPath())
+        self.assertEqual(1, tankMover.getTargetStepIndex())
+
+    def test_checkIfNextPathStepIsReached_no(self):
+        setupEmptyPlayField(2, 2)
+        tankMover = PathProgress((0,0), (1,0))
+
+        self.assertFalse(tankMover.checkIfNextPathStepIsReached((0, 0)))
+
+    def test_checkIfNextPathStepIsReached_yes(self):
+        setupEmptyPlayField(2, 2)
+        tankMover = PathProgress((0,0), (1,0))
+
+        self.assertTrue(tankMover.checkIfNextPathStepIsReached((8, 0)))
+
+    def test_tankMovedToNextStep(self):
+        setupEmptyPlayField(3, 1)
+        tankMover = PathProgress((0,0), (2,0))
+
+        tankMover.moveToNextStepIfCurrentStepIsReached((8,0))
+
+        self.assertEqual(2, tankMover.getTargetStepIndex())
+
+    def test_targetLocationReached(self):
+        setupEmptyPlayField(2, 2)
+        tankMover = PathProgress((0,0), (1,0))
+
+        tankMover.moveToNextStepIfCurrentStepIsReached((8,0))
+
+        self.assertTrue(tankMover.targetReached())
+
 
 class TestSearchGridGenerator(unittest.TestCase):
     def setUp(self):
@@ -19,8 +70,8 @@ class TestSearchGridGenerator(unittest.TestCase):
         images.set('water', None)
         images.set('tree', None)
 
-    def test_generateSearchGrid_resultIsHalfSize(self):
-        playfield.initialize(10, 10)
+    def test_generateSearchGrid_initialization(self):
+        playfield.initialize(5, 5)
 
         searchGrid = self.generateSearchGrid()
         self.assertEqual(5, searchGrid.width)
@@ -31,50 +82,47 @@ class TestSearchGridGenerator(unittest.TestCase):
             '--', \
             '--'])
 
-        self.generateSearchGridAndAssert([[0]])
+        self.generateSearchGridAndAssert([ \
+            [0, 0], \
+            [0, 0]])
 
     def test_generateSearchGrid_brickIsSemiPassable(self):
-        setupPlayfield([\
-            'B-', \
-            '--'])
+        setupPlayfield(['B'])
 
-        self.generateSearchGridAndAssert([[1]])
+        self.generateSearchGridAndAssert([ \
+            [1]])
 
     def test_generateSearchGrid_waterIsImpassable(self):
-        setupPlayfield([\
-            'W-', \
-            '--'])
+        setupPlayfield(['W'])
 
         self.generateSearchGridAndAssert([[100]])
 
     def test_generateSearchGrid_treeIsPassable(self):
-        setupPlayfield([\
-            'T-', \
-            '--'])
+        setupPlayfield(['T'])
 
         self.generateSearchGridAndAssert([[0]])
 
-    def test_generateSearchGrid_highestValueInQuadrantCountsTopLeft(self):
+    def test_generateSearchGrid_horizontalGapsAreFilled(self):
         setupPlayfield([\
-            'BW--', \
-            '----', \
-            '--00', \
-            '----'])
+            '---', \
+            'B-W', \
+            '---'])
 
         self.generateSearchGridAndAssert([ \
-            [100, 0], \
-            [0, 0]])
+            [0, 0, 0], \
+            [1, 1, 100], \
+            [0, 0, 0]])
 
-    def test_generateSearchGrid_highestValueInQuadrantCountsBottomRight(self):
+    def test_generateSearchGrid_verticalGapsAreFilled(self):
         setupPlayfield([\
-            '----', \
-            '----', \
-            '----', \
-            '--WB'])
+            '-B-', \
+            '---', \
+            '-W-'])
 
         self.generateSearchGridAndAssert([ \
-            [0, 0], \
-            [0, 100]])
+            [0, 1, 0], \
+            [0, 1, 0], \
+            [0, 100, 0]])
 
     def generateSearchGrid(self):
         return SearchGridGenerator.generateSearchGridFromPlayfield()
@@ -87,6 +135,9 @@ class TestSearchGridGenerator(unittest.TestCase):
         for x in range(searchGrid.width):
             for y in range(searchGrid.height):
                 self.assertEqual(expectedGrid[y][x], searchGrid.get(x, y), f'Mismatching value at {x},{y}')
+
+def setupEmptyPlayField(width, height):
+    playfield.initialize(width, height)
 
 def setupPlayfield(data):
     height = len(data)

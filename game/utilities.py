@@ -17,6 +17,9 @@ class Vector:
     
     def __str__(self):
         return str(self.x) + "," + str(self.y)
+
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
     
     def add(self, otherVector):
         return Vector(self.x + otherVector.x, self.y + otherVector.y)

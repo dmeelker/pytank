@@ -15,6 +15,9 @@ class Entity:
     def render(self, screen, offset, time):
         pass
 
+    def getLocation(self):
+        return self.location
+
     def setLocation(self, newLocation):
         self.location = newLocation
         self.updateBoundingRectangle()
