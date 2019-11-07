@@ -3,13 +3,12 @@ from pathfinder import PathFinder
 from pathfinder import SearchGrid
 
 class PathProgress():
-    def __init__(self, startLocation, targetLocation):
+    def __init__(self, searchGrid, startLocation, targetLocation):
         self.startLocation = startLocation
         self.targetLocation = targetLocation
-        self.plotPath(startLocation, targetLocation)
+        self.plotPath(searchGrid,startLocation, targetLocation)
 
-    def plotPath(self, startLocation, targetLocation):
-        searchGrid = SearchGridGenerator.generateSearchGridFromPlayfield()
+    def plotPath(self, searchGrid, startLocation, targetLocation):
         pathFinder = PathFinder(searchGrid)
 
         self.path = pathFinder.find(startLocation, targetLocation)
@@ -47,20 +46,17 @@ class PathProgress():
 class SearchGridGenerator():
     @staticmethod
     def generateSearchGridFromPlayfield():
-        grid = SearchGridGenerator.generateTerrainBasedGrid()
-        SearchGridGenerator.accountForDoubleSize(grid) # fillGaps(grid)
+        grid = SearchGrid(playfield.width, playfield.height)
+        SearchGridGenerator.generateTerrainBasedGrid(grid)
+        SearchGridGenerator.accountForDoubleSize(grid)
 
         return grid
 
     @staticmethod
-    def generateTerrainBasedGrid():
-        grid = SearchGrid(playfield.width, playfield.height)
-
+    def generateTerrainBasedGrid(grid):
         for x in range(grid.width):
             for y in range(grid.height):
                 grid.set(x, y, SearchGridGenerator.getSearchSpaceCellValueFromPlayfield(x, y))
-
-        return grid
 
     @staticmethod
     def accountForDoubleSize(grid):
@@ -76,45 +72,10 @@ class SearchGridGenerator():
                     if values[1] > 0 and values[0] == 0:
                         grid.set(x, y, values[1])
                 
-
     @staticmethod
     def fillGaps(grid):
         SearchGridGenerator.fillHorizontalGaps(grid)
         SearchGridGenerator.fillVerticalGaps(grid)
-
-    @staticmethod
-    def fillHorizontalGaps(grid):
-        for y in range(grid.height):
-            for x in range(grid.width):
-                SearchGridGenerator.checkForHorizontalGap(grid, x, y)
-
-    @staticmethod
-    def checkForHorizontalGap(grid, x, y):
-        if SearchGridGenerator.hasTwoHorizontalNeighbours(grid, x):
-            values = [grid.get(x-1, y), grid.get(x, y), grid.get(x+1, y)]
-            if values[0] > 0 and values[1] == 0 and values[2] > 0:
-                grid.set(x, y, min(values[0], values[2]))
-
-    @staticmethod
-    def hasTwoHorizontalNeighbours(grid, x):
-        return x > 0 and x < grid.width - 1
-
-    @staticmethod
-    def fillVerticalGaps(grid):
-        for x in range(grid.width):
-            for y in range(grid.height):
-                SearchGridGenerator.checkForVerticalGap(grid, x, y)
-
-    @staticmethod
-    def checkForVerticalGap(grid, x, y):
-        if SearchGridGenerator.hasTwoVerticalNeighbours(grid, y):
-            values = [grid.get(x, y-1), grid.get(x, y), grid.get(x, y+1)]
-            if values[0] > 0 and values[1] == 0 and values[2] > 0:
-                grid.set(x, y, min(values[0], values[2]))
-
-    @staticmethod
-    def hasTwoVerticalNeighbours(grid, y):
-        return y > 0 and y < grid.height - 1
 
     @staticmethod
     def getSearchSpaceCellValueFromPlayfield(x, y):

@@ -4,8 +4,10 @@ import playfield
 import utilities
 from utilities import Timer
 import pathfinder
+from pathfinder import SearchGrid
 import gamecontroller
 from tankmover import PathProgress
+from tankmover import SearchGridGenerator
 
 import images
 
@@ -46,6 +48,7 @@ class AiTankController(TankController):
         self.lastMovementTime = pygame.time.get_ticks()
         self.plannedPath = None
         self.pathPlanTime = 0
+        self.planThread = None
     
     def update(self, time, timePassed):
         if self.plannedPath is None or time - self.pathPlanTime > 5000:
@@ -88,10 +91,13 @@ class AiTankController(TankController):
         return self.directions[random.randint(0, len(self.directions) - 1)]
 
     def plotPathToLocation(self, targetLocation):
-        start = pygame.time.get_ticks()
-        self.plannedPath = PathProgress(self.toSearchSpaceCoordinateTuple(self.entity.getLocation()), self.toSearchSpaceCoordinateTuple(targetLocation))
-        end = pygame.time.get_ticks()
-        print(f'Pathfinding took {end - start}ms')
+        gridStart = pygame.time.get_ticks()
+        searchGrid = SearchGridGenerator.generateSearchGridFromPlayfield()
+        gridEnd =pygame.time.get_ticks()
+        startPlan = pygame.time.get_ticks()
+        self.plannedPath = PathProgress(searchGrid, self.toSearchSpaceCoordinateTuple(self.entity.getLocation()), self.toSearchSpaceCoordinateTuple(targetLocation))
+        planEnd = pygame.time.get_ticks()
+        print(f'Grid took: {gridEnd - gridStart}ms Pathfinding took {planEnd - startPlan}ms')
         self.pathPlanTime = pygame.time.get_ticks()
 
     def moveTowardsLocation(self, targetLocation):

@@ -45,19 +45,13 @@ class SearchGrid:
         self.initialize()
 
     def initialize(self):
-        self.data = []
-
-        for x in range(self.width):
-            row = []
-            for y in range(self.height):
-               row.append(0)
-            self.data.append(row)
+        self.data = [0 for i in range(self.width * self.height)]
     
     def get(self, x, y):
-        return self.data[x][y]
+        return self.data[(y*self.width) + x]
 
     def set(self, x, y, value):
-        self.data[x][y] = value
+        self.data[(y*self.width) + x] = value
 
     def containsCoordinates(self, x, y):
         return not (x < 0 or x >= self.width or y < 0 or y >= self.height)

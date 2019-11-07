@@ -24,31 +24,31 @@ class TestPathProgress(unittest.TestCase):
         self.tank = MockTank()
     
     def test_setInitialization(self):
-        tankMover = PathProgress((0, 0), (1, 1))
+        tankMover = self.createPathProgress((0, 0), (1, 1))
         self.assertEqual((1, 1), tankMover.getTarget())
 
     def test_verifyPlottedPath(self):
         setupEmptyPlayField(2, 2)
-        tankMover = PathProgress((0,0), (1,0))
+        tankMover = self.createPathProgress((0,0), (1,0))
 
         self.assertEqual([(0,0), (1,0)], tankMover.getPath())
         self.assertEqual(1, tankMover.getTargetStepIndex())
 
     def test_checkIfNextPathStepIsReached_no(self):
         setupEmptyPlayField(2, 2)
-        tankMover = PathProgress((0,0), (1,0))
+        tankMover = self.createPathProgress((0,0), (1,0))
 
         self.assertFalse(tankMover.checkIfNextPathStepIsReached((0, 0)))
 
     def test_checkIfNextPathStepIsReached_yes(self):
         setupEmptyPlayField(2, 2)
-        tankMover = PathProgress((0,0), (1,0))
+        tankMover = self.createPathProgress((0,0), (1,0))
 
         self.assertTrue(tankMover.checkIfNextPathStepIsReached((8, 0)))
 
     def test_tankMovedToNextStep(self):
         setupEmptyPlayField(3, 1)
-        tankMover = PathProgress((0,0), (2,0))
+        tankMover = self.createPathProgress((0,0), (2,0))
 
         tankMover.moveToNextStepIfCurrentStepIsReached((8,0))
 
@@ -56,12 +56,15 @@ class TestPathProgress(unittest.TestCase):
 
     def test_targetLocationReached(self):
         setupEmptyPlayField(2, 2)
-        tankMover = PathProgress((0,0), (1,0))
+        tankMover = self.createPathProgress((0,0), (1,0))
 
         tankMover.moveToNextStepIfCurrentStepIsReached((8,0))
 
         self.assertTrue(tankMover.targetReached())
 
+    def createPathProgress(self, startLocation, endLocation):
+        searchGrid = SearchGridGenerator.generateSearchGridFromPlayfield()
+        return PathProgress(searchGrid, startLocation, endLocation)
 
 class TestSearchGridGenerator(unittest.TestCase):
     def setUp(self):
@@ -90,7 +93,7 @@ class TestSearchGridGenerator(unittest.TestCase):
         setupPlayfield(['B'])
 
         self.generateSearchGridAndAssert([ \
-            [5]])
+            [8]])
 
     def test_generateSearchGrid_waterIsImpassable(self):
         setupPlayfield(['W'])
@@ -109,8 +112,8 @@ class TestSearchGridGenerator(unittest.TestCase):
             '---'])
 
         self.generateSearchGridAndAssert([ \
-            [0, 5, 0], \
-            [5, 5, 0], \
+            [0, 8, 0], \
+            [8, 8, 0], \
             [0, 0, 0]])
 
     def test_generateSearchGrid_WallsAreThickened_LeftEdge(self):
@@ -120,8 +123,8 @@ class TestSearchGridGenerator(unittest.TestCase):
             '---'])
 
         self.generateSearchGridAndAssert([ \
-            [5, 0, 0], \
-            [5, 0, 0], \
+            [8, 0, 0], \
+            [8, 0, 0], \
             [0, 0, 0]])
 
     def test_generateSearchGrid_WallsAreThickened_TopEdge(self):
@@ -131,7 +134,7 @@ class TestSearchGridGenerator(unittest.TestCase):
             '---'])
 
         self.generateSearchGridAndAssert([ \
-            [5, 5, 0], \
+            [8, 8, 0], \
             [0, 0, 0], \
             [0, 0, 0]])
 
@@ -145,8 +148,8 @@ class TestSearchGridGenerator(unittest.TestCase):
         self.generateSearchGridAndAssert([ \
             [100, 100, 0, 100], \
             [100, 100, 100, 100], \
-            [5, 5, 5, 5], \
-            [5, 5, 5, 5]])
+            [8, 8, 8, 8], \
+            [8, 8, 8, 8]])
 
     def generateSearchGrid(self):
         return SearchGridGenerator.generateSearchGridFromPlayfield()
