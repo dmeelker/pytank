@@ -1,7 +1,6 @@
 import entities
 import entities.manager
-import entities.tank
-from entities.movement import MovementHandler
+from .movement import MovementHandler
 import playfield
 import images
 from utilities import Vector

@@ -54,7 +54,7 @@ def resetLevelData():
     tankSpawnLocations = []
     upcomingTankLevels = []
     liveEnemyTanks = []
-    playfield.initialize()
+    playfield.initialize(40, 30)
     resetSpawnTimer()
 
 def loadLevelFromFile(fileName):

@@ -1,8 +1,8 @@
 import unittest
 
-from game.pathfinder import PriorityQueue
-from game.pathfinder import SearchGrid
-from game.pathfinder import PathFinder
+from pathfinder import PriorityQueue
+from pathfinder import SearchGrid
+from pathfinder import PathFinder
 
 INPENETRABLE = 100
 EXTRACOST = 1

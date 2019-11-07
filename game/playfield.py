@@ -3,14 +3,18 @@ import images
 
 blockSize = 8
 tiles = []
-width = 40
-height = 30
-pixelWidth = width * blockSize
-pixelHeight = height * blockSize
+width = 0
+height = 0
+pixelWidth = 0
+pixelHeight = 0
 
-def initialize():
-    global tiles
+def initialize(w, h):
+    global width, height, pixelWidth, pixelHeight, tiles
     tiles = []
+    width = w
+    height = h
+    pixelWidth = w * blockSize
+    pixelHeight = h * blockSize
 
     for _ in range(width):
         column = []
