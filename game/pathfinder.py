@@ -162,7 +162,7 @@ class PathFinder:
     def estimateDistance(self, startLocation, endLocation):
         x = abs(endLocation[0] - startLocation[0])
         y = abs(endLocation[1] - startLocation[1])
-        return math.sqrt((x*x) + (y*y))
+        return x + y # math.sqrt((x*x) + (y*y))
 
     def findOpenNodeByLocation(self, location):
         for node in self.openList.getValues():

@@ -126,7 +126,7 @@ class SearchGridGenerator():
         if tile is None:
             return 0
         elif tile.tileType == playfield.TileType.BRICK:
-            return 5
+            return 8
         elif tile.tileType == playfield.TileType.CONCRETE:
             return 100
         elif tile.tileType == playfield.TileType.WATER:
