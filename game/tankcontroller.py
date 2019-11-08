@@ -70,7 +70,10 @@ class AiTankController(TankController):
                 self.stepTowardsTarget()
                 if self.plannedPath.targetReached():
                     break
-            self.lastMovementTime = time
+            self.resetLastMovementTime(time)
+
+    def resetLastMovementTime(self, time):
+        self.lastMovementTime = time
 
     def stepTowardsTarget(self):
         targetStep = self.toWorldSpaceTuple(self.plannedPath.getTargetStep())
@@ -93,6 +96,7 @@ class AiTankController(TankController):
         planEnd = pygame.time.get_ticks()
         print(f'Grid took: {gridEnd - gridStart}ms Pathfinding took {planEnd - startPlan}ms')
         self.pathPlanTime = pygame.time.get_ticks()
+        self.resetLastMovementTime(pygame.time.get_ticks())
 
     def moveTowardsLocation(self, targetLocation):
         location = self.entity.location
