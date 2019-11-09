@@ -7,6 +7,9 @@ Tweak weapons
 - heavy weapons should destroy more blocks
 - concrete should only be destroyable by highest level weapon
 
+[x] Player death crash
+Player navigation
+
 Powerups
 - Better weapon
 - Movement speed

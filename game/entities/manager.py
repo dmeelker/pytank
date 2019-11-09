@@ -23,11 +23,14 @@ def update(time, timePassed):
 
 def render(screen, offset, time):
     for entity in entities:
+        if entity.disposed or entity.disposable:
+            continue
+
         entity.render(screen, offset, time)
 
 def findEntitiesInRectangle(rectangle, typeFilter = None, exceptEntity = None):
     for entity in entities:
-        if entity == exceptEntity:
+        if entity == exceptEntity or entity.disposed or entity.disposable:
             continue
 
         if not typeFilter == None and not isinstance(entity, typeFilter):

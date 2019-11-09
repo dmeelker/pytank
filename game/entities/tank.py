@@ -39,6 +39,7 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
         self.lastHitTime = None
         self.lastHitVector = Vector(0, 0)
         self.destroyCallback = None
+        self.destroyed = False
 
     def getScorePoints(self):
         return self.type * 100
@@ -147,8 +148,12 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
         return self.type
 
     def destroy(self):
+        self.destroyed = True
         self.fireDestroyCallback()
         self.markDisposable()
+
+    def isDestroyed(self):
+        return self.destroyed
 
 class Weapon:
     def __init__(self, entity, level):

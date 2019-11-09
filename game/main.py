@@ -41,7 +41,7 @@ def initialize():
     pygame.init()
     pygame.joystick.init()
     pygame.display.set_caption("Pytank")
-    screen = pygame.display.set_mode((640, 480), pygame.FULLSCREEN)
+    screen = pygame.display.set_mode((640, 480)) # , pygame.FULLSCREEN)
     pygame.key.set_repeat(50, 50)
 
     buffer = pygame.Surface((320, 240))
@@ -95,7 +95,12 @@ def handleEvents():
 
 
 def render():
-    targetSurface = buffer
+    renderToSurface(buffer)
+    pygame.transform.scale(buffer, screenSize, screen)
+
+    pygame.display.flip()
+
+def renderToSurface(targetSurface):
     targetSurface.fill((0, 0, 0))
 
     playfield.renderLayer(0, targetSurface, (0, 0))
@@ -108,17 +113,14 @@ def render():
     livesSurface = font.render(f'LIVES: {gamecontroller.getLives()}', pygame.color.Color(255, 255, 255, 255))
     targetSurface.blit(livesSurface[0], (0, 240 - 12))
 
-    levelSurface = font.render(f'LEVEL {gamecontroller.getLevel()}', pygame.color.Color(255, 255, 255, 255))
+    levelSurface = font.render(f'WEP {gamecontroller.getPlayerTank().getWeapon().getLevel()}', pygame.color.Color(255, 255, 255, 255))
     targetSurface.blit(levelSurface[0], (150, 240 - 12))
 
+    levelSurface = font.render(f'LEVEL {gamecontroller.getLevel()}', pygame.color.Color(255, 255, 255, 255))
+    targetSurface.blit(levelSurface[0], (210, 240 - 12))
+
     levelSurface = font.render(f'{fps}', pygame.color.Color(255, 255, 255, 255))
-    targetSurface.blit(levelSurface[0], (250, 240 - 12))
-
-    pygame.transform.scale(buffer, screenSize, screen)
-
-    #screen.blit(targetSurface, (0,0))
-
-    pygame.display.flip()
+    targetSurface.blit(levelSurface[0], (260, 240 - 12))
 
 def frameCompleted():
     global fpsCounter, fps, lastFpsTime
@@ -127,5 +129,5 @@ def frameCompleted():
         lastFpsTime = pygame.time.get_ticks()
         fps = fpsCounter
         fpsCounter = 0
-        print(fps)
+
 start()

@@ -39,6 +39,7 @@ def loadNextLevel():
     loadLevel(currentLevel + 1)
 
 def reloadCurrentLevel():
+    recreatePlayerTank()
     loadLevel(currentLevel)
 
 def loadLevel(levelNumber):
@@ -104,7 +105,6 @@ def recreatePlayerTank():
     playerTankController = tankcontroller.PlayerTankController(playerTank)
     playerTank.setController(playerTankController)
     playerTank.hitpoints = 5
-    playerTank.setDestroyCallback(playerTankDestroyed)
 
     entities.manager.add(playerTank)
     input.tankController = playerTankController
@@ -116,9 +116,14 @@ def createPlayerTank():
 
 def update(time, timePassed):
     spawnNewTankIfPossible(time)
+    checkPlayerTankDestroyed()
     checkForCompletedLevel()
     checkForDestroyedBase()
     
+def checkPlayerTankDestroyed():
+    if playerTank.isDestroyed():
+        reduceLivesByOne()
+
 def checkForCompletedLevel():
     if allTanksSpawned() and not enemyTanksLeft():
         levelCompleted()
@@ -158,12 +163,9 @@ def getRandomTankSpawnLocation():
 def getPlayerTank():
     return playerTank
 
-def playerTankDestroyed(tank):
-    reduceLivesByOne()
-
 def reduceLivesByOne():
     global lives
-    if lives > 1:
+    if lives > 0:
         lives -= 1
         reloadCurrentLevel()
         print(f'Lost a live, {lives} lives left')
