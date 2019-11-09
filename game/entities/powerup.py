@@ -7,9 +7,8 @@ import gamecontroller
 from utilities import Vector
 
 class Powerup(entities.Entity):
-    def __init__(self, location):
+    def __init__(self):
         super().__init__()
-        self.setLocation(location)
 
     def update(self, time, timePassed):
         if self.boundingRectangle.colliderect(gamecontroller.getPlayerTank().boundingRectangle):
@@ -27,8 +26,8 @@ class Powerup(entities.Entity):
         self.setSize(Vector(self.image.get_width(), self.image.get_height()))
 
 class PowerBoostPowerup(Powerup):
-    def __init__(self, location):
-        super().__init__(location)
+    def __init__(self):
+        super().__init__()
         self.setImage(images.get('powerup'))
 
     def apply(self, tank):

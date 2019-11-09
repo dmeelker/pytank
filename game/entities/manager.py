@@ -9,6 +9,9 @@ def remove(entity):
 def clear():
     entities.clear()
 
+def contains(entity):
+    return entity in entities
+
 def update(time, timePassed):
     disposableEntities = []
 

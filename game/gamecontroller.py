@@ -7,9 +7,10 @@ import playfield
 import entities
 import entities.tank
 import entities.base
-from entities.powerup import PowerBoostPowerup
+
 import tankfactory
 import tankcontroller
+from powerupspawner import PowerupSpawner
 
 import utilities
 from utilities import Vector
@@ -25,6 +26,9 @@ base = None
 liveEnemyTanks = []
 spawnTimer = Timer(5000)
 currentLevel = 1
+
+powerupSpawner = PowerupSpawner()
+powerupTimer = Timer(10000)
 
 def initialize():
     pass
@@ -48,8 +52,6 @@ def loadLevel(levelNumber):
     resetLevelData()
     loadLevelFromFile(os.path.join('levels', f'level{levelNumber}.txt'))
     currentLevel = levelNumber
-
-    entities.manager.add(PowerBoostPowerup(Vector(2, 2)))
 
 def resetLevelData():
     global tankSpawnLocations, upcomingTankLevels, liveEnemyTanks
@@ -119,10 +121,16 @@ def createPlayerTank():
 
 def update(time, timePassed):
     spawnNewTankIfPossible(time)
+    spawnPowerupIfTimerExpired(time)
+
     checkPlayerTankDestroyed()
     checkForCompletedLevel()
     checkForDestroyedBase()
     
+def spawnPowerupIfTimerExpired(time):
+    if powerupTimer.update(time):
+        powerupSpawner.spawn()
+
 def checkPlayerTankDestroyed():
     if playerTank.isDestroyed():
         reduceLivesByOne()
