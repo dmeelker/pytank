@@ -16,10 +16,15 @@ import input
 import pygame.freetype
 # Pygame objects
 screen = None
+screenSize = None
+buffer = None
 clock = pygame.time.Clock()
 font = None
 running = True
 lastUpdateTime = 0
+fpsCounter = 0
+lastFpsTime = 0
+fps = 0
 
 def start():
     initialize()
@@ -27,15 +32,19 @@ def start():
     while running:
         update()
         render()
-        clock.tick(60)
+        frameCompleted()
+
+        clock.tick(30)
 
 def initialize():
-    global screen,clock, font
+    global screen,clock, font, buffer
     pygame.init()
     pygame.joystick.init()
     pygame.display.set_caption("Pytank")
-    screen = pygame.display.set_mode((320, 240)) #, pygame.FULLSCREEN)
+    screen = pygame.display.set_mode((640, 480), pygame.FULLSCREEN)
     pygame.key.set_repeat(50, 50)
+
+    buffer = pygame.Surface((320, 240))
 
     input.initialize()
     gamecontroller.initialize()
@@ -73,29 +82,50 @@ def update():
     gamecontroller.update(time, timePassed)
 
 def handleEvents():
-    global running
+    global running, screenSize
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
             running = False
+        elif event.type == pygame.VIDEORESIZE:
+            screenSize = event.size
+            print(f'New screen size: {screenSize}')
         else:
             input.handleEvent(event)
 
-def render():
-    screen.fill((0, 0, 0))
 
-    playfield.renderLayer(0, screen, (0, 0))
-    entities.manager.render(screen, (0, 0), pygame.time.get_ticks())
-    playfield.renderLayer(1, screen, (0, 0))
+
+def render():
+    targetSurface = buffer
+    targetSurface.fill((0, 0, 0))
+
+    playfield.renderLayer(0, targetSurface, (0, 0))
+    entities.manager.render(targetSurface, (0, 0), pygame.time.get_ticks())
+    playfield.renderLayer(1, targetSurface, (0, 0))
 
     scoreSurface = font.render(f'SCORE: {gamecontroller.getScore()}', pygame.color.Color(255, 255, 255, 255))
-    screen.blit(scoreSurface[0], (75, 240 - 12))
+    targetSurface.blit(scoreSurface[0], (75, 240 - 12))
 
     livesSurface = font.render(f'LIVES: {gamecontroller.getLives()}', pygame.color.Color(255, 255, 255, 255))
-    screen.blit(livesSurface[0], (0, 240 - 12))
+    targetSurface.blit(livesSurface[0], (0, 240 - 12))
 
     levelSurface = font.render(f'LEVEL {gamecontroller.getLevel()}', pygame.color.Color(255, 255, 255, 255))
-    screen.blit(levelSurface[0], (150, 240 - 12))
+    targetSurface.blit(levelSurface[0], (150, 240 - 12))
+
+    levelSurface = font.render(f'{fps}', pygame.color.Color(255, 255, 255, 255))
+    targetSurface.blit(levelSurface[0], (250, 240 - 12))
+
+    pygame.transform.scale(buffer, screenSize, screen)
+
+    #screen.blit(targetSurface, (0,0))
 
     pygame.display.flip()
 
+def frameCompleted():
+    global fpsCounter, fps, lastFpsTime
+    fpsCounter+=1
+    if pygame.time.get_ticks() - lastFpsTime > 1000:
+        lastFpsTime = pygame.time.get_ticks()
+        fps = fpsCounter
+        fpsCounter = 0
+        print(fps)
 start()
