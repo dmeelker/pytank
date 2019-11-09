@@ -2,7 +2,6 @@ import enum
 
 import entities
 import images
-import gamecontroller
 
 from utilities import Vector
 
@@ -11,6 +10,8 @@ class Powerup(entities.Entity):
         super().__init__()
 
     def update(self, time, timePassed):
+        import gamecontroller
+
         if self.boundingRectangle.colliderect(gamecontroller.getPlayerTank().boundingRectangle):
             self.apply(gamecontroller.getPlayerTank())
             self.markDisposable()

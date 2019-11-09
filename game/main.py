@@ -2,6 +2,7 @@ import os
 
 import pygame
 import pygame.joystick
+import pygame.freetype
 
 import images
 import utilities
@@ -13,7 +14,9 @@ import entities
 import entities.manager
 import input
 
-import pygame.freetype
+import pathfinding.pathfindingbackgroundworker as PathfinderWorker
+
+
 # Pygame objects
 screen = None
 screenSize = None
@@ -53,6 +56,8 @@ def initialize():
     font = pygame.freetype.Font(os.path.join('fonts', 'DTM-Sans.otf'), size=13)
     font.antialiased = False
     loadImages()
+    
+    PathfinderWorker.start()
 
     gamecontroller.startNewGame()
 

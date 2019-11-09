@@ -3,15 +3,9 @@ from .pathfinder import PathFinder
 from .searchgrid import SearchGrid
 
 class PlannedPath():
-    def __init__(self, searchGrid, startLocation, targetLocation):
-        self.startLocation = startLocation
-        self.targetLocation = targetLocation
-        self.plotPath(searchGrid,startLocation, targetLocation)
-
-    def plotPath(self, searchGrid, startLocation, targetLocation):
-        pathFinder = PathFinder(searchGrid)
-
-        self.path = pathFinder.find(startLocation, targetLocation)
+    def __init__(self, path):
+        self.path = path
+        self.targetLocation = path[-1]
         self.targetStepIndex = 1
 
     def moveToNextStepIfCurrentStepIsReached(self, currentLocation):

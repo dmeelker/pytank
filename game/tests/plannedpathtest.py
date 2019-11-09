@@ -6,6 +6,7 @@ from utilities import Vector
 
 from playfield import Tile
 from playfield import TileType
+from pathfinding.pathfinder import PathFinder
 from pathfinding.plannedpath import PlannedPath
 from pathfinding.searchgridgenerator import SearchGridGenerator
 
@@ -64,7 +65,10 @@ class TestPlannedPath(unittest.TestCase):
 
     def createPath(self, startLocation, endLocation):
         searchGrid = SearchGridGenerator.generateSearchGridFromPlayfield()
-        return PlannedPath(searchGrid, startLocation, endLocation)
+        pathFinder = PathFinder(searchGrid)
+        path = pathFinder.find(startLocation, endLocation)
+
+        return PlannedPath(path)
 
 def setupEmptyPlayField(width, height):
     playfield.initialize(width, height)

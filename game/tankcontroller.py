@@ -10,6 +10,8 @@ import gamecontroller
 from pathfinding.plannedpath import PlannedPath
 from pathfinding.searchgridgenerator import SearchGridGenerator
 from pathfinding.searchgrid import SearchGrid
+import pathfinding.pathfindingbackgroundworker as PathfinderWorker
+from pathfinding.pathfindingbackgroundworker import Task as PathFindingTask
 
 import images
 
@@ -48,11 +50,17 @@ class AiTankController(TankController):
         self.lastMovementTime = pygame.time.get_ticks()
         self.plannedPath = None
         self.pathPlanTime = 0
-        self.planThread = None
+        self.pendingSearch = None
     
     def update(self, time, timePassed):
         if self.fireTimer.update(time):
             self.fire(time)
+
+        if self.pendingSearch != None and self.pendingSearch.isCompleted():
+            if self.pendingSearch.getPath() != None:
+                self.plannedPath = PlannedPath(self.pendingSearch.getPath())
+                self.resetLastMovementTime(pygame.time.get_ticks())
+            self.pendingSearch = None
 
     def render(self, screen):
         if self.plannedPath != None:
@@ -92,11 +100,15 @@ class AiTankController(TankController):
         searchGrid = SearchGridGenerator.generateSearchGridFromPlayfield()
         gridEnd = pygame.time.get_ticks()
         startPlan = pygame.time.get_ticks()
-        self.plannedPath = PlannedPath(searchGrid, self.toSearchSpaceCoordinateTuple(self.entity.getLocation()), self.toSearchSpaceCoordinateTuple(targetLocation))
-        planEnd = pygame.time.get_ticks()
-        print(f'Grid took: {gridEnd - gridStart}ms Pathfinding took {planEnd - startPlan}ms')
+
+        start = self.toSearchSpaceCoordinateTuple(self.entity.getLocation())
+        end = self.toSearchSpaceCoordinateTuple(targetLocation)
+        self.pendingSearch = PathFindingTask(searchGrid, start, end)
+        PathfinderWorker.queueTask(self.pendingSearch)
+
         self.pathPlanTime = pygame.time.get_ticks()
-        self.resetLastMovementTime(pygame.time.get_ticks())
+
+
 
     def moveTowardsLocation(self, targetLocation):
         location = self.entity.location
@@ -177,7 +189,7 @@ class BaseChargerAiTankController(AiTankController):
     def update(self, time, timePassed):
         super().update(time, timePassed)
 
-        if self.plannedPath is None or self.pathRecalculationNeeded(time):
+        if (self.plannedPath is None and self.pendingSearch is None) or self.pathRecalculationNeeded(time):
             self.plotPathToLocation(gamecontroller.base.location)
-        elif not self.plannedPath.targetReached():
+        elif self.plannedPath != None and not self.plannedPath.targetReached():
             self.moveAlongPath(time)
