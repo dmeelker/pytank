@@ -54,7 +54,7 @@ def resetLevelData():
     tankSpawnLocations = []
     upcomingTankLevels = []
     liveEnemyTanks = []
-    playfield.initialize(40, 30)
+    playfield.initialize(40, 28)
     resetSpawnTimer()
 
 def loadLevelFromFile(fileName):
@@ -185,3 +185,12 @@ def addScorePoints(points):
     global score
     score += points
     print(f'New score: {score}')
+
+def getScore():
+    return score
+
+def getLives():
+    return lives
+
+def getLevel():
+    return currentLevel

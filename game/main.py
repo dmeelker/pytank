@@ -1,3 +1,5 @@
+import os
+
 import pygame
 import pygame.joystick
 
@@ -11,10 +13,11 @@ import entities
 import entities.manager
 import input
 
+import pygame.freetype
 # Pygame objects
 screen = None
 clock = pygame.time.Clock()
-
+font = None
 running = True
 lastUpdateTime = 0
 
@@ -27,7 +30,7 @@ def start():
         clock.tick(60)
 
 def initialize():
-    global screen,clock
+    global screen,clock, font
     pygame.init()
     pygame.joystick.init()
     pygame.display.set_caption("Pytank")
@@ -37,6 +40,9 @@ def initialize():
     input.initialize()
     gamecontroller.initialize()
 
+    pygame.freetype.init()
+    font = pygame.freetype.Font(os.path.join('fonts', 'DTM-Sans.otf'), size=13)
+    font.antialiased = False
     loadImages()
 
     gamecontroller.startNewGame()
@@ -80,6 +86,15 @@ def render():
     playfield.renderLayer(0, screen, (0, 0))
     entities.manager.render(screen, (0, 0), pygame.time.get_ticks())
     playfield.renderLayer(1, screen, (0, 0))
+
+    scoreSurface = font.render(f'SCORE: {gamecontroller.getScore()}', pygame.color.Color(255, 255, 255, 255))
+    screen.blit(scoreSurface[0], (75, 240 - 12))
+
+    livesSurface = font.render(f'LIVES: {gamecontroller.getLives()}', pygame.color.Color(255, 255, 255, 255))
+    screen.blit(livesSurface[0], (0, 240 - 12))
+
+    levelSurface = font.render(f'LEVEL {gamecontroller.getLevel()}', pygame.color.Color(255, 255, 255, 255))
+    screen.blit(levelSurface[0], (150, 240 - 12))
 
     pygame.display.flip()
 
