@@ -7,6 +7,7 @@ import playfield
 import entities
 import entities.tank
 import entities.base
+from entities.powerup import PowerBoostPowerup
 import tankfactory
 import tankcontroller
 
@@ -47,6 +48,8 @@ def loadLevel(levelNumber):
     resetLevelData()
     loadLevelFromFile(os.path.join('levels', f'level{levelNumber}.txt'))
     currentLevel = levelNumber
+
+    entities.manager.add(PowerBoostPowerup(Vector(2, 2)))
 
 def resetLevelData():
     global tankSpawnLocations, upcomingTankLevels, liveEnemyTanks

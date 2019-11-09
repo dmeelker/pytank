@@ -65,6 +65,8 @@ def loadImages():
     images.load('water.png', 'water')
     images.load('base.png', 'base')
 
+    images.load('powerup.png', 'powerup')
+
     images.generateRotatedImages('tank1.png', 'tank1')
     images.generateRotatedImages('tank1.png', 'tank2')
     images.generateRotatedImages('tank1.png', 'tank3')

@@ -177,6 +177,10 @@ class Weapon:
         if level >= 4:
             self.breaksConcrete = True
 
+    def improve(self):
+        if self.level < 4:
+            self.setLevel(self.level + 1)
+
     def canFire(self, time):
         return time - self.lastFireTime > self.fireDelay
 
