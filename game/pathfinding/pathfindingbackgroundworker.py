@@ -41,9 +41,7 @@ def workerFunction():
     running = False
 
 def processTask(task):
-    print(task)
     path = PathFinder(task.searchGrid).find(task.startLocation, task.endLocation)
-    print(path)
     task.setCompleted(path)
 
 class Task():
@@ -66,3 +64,6 @@ class Task():
 
     def getPath(self):
         return self.path
+
+    def pathFound(self):
+        return self.path != None
