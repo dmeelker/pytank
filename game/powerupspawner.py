@@ -20,7 +20,7 @@ class PowerupSpawner():
             return None
         else:
             powerup = self.createRandomPowerup()
-            powerup.setLocation(Vector(location[0], location[1]))
+            powerup.setLocation(Vector(location[0] * playfield.blockSize, location[1] * playfield.blockSize))
             return powerup
 
     def createRandomPowerup(self):
