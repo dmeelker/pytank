@@ -1,11 +1,8 @@
-Tweak weapons
+[x]Tweak weapons
 - Basic weapon
 - Increased fire rate
 - Double power weapon
 - Destroy concrete
-
-- heavy weapons should destroy more blocks
-- concrete should only be destroyable by highest level weapon
 
 [x] Player death crash
 Player navigation
@@ -18,12 +15,12 @@ Powerups
 - Destroy all tanks
 
 Display state of base
-Display score, lives and weapon power
+[x] Display score, lives and weapon power
 
 Different AI behaviours
-- Stupid random walker
-- Stalker (tracks the player)
-- Bulldozer (goes straight for the base by blasting through any walls that might be in the way)
+- [x] Stupid random walker
+- [x] Stalker (tracks the player)
+- [x] Bulldozer (goes straight for the base by blasting through any walls that might be in the way)
 - Saboteur (finds quikest way to base and attempts to destroy it)
 
 More levels
