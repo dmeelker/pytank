@@ -31,6 +31,9 @@ class Vector:
     def multiplyScalar(self, scalar):
         return Vector(self.x * scalar, self.y * scalar)
         
+    def round(self):
+        return Vector(round(self.x), round(self.y))
+
     def toUnit(self):
         length = self.length()
         return Vector(self.x / length, self.y / length)

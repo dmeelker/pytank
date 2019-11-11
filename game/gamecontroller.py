@@ -116,7 +116,7 @@ def recreatePlayerTank():
 
 def createPlayerTank():
     tank = entities.tank.Tank(Vector(100, 100), type=1)
-    tank.movementSpeed = 3
+    tank.movementSpeed = 1
     return tank
 
 def update(time, timePassed):
