@@ -11,7 +11,7 @@ Powerups
 - [x] Better weapon
 - Movement speed
 - [x] Repair base
-- Shield
+- [x] Shield
 - [x] Destroy all tanks
 - [x] Repair self
 
