@@ -29,6 +29,9 @@ def setTile(x, y, tile):
 def getTile(x, y):
     return tiles[x][y]
 
+def getTilesInQuad(x, y):
+    return [tiles[x][y], tiles[x+1][y], tiles[x][y+1], tiles[x+1][y+1]]
+
 def getTileAtPixel(x, y):
     tileX = int(x / blockSize)
     tileY = int(y / blockSize)

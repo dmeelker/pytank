@@ -24,24 +24,52 @@ class TestPowerupSpawner(unittest.TestCase):
         powerup = PowerupSpawner().createRandomPowerup()
         self.assertTrue(isinstance(powerup, Powerup))
 
-    def test_getRandomPowerupLocation(self):
-        setupPlayfield(['B-'])
-        location = PowerupSpawner().getRandomPowerupLocation()
-        self.assertEqual((1,0), location)
+    def test_getAvailableLocations_NoRoom(self):
+        setupPlayfield([\
+            'BBB', \
+            'B-B', \
+            'BBB'])
+        locations = list(PowerupSpawner().getAvailableLocations())
+        self.assertEqual(0, len(locations))
 
-    def test_getRandomPowerupLocation_noRoom(self):
-        setupPlayfield(['B'])
-        location = PowerupSpawner().getRandomPowerupLocation()
-        self.assertIsNone(location)
+    def test_getAvailableLocations_SingleSpot(self):
+        setupPlayfield([\
+            '--', \
+            '--',])
+        locations = list(PowerupSpawner().getAvailableLocations())
+        self.assertEqual([(0,0)], locations)
+
+    def test_getAvailableLocations_Surrounded(self):
+        setupPlayfield([\
+            'BBBB', \
+            'B--B', \
+            'B--B', \
+            'BBBB'])
+        locations = list(PowerupSpawner().getAvailableLocations())
+        self.assertEqual([(1,1)], locations)
+
+    def test_getAvailableLocations_MultipleSpots(self):
+        setupPlayfield([\
+            'BBBBB', \
+            'B---B', \
+            'B---B', \
+            'B---B', \
+            'BBBBB'])
+        locations = list(PowerupSpawner().getAvailableLocations())
+        self.assertEqual([(1,1), (2,1), (1,2), (2,2)], locations)
 
     def test_createRandomPowerupAtRandomLocation(self):
-        setupPlayfield(['B-'])
+        setupPlayfield([\
+            '--', \
+            '--',])
         createdPowerup = PowerupSpawner().createRandomPowerupAtRandomLocation()
 
         self.assertIsNotNone(createdPowerup)
     
     def test_spawn_powerupIsAddedToManager(self):
-        setupPlayfield(['-'])
+        setupPlayfield([\
+            '--', \
+            '--',])
         powerup = PowerupSpawner().spawn()
 
         self.assertTrue(entities.manager.contains(powerup))

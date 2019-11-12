@@ -27,11 +27,19 @@ class PowerupSpawner():
         return PowerBoostPowerup()
 
     def getRandomPowerupLocation(self):
-        for i in range(20):
-            x = random.randint(0, playfield.width - 1)
-            y = random.randint(0, playfield.height - 1)
+        availableLocations = list(self.getAvailableLocations())
+        if len(availableLocations) == 0:
+            return None
+        else:
+            randomIndex = random.randint(0, len(availableLocations) - 1)
+            return availableLocations[randomIndex]
 
-            tile = playfield.getTile(x, y)
-            if tile == None or not tile.blocksMovement:
-                return (x, y)
-        return None
+    def getAvailableLocations(self):
+        for y in range(playfield.height - 1):
+            for x in range(playfield.width - 1):
+                tiles = playfield.getTilesInQuad(x, y)
+                for tile in tiles:
+                    if tile != None and tile.blocksMovement:
+                        break
+                else:
+                    yield (x, y)
