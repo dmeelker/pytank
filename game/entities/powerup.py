@@ -55,3 +55,10 @@ class DestroyAllTanksPowerup(Powerup):
 
     def apply(self, tank):
         gamecontroller.destroyAllEnemyTanks()
+
+class ShieldPowerup(Powerup):
+    def __init__(self):
+        super().__init__(images.get('powerup_weapon'))
+
+    def apply(self, tank):
+        tank.enableShield(10000)

@@ -27,6 +27,9 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
         self.hitpoints = self.maxHitPoints
         self.movementSpeed = 1
 
+        self.shielded = False
+        self.shieldEndTime = 0
+
         self.weapon = Weapon(self, level=1)
 
         self.controller = None
@@ -70,6 +73,8 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
             movementVector = self.heading.multiplyScalar(self.movementSpeed * timePassed * 0.05).round()
             self.movementHandler.moveEntity(movementVector)
 
+        self.checkIfShieldIsDone(time)
+
         self.moving = False
         pass
 
@@ -111,6 +116,9 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
         # return location
 
     def hitByProjectile(self, projectile, time):
+        if self.shielded:
+            return
+        
         self.lastHitTime = time
         self.lastHitVector = projectile.directionVector
 
@@ -144,6 +152,16 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
 
     def setWeapon(self, newWeapon):
         self.weapon = newWeapon
+
+    def enableShield(self, duration):
+        self.shielded = True
+        self.shieldEndTime = pygame.time.get_ticks() + duration
+        print(f'Shield enabled for {duration} seconds')
+
+    def checkIfShieldIsDone(self, time):
+        if self.shielded and time >= self.shieldEndTime:
+            self.shielded = False
+            print('Shield has ran out')
 
     def setDestroyCallback(self, callback):
         self.destroyCallback = callback

@@ -24,7 +24,7 @@ class PowerupSpawner():
             return powerup
 
     def createRandomPowerup(self):
-        types = [PowerBoostPowerup, RepairTankPowerup, RepairBasePowerup, DestroyAllTanksPowerup]
+        types = [PowerBoostPowerup, RepairTankPowerup, RepairBasePowerup, DestroyAllTanksPowerup, ShieldPowerup]
         powerupType = types[random.randint(0, len(types) - 1)]
         return powerupType()
 
