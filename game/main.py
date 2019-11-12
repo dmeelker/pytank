@@ -70,7 +70,9 @@ def loadImages():
     images.load('water.png', 'water')
     images.load('base.png', 'base')
 
-    images.load('powerup.png', 'powerup')
+    images.load('powerup_weapon.png', 'powerup_weapon')
+    images.load('powerup_destroyall.png', 'powerup_destroyall')
+    images.load('powerup_repairself.png', 'powerup_repairself')
 
     images.generateRotatedImages('tank1.png', 'tank1')
     images.generateRotatedImages('tank1.png', 'tank2')

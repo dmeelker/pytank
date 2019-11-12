@@ -21,3 +21,6 @@ class Base(entities.Entity, entities.ProjectileCollider, entities.Blocking):
 
         if self.hitpoints <= 0:
             self.markDisposable()
+
+    def repair(self):
+        self.hitpoints = 10

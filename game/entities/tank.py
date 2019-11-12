@@ -23,7 +23,8 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
         self.moving = False
         self.type = type
 
-        self.hitpoints = 10
+        self.maxHitPoints = 10
+        self.hitpoints = self.maxHitPoints
         self.movementSpeed = 1
 
         self.weapon = Weapon(self, level=1)
@@ -43,6 +44,13 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
 
     def getScorePoints(self):
         return self.type * 100
+
+    def setMaxHitpoints(self, hitpoints):
+        self.maxHitPoints = hitpoints
+        self.repair()
+
+    def repair(self):
+        self.hitpoints = self.maxHitPoints
 
     def setController(self, controller):
         self.controller = controller

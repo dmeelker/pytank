@@ -59,7 +59,6 @@ class TankSpawnSchedule():
         parts = input.split(' ')
 
         for partString in parts:
-            print(partString + '=>' + partString.strip())
             partString = partString.strip()
             if len(partString) == 0:
                 continue

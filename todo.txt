@@ -8,11 +8,12 @@
 Player navigation
 
 Powerups
-- Better weapon
+- [x] Better weapon
 - Movement speed
-- Repair base
+- [x] Repair base
 - Shield
-- Destroy all tanks
+- [x] Destroy all tanks
+- [x] Repair self
 
 Display state of base
 [x] Display score, lives and weapon power

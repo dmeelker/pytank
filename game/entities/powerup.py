@@ -2,12 +2,14 @@ import enum
 
 import entities
 import images
+import gamecontroller
 
 from utilities import Vector
 
 class Powerup(entities.Entity):
-    def __init__(self):
+    def __init__(self, image):
         super().__init__()
+        self.setImage(image)
 
     def update(self, time, timePassed):
         import gamecontroller
@@ -28,8 +30,28 @@ class Powerup(entities.Entity):
 
 class PowerBoostPowerup(Powerup):
     def __init__(self):
-        super().__init__()
-        self.setImage(images.get('powerup'))
+        super().__init__(images.get('powerup_weapon'))
 
     def apply(self, tank):
         tank.getWeapon().improve()
+
+class RepairTankPowerup(Powerup):
+    def __init__(self):
+        super().__init__(images.get('powerup_repairself'))
+
+    def apply(self, tank):
+        tank.repair()
+
+class RepairBasePowerup(Powerup):
+    def __init__(self):
+        super().__init__(images.get('powerup_repairself'))
+
+    def apply(self, tank):
+        gamecontroller.getBase().repair()
+
+class DestroyAllTanksPowerup(Powerup):
+    def __init__(self):
+        super().__init__(images.get('powerup_destroyall'))
+
+    def apply(self, tank):
+        gamecontroller.destroyAllEnemyTanks()

@@ -28,7 +28,7 @@ liveEnemyTanks = []
 currentLevel = 1
 
 powerupSpawner = PowerupSpawner()
-powerupTimer = Timer(30000)
+powerupTimer = Timer(10000)
 
 def initialize():
     pass
@@ -117,7 +117,7 @@ def recreatePlayerTank():
     playerTank = createPlayerTank()
     playerTankController = tankcontroller.PlayerTankController(playerTank)
     playerTank.setController(playerTankController)
-    playerTank.hitpoints = 5
+    playerTank.setMaxHitpoints(5)
 
     entities.manager.add(playerTank)
     input.tankController = playerTankController
@@ -170,6 +170,14 @@ def spawnNewTankIfPossible(time):
         if newTank != None:
             newTank.setDestroyCallback(computerTankDestroyed)
             liveEnemyTanks.append(newTank)
+
+def destroyAllEnemyTanks():
+    tanksToDestroy = liveEnemyTanks.copy()
+    for tank in tanksToDestroy:
+        tank.destroy()
+
+def getBase():
+    return base
 
 def getPlayerTank():
     return playerTank
