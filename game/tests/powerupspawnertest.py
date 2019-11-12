@@ -29,14 +29,14 @@ class TestPowerupSpawner(unittest.TestCase):
             'BBB', \
             'B-B', \
             'BBB'])
-        locations = list(PowerupSpawner().getAvailableLocations())
+        locations = PowerupSpawner().getAvailableLocations()
         self.assertEqual(0, len(locations))
 
     def test_getAvailableLocations_SingleSpot(self):
         setupPlayfield([\
             '--', \
             '--',])
-        locations = list(PowerupSpawner().getAvailableLocations())
+        locations = PowerupSpawner().getAvailableLocations()
         self.assertEqual([(0,0)], locations)
 
     def test_getAvailableLocations_Surrounded(self):
@@ -45,7 +45,7 @@ class TestPowerupSpawner(unittest.TestCase):
             'B--B', \
             'B--B', \
             'BBBB'])
-        locations = list(PowerupSpawner().getAvailableLocations())
+        locations = PowerupSpawner().getAvailableLocations()
         self.assertEqual([(1,1)], locations)
 
     def test_getAvailableLocations_MultipleSpots(self):
@@ -55,7 +55,7 @@ class TestPowerupSpawner(unittest.TestCase):
             'B---B', \
             'B---B', \
             'BBBBB'])
-        locations = list(PowerupSpawner().getAvailableLocations())
+        locations = PowerupSpawner().getAvailableLocations()
         self.assertEqual([(1,1), (2,1), (1,2), (2,2)], locations)
 
     def test_createRandomPowerupAtRandomLocation(self):
