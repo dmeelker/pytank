@@ -166,12 +166,12 @@ class Weapon:
 
     def setLevel(self, level):
         self.level = level
-        self.fireDelay = 500
+        self.fireDelay = 1000
         self.power = 1
         self.breaksConcrete = False
 
         if level >= 2:
-            self.fireDelay = 300
+            self.fireDelay = 500
         if level >= 3:
             self.power = 2
         if level >= 4:

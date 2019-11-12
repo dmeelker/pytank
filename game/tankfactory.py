@@ -12,14 +12,7 @@ class TankSpec:
 tankSpecs = [
     TankSpec(1, 1, 1, 1),
     TankSpec(2, 1, 2, 1),
-    TankSpec(1, 1, 4, 2),
-    # TankSpec(1, 1000, 2, 1),
-    # TankSpec(1, 1000, 2, 1),
-    # TankSpec(1, 1000, 2, 1),
-    # TankSpec(1, 1000, 2, 1),
-    # TankSpec(1, 1000, 2, 1),
-    # TankSpec(1, 1000, 2, 1),
-    # TankSpec(1, 1000, 2, 1)
+    TankSpec(1, 1, 4, 2)
 ]
 
 def createTank(level, location):

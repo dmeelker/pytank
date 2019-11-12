@@ -1,5 +1,6 @@
 import random
 import os
+import pygame
 
 import images
 import input
@@ -10,6 +11,7 @@ import entities.base
 
 import tankfactory
 import tankcontroller
+import tankspawnschedule
 from powerupspawner import PowerupSpawner
 
 import utilities
@@ -20,15 +22,13 @@ playerTank = None
 score = 0
 lives = 3
 
-tankSpawnLocations = []
-upcomingTankLevels = []
+tankSpawns = []
 base = None
 liveEnemyTanks = []
-spawnTimer = Timer(5000)
 currentLevel = 1
 
 powerupSpawner = PowerupSpawner()
-powerupTimer = Timer(10000)
+powerupTimer = Timer(30000)
 
 def initialize():
     pass
@@ -54,29 +54,36 @@ def loadLevel(levelNumber):
     currentLevel = levelNumber
 
 def resetLevelData():
-    global tankSpawnLocations, upcomingTankLevels, liveEnemyTanks
+    global tankSpawns, liveEnemyTanks
     entities.manager.clear()
     entities.manager.add(playerTank)
-    tankSpawnLocations = []
-    upcomingTankLevels = []
+    tankSpawns = []
     liveEnemyTanks = []
     playfield.initialize(40, 28)
-    resetSpawnTimer()
 
 def loadLevelFromFile(fileName):
     file = open(fileName, 'rt', encoding="utf-8")
-    readTankSpawnOrderFromFile(file)
+    readTankSpawnSchedulesFromFile(file)
     readLevelLayoutFromFile(file)
     file.close()
 
-def readTankSpawnOrderFromFile(file):
-    global upcomingTankLevels
-    spawnOrderLine = file.readline()
-    tankLevelsAsString = spawnOrderLine.split(' ')
-    for levelString in tankLevelsAsString:
-        upcomingTankLevels.append(int(levelString))
+def readTankSpawnSchedulesFromFile(file):
+    spawnCount = int(file.readline())
+
+    for spawnIndex in range(spawnCount):
+        createTankSpawnSchedule(file.readline())
+
+def createTankSpawnSchedule(line):
+    scheduleMoments = tankspawnschedule.TankSpawnSchedule.parseSpawnMomentsFromString(line)
+    schedule = tankspawnschedule.TankSpawnSchedule(pygame.time.get_ticks(), scheduleMoments)
+    tankSpawns.append(tankspawnschedule.TankSpawn(Vector(0, 0), schedule))
+
+foundTankSpawns = 0
 
 def readLevelLayoutFromFile(file):
+    global foundTankSpawns
+    foundTankSpawns = 0
+
     lines = file.readlines()
     for y in range(len(lines)):
         for x in range(playfield.width):
@@ -84,7 +91,7 @@ def readLevelLayoutFromFile(file):
             interpretLevelLayoutCharacter(character, x, y)
 
 def interpretLevelLayoutCharacter(character, x, y):
-    global tankSpawnLocations, base
+    global foundTankSpawns, base
     pixelLocation = Vector(x * playfield.blockSize, y * playfield.blockSize)
 
     if character == 'B':
@@ -102,7 +109,8 @@ def interpretLevelLayoutCharacter(character, x, y):
         playerTank.setLocation(pixelLocation)
         playerTank.setHeading(utilities.vectorUp)
     elif character == 'S':
-        tankSpawnLocations.append(pixelLocation)
+        tankSpawns[foundTankSpawns].setLocation(pixelLocation)
+        foundTankSpawns += 1
 
 def recreatePlayerTank():
     global playerTank
@@ -147,29 +155,21 @@ def levelCompleted():
     loadNextLevel()
 
 def allTanksSpawned():
-    return len(upcomingTankLevels) == 0
+    for spawn in tankSpawns:
+        if not spawn.completed():
+            return False
+    else:
+        return True
 
 def enemyTanksLeft():
     return len(liveEnemyTanks) > 0
 
-def resetSpawnTimer():
-    spawnTimer.setInterval(random.randint(4000, 6000))
-
 def spawnNewTankIfPossible(time):
-    if not allTanksSpawned() and spawnTimer.update(time):
-        spawnTank()
-
-def spawnTank():
-    location = getRandomTankSpawnLocation()
-    tankLevel = upcomingTankLevels.pop(0)
-    print(f'Spawning tank of level {tankLevel}')
-    tank = tankfactory.createTank(tankLevel, location)
-    tank.setDestroyCallback(computerTankDestroyed)
-    liveEnemyTanks.append(tank)
-    entities.manager.add(tank)
-
-def getRandomTankSpawnLocation():
-    return tankSpawnLocations[random.randint(0, len(tankSpawnLocations) -1)] 
+    for tankSpawn in tankSpawns:
+        newTank = tankSpawn.update(time)
+        if newTank != None:
+            newTank.setDestroyCallback(computerTankDestroyed)
+            liveEnemyTanks.append(newTank)
 
 def getPlayerTank():
     return playerTank
