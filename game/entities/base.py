@@ -24,3 +24,6 @@ class Base(entities.Entity, entities.ProjectileCollider, entities.Blocking):
 
     def repair(self):
         self.hitpoints = 10
+
+    def getHitpoints(self):
+        return self.hitpoints

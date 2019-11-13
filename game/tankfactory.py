@@ -11,7 +11,8 @@ class TankSpec:
 tankSpecs = [
     TankSpec(1, 1, 1),
     TankSpec(2, 1, 2),
-    TankSpec(1, 1, 4)
+    TankSpec(1, 1, 3),
+    TankSpec(1, 3, 4),
 ]
 
 def createTank(level, location):
@@ -34,6 +35,8 @@ def getTankController(tank):
     elif tankLevel == 2:
         return tankcontroller.PlayerChargerAiTankController(tank)
     elif tankLevel == 3:
+        return tankcontroller.BaseStalkerAiTankController(tank)
+    elif tankLevel == 4: 
         return tankcontroller.BaseChargerAiTankController(tank)
 
     return tankcontroller.RandomMovementAiTankController(tank)

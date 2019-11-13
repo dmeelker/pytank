@@ -1,20 +1,22 @@
 import playfield
-from .searchgrid import SearchGrid
+from pathfinding.searchgrid import SearchGrid
 
 class SearchGridGenerator():
     @staticmethod
-    def generateSearchGridFromPlayfield():
+    def generateSearchGridFromPlayfield(cellValueFunction = None):
+        cellValueFunction = cellValueFunction or SearchGridGenerator.getSearchSpaceCellValueForTile
         grid = SearchGrid(playfield.width, playfield.height)
-        SearchGridGenerator.generateTerrainBasedGrid(grid)
+        SearchGridGenerator.generateTerrainBasedGrid(grid, cellValueFunction)
         SearchGridGenerator.accountForDoubleSize(grid)
 
         return grid
 
     @staticmethod
-    def generateTerrainBasedGrid(grid):
+    def generateTerrainBasedGrid(grid, cellValueFunction):
         for x in range(grid.width):
             for y in range(grid.height):
-                grid.set(x, y, SearchGridGenerator.getSearchSpaceCellValueFromPlayfield(x, y))
+                tile = playfield.getTile(x, y)
+                grid.set(x, y, cellValueFunction(tile))
 
     @staticmethod
     def accountForDoubleSize(grid):
@@ -29,16 +31,6 @@ class SearchGridGenerator():
                     values = [grid.get(x, y), grid.get(x, y + 1)]
                     if values[1] > 0 and values[0] == 0:
                         grid.set(x, y, values[1])
-                
-    @staticmethod
-    def fillGaps(grid):
-        SearchGridGenerator.fillHorizontalGaps(grid)
-        SearchGridGenerator.fillVerticalGaps(grid)
-
-    @staticmethod
-    def getSearchSpaceCellValueFromPlayfield(x, y):
-        tile = playfield.getTile(x, y)
-        return SearchGridGenerator.getSearchSpaceCellValueForTile(tile)
 
     @staticmethod
     def getSearchSpaceCellValueForTile(tile):

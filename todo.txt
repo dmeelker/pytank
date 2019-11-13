@@ -15,13 +15,14 @@ Powerups
 - [x] Destroy all tanks
 - [x] Repair self
 
-Display state of base
+Display state of base & health
 [x] Display score, lives and weapon power
 
 Different AI behaviours
 - [x] Stupid random walker
 - [x] Stalker (tracks the player)
 - [x] Bulldozer (goes straight for the base by blasting through any walls that might be in the way)
-- Saboteur (finds quikest way to base and attempts to destroy it)
+- [x] Saboteur (finds quikest way to base and attempts to destroy it)
 
+Graphics
 More levels

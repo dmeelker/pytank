@@ -173,6 +173,9 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
     def getLevel(self):
         return self.type
 
+    def getHitpoints(self):
+        return self.hitpoints
+
     def destroy(self):
         self.destroyed = True
         self.fireDestroyCallback()

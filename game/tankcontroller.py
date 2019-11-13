@@ -51,6 +51,7 @@ class AiTankController(TankController):
         self.pendingPathSearch = None
         self.plannedPath = None
         self.pathPlanTime = 0
+        self.searchGridFunction = SearchGridGenerator.getSearchSpaceCellValueForTile
         
     
     def update(self, time, timePassed):
@@ -103,7 +104,7 @@ class AiTankController(TankController):
         self.fireTimer.setInterval(random.randint(400, 600))
 
     def plotPathToLocation(self, targetLocation):
-        searchGrid = SearchGridGenerator.generateSearchGridFromPlayfield()
+        searchGrid = SearchGridGenerator.generateSearchGridFromPlayfield(self.searchGridFunction)
         start = self.toSearchSpaceCoordinateTuple(self.entity.getLocation())
         end = self.toSearchSpaceCoordinateTuple(targetLocation)
         
@@ -194,6 +195,28 @@ class PlayerChargerAiTankController(AiTankController):
             self.moveAlongPath(time)
 
 class BaseChargerAiTankController(AiTankController):
+    def __init__(self, entity):
+        super().__init__(entity)
+        self.searchGridFunction = BaseChargerAiTankController.getSearchSpaceCellValueForTile
+    
+    def update(self, time, timePassed):
+        super().update(time, timePassed)
+
+        if self.pathRecalculationNeeded(time):
+            self.plotPathToLocation(gamecontroller.base.location)
+        elif self.canMoveAlongPath():
+            self.moveAlongPath(time)
+
+    @staticmethod
+    def getSearchSpaceCellValueForTile(tile):
+        if tile is None:
+            return 0
+        elif tile.tileType == playfield.TileType.BRICK:
+            return 0
+        else:
+            return SearchGridGenerator.getSearchSpaceCellValueForTile(tile)
+
+class BaseStalkerAiTankController(AiTankController):
     def __init__(self, entity):
         super().__init__(entity)
     

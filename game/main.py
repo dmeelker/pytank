@@ -69,6 +69,7 @@ def loadImages():
     images.load('tree.png', 'tree')
     images.load('water.png', 'water')
     images.load('base.png', 'base')
+    images.load('tank1.png', 'tank1')
 
     images.load('powerup_weapon.png', 'powerup_weapon')
     images.load('powerup_destroyall.png', 'powerup_destroyall')
@@ -77,6 +78,7 @@ def loadImages():
     images.generateRotatedImages('tank1.png', 'tank1')
     images.generateRotatedImages('tank1.png', 'tank2')
     images.generateRotatedImages('tank1.png', 'tank3')
+    images.generateRotatedImages('tank1.png', 'tank4')
     
 def update():
     global lastUpdateTime
@@ -119,17 +121,53 @@ def renderToSurface(targetSurface):
     scoreSurface = font.render(f'SCORE: {gamecontroller.getScore()}', pygame.color.Color(255, 255, 255, 255))
     targetSurface.blit(scoreSurface[0], (75, 240 - 12))
 
-    livesSurface = font.render(f'LIVES: {gamecontroller.getLives()}', pygame.color.Color(255, 255, 255, 255))
-    targetSurface.blit(livesSurface[0], (0, 240 - 12))
+    renderLives(targetSurface)
+    renderWeaponPower(targetSurface)
+    renderPlayerHitpoints(targetSurface)
+    renderBaseHitpoints(targetSurface)
+    # livesSurface = font.render(f'LIVES: {gamecontroller.getLives()}', pygame.color.Color(255, 255, 255, 255))
+    # targetSurface.blit(livesSurface[0], (0, 240 - 12))
 
-    levelSurface = font.render(f'WEP {gamecontroller.getPlayerTank().getWeapon().getLevel()}', pygame.color.Color(255, 255, 255, 255))
-    targetSurface.blit(levelSurface[0], (150, 240 - 12))
+    # levelSurface = font.render(f'WEP {gamecontroller.getPlayerTank().getWeapon().getLevel()}', pygame.color.Color(255, 255, 255, 255))
+    # targetSurface.blit(levelSurface[0], (150, 240 - 12))
 
-    levelSurface = font.render(f'LEVEL {gamecontroller.getLevel()}', pygame.color.Color(255, 255, 255, 255))
-    targetSurface.blit(levelSurface[0], (210, 240 - 12))
+    # levelSurface = font.render(f'LEVEL {gamecontroller.getLevel()}', pygame.color.Color(255, 255, 255, 255))
+    # targetSurface.blit(levelSurface[0], (210, 240 - 12))
 
-    levelSurface = font.render(f'{fps}', pygame.color.Color(255, 255, 255, 255))
-    targetSurface.blit(levelSurface[0], (260, 240 - 12))
+    # levelSurface = font.render(f'{fps}', pygame.color.Color(255, 255, 255, 255))
+    # targetSurface.blit(levelSurface[0], (260, 240 - 12))
+
+def renderLives(targetSurface):
+    startLocation = Vector(0, 240 - 12)
+    tankImage = images.get('tank1')
+
+    for _ in range(gamecontroller.getLives()):
+        targetSurface.blit(tankImage, startLocation.toIntTuple())    
+        startLocation = startLocation.add(Vector(16, 0))
+
+def renderWeaponPower(targetSurface):
+    image = images.get('projectile')
+    startLocation = Vector(160, 240 - 12)
+
+    for _ in range(gamecontroller.getPlayerTank().getWeapon().getLevel()):
+        targetSurface.blit(image, startLocation.toIntTuple())
+        startLocation = startLocation.add(Vector(4, 0))
+
+def renderPlayerHitpoints(targetSurface):
+    image = images.get('projectile')
+    startLocation = Vector(210, 240 - 12)
+
+    for _ in range(gamecontroller.getPlayerTank().getHitpoints()):
+        targetSurface.blit(image, startLocation.toIntTuple())
+        startLocation = startLocation.add(Vector(4, 0))
+
+def renderBaseHitpoints(targetSurface):
+    image = images.get('projectile')
+    startLocation = Vector(260, 240 - 12)
+
+    for _ in range(gamecontroller.getBase().getHitpoints()):
+        targetSurface.blit(image, startLocation.toIntTuple())
+        startLocation = startLocation.add(Vector(4, 0))
 
 def frameCompleted():
     global fpsCounter, fps, lastFpsTime
