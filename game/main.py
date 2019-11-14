@@ -20,6 +20,7 @@ import pathfinding.pathfindingbackgroundworker as PathfinderWorker
 # Pygame objects
 screen = None
 screenSize = (640, 480)
+bufferSize = (320, 240)
 buffer = None
 clock = pygame.time.Clock()
 font = None
@@ -47,7 +48,7 @@ def initialize():
     screen = pygame.display.set_mode((640, 480)) # , pygame.FULLSCREEN)
     pygame.key.set_repeat(50, 50)
 
-    buffer = pygame.Surface((320, 240))
+    buffer = pygame.Surface(bufferSize)
 
     input.initialize()
     gamecontroller.initialize()
@@ -129,17 +130,7 @@ def renderToSurface(targetSurface):
     renderWeaponPower(targetSurface)
     renderPlayerHitpoints(targetSurface)
     renderBaseHitpoints(targetSurface)
-    # livesSurface = font.render(f'LIVES: {gamecontroller.getLives()}', pygame.color.Color(255, 255, 255, 255))
-    # targetSurface.blit(livesSurface[0], (0, 240 - 12))
-
-    # levelSurface = font.render(f'WEP {gamecontroller.getPlayerTank().getWeapon().getLevel()}', pygame.color.Color(255, 255, 255, 255))
-    # targetSurface.blit(levelSurface[0], (150, 240 - 12))
-
-    # levelSurface = font.render(f'LEVEL {gamecontroller.getLevel()}', pygame.color.Color(255, 255, 255, 255))
-    # targetSurface.blit(levelSurface[0], (210, 240 - 12))
-
-    # levelSurface = font.render(f'{fps}', pygame.color.Color(255, 255, 255, 255))
-    # targetSurface.blit(levelSurface[0], (260, 240 - 12))
+    renderOverlayText(targetSurface)
 
 def renderLives(targetSurface):
     startLocation = Vector(0, 240 - 12)
@@ -172,6 +163,16 @@ def renderBaseHitpoints(targetSurface):
     for _ in range(gamecontroller.getBase().getHitpoints()):
         targetSurface.blit(image, startLocation.toIntTuple())
         startLocation = startLocation.add(Vector(4, 0))
+
+def renderOverlayText(targetSurface):
+    if gamecontroller.overlayText != None:
+        age = gamecontroller.overlayHideTime - pygame.time.get_ticks()
+
+        if int(age / 500) % 2 == 1:
+            overlay = font.render(gamecontroller.overlayText, pygame.color.Color(255,255,0))
+            overlaySize = overlay[1]
+            location = ((bufferSize[0] / 2) - (overlaySize.width / 2), (bufferSize[1] / 2) - (overlaySize.height / 2))
+            targetSurface.blit(overlay[0], location)
 
 def frameCompleted():
     global fpsCounter, fps, lastFpsTime

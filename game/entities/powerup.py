@@ -34,6 +34,7 @@ class PowerBoostPowerup(Powerup):
 
     def apply(self, tank):
         tank.getWeapon().improve()
+        gamecontroller.showOverlay('Extra weapon power!')
 
 class RepairTankPowerup(Powerup):
     def __init__(self):
@@ -41,6 +42,7 @@ class RepairTankPowerup(Powerup):
 
     def apply(self, tank):
         tank.repair()
+        gamecontroller.showOverlay('Tank repaired!')
 
 class RepairBasePowerup(Powerup):
     def __init__(self):
@@ -48,6 +50,7 @@ class RepairBasePowerup(Powerup):
 
     def apply(self, tank):
         gamecontroller.getBase().repair()
+        gamecontroller.showOverlay('Base repaired!')
 
 class DestroyAllTanksPowerup(Powerup):
     def __init__(self):
@@ -55,6 +58,7 @@ class DestroyAllTanksPowerup(Powerup):
 
     def apply(self, tank):
         gamecontroller.destroyAllEnemyTanks()
+        gamecontroller.showOverlay('BOOM!')
 
 class ShieldPowerup(Powerup):
     def __init__(self):
@@ -62,3 +66,4 @@ class ShieldPowerup(Powerup):
 
     def apply(self, tank):
         tank.enableShield(10000)
+        gamecontroller.showOverlay('Shield!')

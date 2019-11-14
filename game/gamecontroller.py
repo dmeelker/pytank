@@ -31,6 +31,9 @@ currentLevel = 1
 powerupSpawner = PowerupSpawner()
 powerupTimer = Timer(10000)
 
+overlayText = None
+overlayHideTime = None
+
 def initialize():
     pass
 
@@ -110,6 +113,7 @@ def createPlayerTank():
 def update(time, timePassed):
     spawnNewTankIfPossible(time)
     spawnPowerupIfTimerExpired(time)
+    hideOverlayIfExpired(time)
 
     checkPlayerTankDestroyed()
     checkForCompletedLevel()
@@ -186,6 +190,19 @@ def addScorePoints(points):
     global score
     score += points
     print(f'New score: {score}')
+
+def showOverlay(text):
+    global overlayText, overlayHideTime
+    overlayText = text
+    overlayHideTime = pygame.time.get_ticks() + 3000
+
+def hideOverlayIfExpired(time):
+    if overlayText != None and time >= overlayHideTime:
+        hideOverlay()
+
+def hideOverlay():
+    global overlayText, overlayHideTime
+    overlayText = None
 
 def getScore():
     return score
