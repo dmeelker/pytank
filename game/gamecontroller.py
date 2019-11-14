@@ -8,6 +8,7 @@ import playfield
 import entities
 import entities.tank
 import entities.base
+import leveldefinition
 
 import tankfactory
 import tankcontroller
@@ -62,55 +63,34 @@ def resetLevelData():
     playfield.initialize(40, 28)
 
 def loadLevelFromFile(fileName):
-    file = open(fileName, 'rt', encoding="utf-8")
-    readTankSpawnSchedulesFromFile(file)
-    readLevelLayoutFromFile(file)
-    file.close()
+    level = leveldefinition.loadFromFile(fileName)
 
-def readTankSpawnSchedulesFromFile(file):
-    spawnCount = int(file.readline())
+    initializeTankSpawns(level)
+    initializeBaseAndPlayer(level)
+    initializeMapData(level)
 
-    for spawnIndex in range(spawnCount):
-        createTankSpawnSchedule(file.readline())
+def initializeTankSpawns(level):
+    for spawnDefinition in level.getTankSpawns():
+        schedule = tankspawnschedule.TankSpawnSchedule(pygame.time.get_ticks(), spawnDefinition.getSchedule())
+        spawnLocation = convertFromTileTupleToScreenVector(spawnDefinition.getLocation())
+        tankSpawns.append(tankspawnschedule.TankSpawn(spawnLocation, schedule))
 
-def createTankSpawnSchedule(line):
-    scheduleMoments = tankspawnschedule.TankSpawnSchedule.parseSpawnMomentsFromString(line)
-    schedule = tankspawnschedule.TankSpawnSchedule(pygame.time.get_ticks(), scheduleMoments)
-    tankSpawns.append(tankspawnschedule.TankSpawn(Vector(0, 0), schedule))
+def initializeBaseAndPlayer(level):
+    global base
+    playerTank.setLocation(convertFromTileTupleToScreenVector(level.getPlayerSpawnLocation()))
+    playerTank.setHeading(utilities.vectorUp)
 
-foundTankSpawns = 0
+    base = entities.base.Base(convertFromTileTupleToScreenVector(level.getBaseLocation()))
+    entities.manager.add(base)
 
-def readLevelLayoutFromFile(file):
-    global foundTankSpawns
-    foundTankSpawns = 0
+def initializeMapData(level):
+    mapData = level.getMapData()
+    for x in range(level.getSize()[0]):
+        for y in range(level.getSize()[1]):
+            playfield.setTile(x, y, playfield.Tile(mapData[x][y]))
 
-    lines = file.readlines()
-    for y in range(len(lines)):
-        for x in range(playfield.width):
-            character = lines[y][x]
-            interpretLevelLayoutCharacter(character, x, y)
-
-def interpretLevelLayoutCharacter(character, x, y):
-    global foundTankSpawns, base
-    pixelLocation = Vector(x * playfield.blockSize, y * playfield.blockSize)
-
-    if character == 'B':
-        playfield.setTile(x, y, playfield.Tile(playfield.TileType.BRICK))
-    elif character == 'C':
-        playfield.setTile(x, y, playfield.Tile(playfield.TileType.CONCRETE))
-    elif character == '~':
-        playfield.setTile(x, y, playfield.Tile(playfield.TileType.WATER))
-    elif character == '^':
-        playfield.setTile(x, y, playfield.Tile(playfield.TileType.TREE))
-    elif character == 'X':
-        base = entities.base.Base(pixelLocation)
-        entities.manager.add(base)
-    elif character == 'P':
-        playerTank.setLocation(pixelLocation)
-        playerTank.setHeading(utilities.vectorUp)
-    elif character == 'S':
-        tankSpawns[foundTankSpawns].setLocation(pixelLocation)
-        foundTankSpawns += 1
+def convertFromTileTupleToScreenVector(tuple):
+    return Vector.fromTuple(tuple).multiplyScalar(playfield.blockSize)
 
 def recreatePlayerTank():
     global playerTank

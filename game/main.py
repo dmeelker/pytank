@@ -19,7 +19,7 @@ import pathfinding.pathfindingbackgroundworker as PathfinderWorker
 
 # Pygame objects
 screen = None
-screenSize = None
+screenSize = (640, 480)
 buffer = None
 clock = pygame.time.Clock()
 font = None
@@ -40,7 +40,7 @@ def start():
         clock.tick(30)
 
 def initialize():
-    global screen,clock, font, buffer
+    global screen,clock, buffer
     pygame.init()
     pygame.joystick.init()
     pygame.display.set_caption("Pytank")
@@ -52,14 +52,18 @@ def initialize():
     input.initialize()
     gamecontroller.initialize()
 
-    pygame.freetype.init()
-    font = pygame.freetype.Font(os.path.join('fonts', 'DTM-Sans.otf'), size=13)
-    font.antialiased = False
+    initializeFont()
     loadImages()
     
     PathfinderWorker.start()
 
     gamecontroller.startNewGame()
+
+def initializeFont():
+    global font
+    pygame.freetype.init()
+    font = pygame.freetype.Font(os.path.join('fonts', 'DTM-Sans.otf'), size=13)
+    font.antialiased = False
 
 def loadImages():
     images.load('projectile.png', 'projectile')

@@ -54,6 +54,10 @@ class Vector:
         length = self.length()
         return self.toUnit().multiplyScalar(min(length, maxLength))
 
+    @staticmethod
+    def fromTuple(tuple):
+        return Vector(tuple[0], tuple[1])
+
 vectorLeft = Vector(-1, 0)
 vectorRight = Vector(1, 0)
 vectorUp = Vector(0, -1)

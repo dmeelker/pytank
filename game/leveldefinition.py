@@ -5,7 +5,7 @@ class LevelDefinition():
     def __init__(self, size):
         self.size = size
         self.mapData = None
-        self.tankSpawns = None
+        self.tankSpawns = []
         self.baseLocation = None
         self.playerSpawnLocation = None
 
@@ -58,9 +58,16 @@ class LineReader():
             self.index += 1
             return self.lines[self.index]
 
+def loadFromFile(fileName):
+    with open(fileName, 'rt', encoding="utf-8") as file:
+        reader = LineReader(file.readlines())
+        return loadFromLineReader(reader)
+
 def loadFromString(levelString):
     reader = LineReader(levelString.splitlines())
+    return loadFromLineReader(reader)
 
+def loadFromLineReader(reader):
     size = readLevelSize(reader)
 
     level = LevelDefinition(size)
