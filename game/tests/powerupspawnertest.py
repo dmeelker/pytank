@@ -16,7 +16,9 @@ class TestPowerupSpawner(unittest.TestCase):
         images.set('concrete', None)
         images.set('water', None)
         images.set('tree', None)
-        images.set('powerup', pygame.Surface((1, 1)))
+        images.set('powerup_repairself', pygame.Surface((1, 1)))
+        images.set('powerup_weapon', pygame.Surface((1, 1)))
+        images.set('powerup_destroyall', pygame.Surface((1, 1)))
         entities.manager.clear()
         playfield.initialize(10, 10)
 
