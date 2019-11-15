@@ -1,3 +1,21 @@
+= Open
+
+Start screen
+Fix level loading in editor
+Projectiles going through walls
+Explosive projectiles
+Animations for spawning and explosions
+Player navigation
+Shield visualization
+Graphics
+- Tiles
+- UI
+- Different image for different projectiles
+More levels
+Multiplayer
+
+= Done
+
 [x]Tweak weapons
 - Basic weapon
 - Increased fire rate
@@ -5,7 +23,6 @@
 - Destroy concrete
 
 [x] Player death crash
-Player navigation
 
 Powerups
 - [x] Better weapon
@@ -24,5 +41,3 @@ Different AI behaviours
 - [x] Bulldozer (goes straight for the base by blasting through any walls that might be in the way)
 - [x] Saboteur (finds quikest way to base and attempts to destroy it)
 
-Graphics
-More levels

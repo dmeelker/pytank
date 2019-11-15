@@ -1,4 +1,5 @@
 import enum
+import math
 import images
 
 blockSize = 8
@@ -28,6 +29,15 @@ def setTile(x, y, tile):
 
 def getTile(x, y):
     return tiles[x][y]
+
+def getTilesInPixelArea(x, y, width, height):
+    tileStart = (int(x / blockSize), int(y / blockSize))
+    tileEnd = (int((x + width) / blockSize), int((y + height) / blockSize))
+
+    for currentX in range(tileStart[0], tileEnd[0]):
+        for currentY in range(tileStart[1], tileEnd[1]):
+            if containsTileCoordinates(currentX, currentY):
+                yield tiles[currentX][currentY]
 
 def getTilesInQuad(x, y):
     return [tiles[x][y], tiles[x+1][y], tiles[x][y+1], tiles[x+1][y+1]]

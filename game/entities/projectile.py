@@ -17,7 +17,7 @@ class Projectile(entities.Entity, entities.ProjectileCollider):
         self.breaksConcrete = breaksConcrete
 
         tileBlockedFunction = lambda tile: not tile is None and tile.blocksProjectiles
-        self.movementHandler = MovementHandler(self, tileBlockedFunction, entityIgnoreFunction=lambda entity: self.collisionIgnoreFunction(entity))
+        self.movementHandler = MovementHandler(self, tileBlockedFunction, entityIgnoreFunction=self.collisionIgnoreFunction)
 
     def update(self, time, timePassed):
         movementVector = self.directionVector.multiplyScalar(timePassed * 0.25)
@@ -29,13 +29,23 @@ class Projectile(entities.Entity, entities.ProjectileCollider):
             collision = collisions[0]
             if collision.collidedObject is None:
                 self.markDisposable()
-            elif isinstance(collision.collidedObject, playfield.Tile):
-                collision.collidedObject.hitByProjectile(self, time)
-                self.markDisposable()
-            elif isinstance(collision.collidedObject, entities.ProjectileCollider):
-                collision.collidedObject.hitByProjectile(self, time)
-                self.markDisposable()
-                return
+            elif self.isCollidableObject(collision.collidedObject):
+                self.explode(time)
+
+    def explode(self, time):
+        range = 6
+        centerLocation = self.getCenterLocation()
+        collidingTiles = playfield.getTilesInPixelArea(centerLocation.x - range, centerLocation.y - range, range*2, range*2)
+
+        for tile in collidingTiles:
+            if tile != None:
+                tile.hitByProjectile(self, time)
+
+        #collision.collidedObject.hitByProjectile(self, time)
+        self.markDisposable()
+
+    def isCollidableObject(self, collidedObject):
+        return isinstance(collidedObject, playfield.Tile) or isinstance(collidedObject, entities.ProjectileCollider)
 
     def collisionIgnoreFunction(self, entity):
         if isinstance(entity, entities.tank.Tank):
