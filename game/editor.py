@@ -51,7 +51,7 @@ def initialize():
     pygame.display.set_caption("Pytank Editor")
     screen = pygame.display.set_mode((640, 480)) #, pygame.FULLSCREEN)
     buffer = pygame.surface.Surface((320, 240))
-    playfield.initialize(40, 28)
+    playfield.initialize(38, 28)
     loadImages()
     initializeTiles()
 
@@ -170,8 +170,8 @@ def drawGrid(surface):
     for x in range(0, 20):
         pygame.draw.line(surface, gridColor, (x * 16, 0), (x * 16, 14 * 16))
 
-    for y in range(0, 14):
-        pygame.draw.line(surface, gridColor, (0, y * 16), (20 * 16, y * 16))
+    for y in range(0, 15):
+        pygame.draw.line(surface, gridColor, (0, y * 16), (19 * 16, y * 16))
 
 def loadLevelFile(fileName):
     global level

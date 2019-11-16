@@ -117,9 +117,9 @@ def render():
 def renderToSurface(targetSurface):
     targetSurface.fill((0, 0, 0))
 
-    playfield.renderLayer(0, targetSurface, (0, 0))
-    entities.manager.render(targetSurface, (0, 0), pygame.time.get_ticks())
-    playfield.renderLayer(1, targetSurface, (0, 0))
+    playfield.renderLayer(0, targetSurface, (8, 0))
+    entities.manager.render(targetSurface, (8, 0), pygame.time.get_ticks())
+    playfield.renderLayer(1, targetSurface, (8, 0))
 
     scoreSurface = font.render(f'SCORE: {gamecontroller.getScore()}', pygame.color.Color(255, 255, 255, 255))
     targetSurface.blit(scoreSurface[0], (75, 240 - 12))

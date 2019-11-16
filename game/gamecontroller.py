@@ -63,7 +63,7 @@ def resetLevelData():
     entities.manager.add(playerTank)
     tankSpawns = []
     liveEnemyTanks = []
-    playfield.initialize(40, 28)
+    playfield.initialize(38, 28)
 
 def loadLevelFromFile(fileName):
     level = leveldefinition.loadFromFile(fileName)
