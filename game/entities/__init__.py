@@ -47,3 +47,11 @@ class ProjectileCollider:
 
 class Blocking:
     pass
+
+class Marker(Entity):
+    def __init__(self, location):
+        super().__init__()
+        self.setLocation(location)
+        self.setSize(Vector(1, 1))
+    def render(self, screen, offset, time):
+        screen.set_at((int(offset[0] + self.location.x), int(offset[1] + self.location.y)), pygame.color.Color(255, 255, 255, 255))

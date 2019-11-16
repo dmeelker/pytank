@@ -1,3 +1,6 @@
+import math
+import pygame
+
 import entities
 import entities.manager
 from .movement import MovementHandler
@@ -10,6 +13,7 @@ class Projectile(entities.Entity, entities.ProjectileCollider):
         super().__init__()
         self.image = images.get('projectile')
         self.setSize(Vector(self.image.get_width(), self.image.get_height()))
+        self.halfSize = math.ceil(self.size.x / 2)
         self.setLocation(location)
         self.directionVector = directionVector
         self.source = source
@@ -33,16 +37,29 @@ class Projectile(entities.Entity, entities.ProjectileCollider):
                 self.explode(time)
 
     def explode(self, time):
-        range = 6
-        centerLocation = self.getCenterLocation()
-        collidingTiles = playfield.getTilesInPixelArea(centerLocation.x - range, centerLocation.y - range, range*2, range*2)
+        range = 3
+        centerLocation = self.getCenterLocation().add(self.directionVector.multiplyScalar(self.halfSize))
+        area = pygame.Rect(centerLocation.x - range, centerLocation.y - range, range*2, range*2)
+        #entities.manager.add(entities.Marker(centerLocation))
+
+        self.explodeTiles(area, time)
+        self.explodeEntities(area, time)
+
+        self.markDisposable()
+
+    def explodeTiles(self, area, time):
+        collidingTiles = playfield.getTilesInPixelArea(area.left, area.top, area.width, area.height)
 
         for tile in collidingTiles:
             if tile != None:
                 tile.hitByProjectile(self, time)
 
-        #collision.collidedObject.hitByProjectile(self, time)
-        self.markDisposable()
+    def explodeEntities(self, area, time):
+        collidingEntities = entities.manager.findEntitiesInRectangle(area, typeFilter = entities.ProjectileCollider)
+
+        for entity in collidingEntities:
+            if not self.collisionIgnoreFunction(entity):
+                entity.hitByProjectile(self, time)
 
     def isCollidableObject(self, collidedObject):
         return isinstance(collidedObject, playfield.Tile) or isinstance(collidedObject, entities.ProjectileCollider)

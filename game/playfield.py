@@ -32,10 +32,10 @@ def getTile(x, y):
 
 def getTilesInPixelArea(x, y, width, height):
     tileStart = (int(x / blockSize), int(y / blockSize))
-    tileEnd = (int((x + width) / blockSize), int((y + height) / blockSize))
+    tileEnd = (int((x + width - 1) / blockSize), int((y + height - 1) / blockSize))
 
-    for currentX in range(tileStart[0], tileEnd[0]):
-        for currentY in range(tileStart[1], tileEnd[1]):
+    for currentX in range(tileStart[0], tileEnd[0] + 1):
+        for currentY in range(tileStart[1], tileEnd[1] + 1):
             if containsTileCoordinates(currentX, currentY):
                 yield tiles[currentX][currentY]
 
