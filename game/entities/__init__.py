@@ -1,5 +1,13 @@
 import pygame
+import enum
+
 from utilities import Vector
+
+class Direction(enum.Enum):
+    NORTH = 1,
+    EAST = 2,
+    SOUTH = 3,
+    WEST = 4
 
 class Entity:
     def __init__(self):
@@ -40,6 +48,16 @@ class Entity:
 
     def dispose(self):
         self.disposed = True
+
+    def getDirectionFromVector(self, vector):
+        if vector.y < 0:
+            return Direction.NORTH
+        elif vector.y > 0:
+            return Direction.SOUTH
+        elif vector.x < 0:
+            return Direction.WEST
+        elif vector.x > 0:
+            return Direction.EAST
 
 class ProjectileCollider:
     def hitByProjectile(self, projectile, time):

@@ -3,6 +3,7 @@ import math
 import pygame
 
 import entities
+from entities import Direction
 import entities.projectile
 from entities.movement import MovementHandler
 import playfield
@@ -108,11 +109,11 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
             self.weapon.fire(location, self.heading, time)
 
     def getProjectileFireLocation(self):
-        halfProjectileSize = Vector(4, 4)
+        halfProjectileSize = Vector(2, 2)
         location = self.getCenterLocation()
 
         return location.subtract(halfProjectileSize)
-        # halfProjectileSize = Vector(4, 4)
+        # halfProjectileSize = Vector(2, 2)
         # location = self.getCenterLocation()
         # location = location.subtract(halfProjectileSize)
         # location = location.add(self.heading.toUnit().multiplyScalar(self.size.y / 2))
@@ -138,18 +139,8 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
 
     def setHeading(self, newHeading):
         self.heading = newHeading
-        self.updateDirectionBasedOnHeading()
+        self.direction = self.getDirectionFromVector(self.heading)
         self.setGraphics(self.direction)
-
-    def updateDirectionBasedOnHeading(self):
-        if self.heading.y < 0:
-            self.direction = Direction.NORTH
-        elif self.heading.y > 0:
-            self.direction = Direction.SOUTH
-        elif self.heading.x < 0:
-            self.direction = Direction.WEST
-        elif self.heading.x > 0:
-            self.direction = Direction.EAST
 
     def setGraphics(self, direction):
         self.setImage(self.graphics.baseImages[direction])
@@ -236,12 +227,6 @@ class Weapon:
     def setFireRateModifier(self, rate):
         self.fireRateModifier = rate
         self.setLevel(self.level)
-
-class Direction(enum.Enum):
-    NORTH = 1,
-    EAST = 2,
-    SOUTH = 3,
-    WEST = 4
 
 class TankGraphics:
     def __init__(self, type, turretOffsets):

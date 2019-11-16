@@ -11,7 +11,10 @@ from utilities import Vector
 class Projectile(entities.Entity, entities.ProjectileCollider):
     def __init__(self, location, directionVector, source, power = 1, breaksConcrete = False):
         super().__init__()
-        self.image = images.get('projectile')
+        
+        self.direction = self.getDirectionFromVector(directionVector)
+        self.image = self.getImageBasedOnDirection()
+
         self.setSize(Vector(self.image.get_width(), self.image.get_height()))
         self.halfSize = math.ceil(self.size.x / 2)
         self.setLocation(location)
@@ -23,6 +26,16 @@ class Projectile(entities.Entity, entities.ProjectileCollider):
 
         tileBlockedFunction = lambda tile: not tile is None and tile.blocksProjectiles
         self.movementHandler = MovementHandler(self, tileBlockedFunction, entityIgnoreFunction=self.collisionIgnoreFunction)
+
+    def getImageBasedOnDirection(self):
+        if self.direction == entities.Direction.NORTH:
+            return images.get('projectile_north')
+        elif self.direction == entities.Direction.EAST:
+            return images.get('projectile_east')
+        elif self.direction == entities.Direction.SOUTH:
+            return images.get('projectile_south')
+        elif self.direction == entities.Direction.WEST:
+            return images.get('projectile_west')
 
     def update(self, time, timePassed):
         movementSteps = int((time - self.lastMoveTime ) / 20)

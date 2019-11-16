@@ -92,6 +92,8 @@ def loadImages():
     images.generateRotatedImages('tank4_base.png', 'tank4_base')
     images.generateRotatedImages('tank4_turret.png', 'tank4_turret')
 
+    images.generateRotatedImages('projectile.png', 'projectile')
+
     images.generateRotatedImages('tank1.png', 'tank1')
     #images.generateRotatedImages('tank1.png', 'tank2_base')
     # images.generateRotatedImages('tank1.png', 'tank3_base')
