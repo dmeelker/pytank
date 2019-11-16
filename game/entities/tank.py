@@ -188,6 +188,7 @@ class Weapon:
     def __init__(self, entity, level):
         self.entity = entity
         self.lastFireTime = 0
+        self.fireRateModifier = 1
         self.setLevel(level)
 
     def getLevel(self):
@@ -195,12 +196,12 @@ class Weapon:
 
     def setLevel(self, level):
         self.level = level
-        self.fireDelay = 1000
+        self.fireDelay = 1000 * self.fireRateModifier
         self.power = 1
         self.breaksConcrete = False
 
         if level >= 2:
-            self.fireDelay = 500
+            self.fireDelay = 500 * self.fireRateModifier
         if level >= 3:
             self.power = 2
         if level >= 4:
@@ -221,3 +222,7 @@ class Weapon:
         projectile = entities.projectile.Projectile(Vector(0, 0), vector.toUnit(), source=self.entity, power=self.power, breaksConcrete=self.breaksConcrete)
         projectile.setLocation(location)
         entities.manager.add(projectile)
+
+    def setFireRateModifier(self, rate):
+        self.fireRateModifier = rate
+        self.setLevel(self.level)

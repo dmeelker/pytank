@@ -19,11 +19,14 @@ def createTank(level, location):
     tankSpec = tankSpecs[level]
 
     tank = entities.tank.Tank(location, level + 1)
-    tank.setWeapon(entities.tank.Weapon(tank, tankSpec.weaponLevel))
     tank.movementSpeed = tankSpec.movementSpeed
     tank.hitpoints = tankSpec.hitpoints
     tank.setHeading(utilities.vectorDown)
     tank.setController(getTankController(tank))
+
+    weapon = entities.tank.Weapon(tank, tankSpec.weaponLevel)
+    weapon.setFireRateModifier(2)
+    tank.setWeapon(weapon)
 
     return tank
 

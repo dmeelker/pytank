@@ -22,9 +22,9 @@ class TestTankSpawnSchedule(unittest.TestCase):
         self.assertIsNone(spawner.getTankToSpawn(102))
 
     def test_parseSpawnMomentsFromString(self):
-        schedule = tankspawnschedule.TankSpawnSchedule.parseSpawnMomentsFromString('0:0 1000:1 2000:2')
+        schedule = tankspawnschedule.TankSpawnSchedule.parseSpawnMomentsFromString('0:0 1:1 2:2')
         self.assertEqual([(0,0), (1000,1), (2000, 2)], schedule)
 
     def test_parseSpawnMomentsFromStringWhitespace(self):
-        schedule = tankspawnschedule.TankSpawnSchedule.parseSpawnMomentsFromString('     0:0       1000:1 2000:2   ')
+        schedule = tankspawnschedule.TankSpawnSchedule.parseSpawnMomentsFromString('     0:0       1:1 2:2   ')
         self.assertEqual([(0,0), (1000,1), (2000, 2)], schedule)

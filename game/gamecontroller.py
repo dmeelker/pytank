@@ -29,7 +29,7 @@ liveEnemyTanks = []
 currentLevel = 1
 
 powerupSpawner = PowerupSpawner()
-powerupTimer = Timer(30000)
+powerupTimer = Timer(40000)
 
 overlayText = None
 overlayHideTime = None

@@ -66,6 +66,6 @@ class TankSpawnSchedule():
             components = partString.split(':')
             time = int(components[0])
             tankType = int(components[1])
-            spawnMoments.append((time, tankType))
+            spawnMoments.append((time * 1000, tankType))
         return spawnMoments
 

@@ -29,10 +29,10 @@ class TestLevelDefinition(unittest.TestCase):
         level = leveldefinition.loadFromString(basicLevel)
 
         spawn1 = level.getTankSpawns()[0]
-        self.assertEqual([(0,0), (1,1)], spawn1.getSchedule())
+        self.assertEqual([(0,0), (1000,1)], spawn1.getSchedule())
 
         spawn2 = level.getTankSpawns()[1]
-        self.assertEqual([(1,1), (2,2)], spawn2.getSchedule())
+        self.assertEqual([(1000,1), (2000,2)], spawn2.getSchedule())
         
     def test_tankSpawnLocations(self):
         level = leveldefinition.loadFromString(basicLevel)

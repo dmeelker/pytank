@@ -1,7 +1,7 @@
 = Open
 
 Start screen
-Fix level loading in editor
+[x] Fix level loading in editor
 [x] Projectiles going through walls
 [x] Explosive projectiles
 Animations for spawning and explosions
