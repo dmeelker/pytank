@@ -30,16 +30,17 @@ class Projectile(entities.Entity, entities.ProjectileCollider):
             movementVector = self.directionVector.multiplyScalar(5)
             for _ in range(movementSteps):
                 collisions = self.movementHandler.moveEntity(movementVector)
-                self.handleCollisions(collisions, time)
+                if len(collisions) > 0:
+                    self.handleCollisions(collisions, time)
+                    break
             self.lastMoveTime = time
 
     def handleCollisions(self, collisions, time):
-        if len(collisions) > 0:
-            collision = collisions[0]
-            if collision.collidedObject is None:
-                self.markDisposable()
-            elif self.isCollidableObject(collision.collidedObject):
-                self.explode(time)
+        collision = collisions[0]
+        if collision.collidedObject is None:
+            self.markDisposable()
+        elif self.isCollidableObject(collision.collidedObject):
+            self.explode(time)
 
     def explode(self, time):
         range = 3

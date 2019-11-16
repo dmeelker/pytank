@@ -108,8 +108,6 @@ def handleEvents():
         else:
             input.handleEvent(event)
 
-
-
 def render():
     renderToSurface(buffer)
     pygame.transform.scale(buffer, screenSize, screen)
