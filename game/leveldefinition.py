@@ -36,15 +36,19 @@ class LevelDefinition():
         return self.playerSpawnLocation
 
 class TankSpawnDefinition():
-    def __init__(self, schedule):
+    def __init__(self, schedule, scheduleString):
         self.location = None
         self.schedule = schedule
+        self.scheduleString = scheduleString
 
     def getLocation(self):
         return self.location
     
     def getSchedule(self):
         return self.schedule
+    
+    def getScheduleAsString(self):
+        return self.scheduleString
 
 class LineReader():
     def __init__(self, lines):
@@ -88,7 +92,8 @@ def readSpawnSchedules(reader, level):
     spawnCount = readSpawnCount(reader)
     level.tankSpawns = []
     for _ in range(spawnCount):
-        level.tankSpawns.append(TankSpawnDefinition(readSpawnSchedule(reader)))
+        line = reader.readLine()
+        level.tankSpawns.append(TankSpawnDefinition(readSpawnSchedule(line), line))
 
 def readSpawnCount(reader):
     line = reader.readLine()
@@ -97,8 +102,7 @@ def readSpawnCount(reader):
 
     return int(line[11:])
 
-def readSpawnSchedule(reader):
-    line = reader.readLine()
+def readSpawnSchedule(line):
     return tankspawnschedule.TankSpawnSchedule.parseSpawnMomentsFromString(line)
 
 foundTankSpawns = 0

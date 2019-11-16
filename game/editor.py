@@ -3,10 +3,12 @@ import os
 import pygame
 import images
 import playfield
+import leveldefinition
 
 # Pygame objects
 screen = None
 clock = pygame.time.Clock()
+buffer = None
 
 running = True
 lastUpdateTime = 0
@@ -17,12 +19,13 @@ waterTile = None
 treeTile = None
 activeTile = None
 
+level = None
 baseLocation = (18, 28)
 tankSpawners = []
 playerStartLocation = (18, 25)
 
 openFileName = None
-tankSpawnOrder = '0 0 0 0 0'
+tankSpawnOrders = []
 
 def start():
     initialize()
@@ -43,10 +46,11 @@ def processCommandLineArgument(fileName):
         loadLevelFile(fileName)
 
 def initialize():
-    global screen,clock
+    global screen,clock,buffer
     pygame.init()
     pygame.display.set_caption("Pytank Editor")
-    screen = pygame.display.set_mode((320, 240)) #, pygame.FULLSCREEN)
+    screen = pygame.display.set_mode((640, 480)) #, pygame.FULLSCREEN)
+    buffer = pygame.surface.Surface((320, 240))
     playfield.initialize(40, 28)
     loadImages()
     initializeTiles()
@@ -79,7 +83,7 @@ def update():
     handleEvents()
 
     mouseLocation = pygame.mouse.get_pos()
-
+    mouseLocation = (int(mouseLocation[0] / 2), int(mouseLocation[1] / 2))
     if pygame.mouse.get_pressed()[0]:        
         drawTileAtPixel(mouseLocation[0], mouseLocation[1], activeTile)
     if pygame.mouse.get_pressed()[2]:        
@@ -89,7 +93,8 @@ def drawTileAtPixel(x, y, tileType):
     tileX = int(x / playfield.blockSize)
     tileY = int(y / playfield.blockSize)
 
-    playfield.setTile(tileX, tileY, tileType)
+    if playfield.containsTileCoordinates(tileX, tileY):
+        playfield.setTile(tileX, tileY, tileType)
 
 def handleEvents():
     global running
@@ -140,61 +145,71 @@ def movePlayerSpawnToMouseLocation():
 
 def getMouseTileLocation():
     mouseLocation = pygame.mouse.get_pos()
-    return (int(mouseLocation[0] / playfield.blockSize), int(mouseLocation[1] / playfield.blockSize))
+    return (int((mouseLocation[0] / 2) / playfield.blockSize), int((mouseLocation[1] / 2) / playfield.blockSize))
 
 def render():
-    screen.fill((0, 0, 0))
+    buffer.fill((0, 0, 0))
 
-    screen.blit(images.get('base'), (baseLocation[0] * playfield.blockSize, baseLocation[1] * playfield.blockSize))
-    playfield.renderLayer(0, screen, (0, 0))
-    playfield.renderLayer(1, screen, (0, 0))
+    buffer.blit(images.get('base'), (baseLocation[0] * playfield.blockSize, baseLocation[1] * playfield.blockSize))
+    playfield.renderLayer(0, buffer, (0, 0))
+    playfield.renderLayer(1, buffer, (0, 0))
 
     for tankSpawner in tankSpawners:
-        screen.blit(images.get('tank1'), (tankSpawner[0] * playfield.blockSize, tankSpawner[1] * playfield.blockSize))
+        buffer.blit(images.get('tank1'), (tankSpawner[0] * playfield.blockSize, tankSpawner[1] * playfield.blockSize))
 
-    screen.blit(images.get('tank3'), (playerStartLocation[0] * playfield.blockSize, playerStartLocation[1] * playfield.blockSize))
+    buffer.blit(images.get('tank3'), (playerStartLocation[0] * playfield.blockSize, playerStartLocation[1] * playfield.blockSize))
+    drawGrid(buffer)
+
+    pygame.transform.scale(buffer, (640, 480), screen)
+    #screen.blit(buffer, (0,0))
 
     pygame.display.flip()
 
+def drawGrid(surface):
+    gridColor = pygame.color.Color(100, 100, 100, 20)
+    for x in range(0, 20):
+        pygame.draw.line(surface, gridColor, (x * 16, 0), (x * 16, 14 * 16))
+
+    for y in range(0, 14):
+        pygame.draw.line(surface, gridColor, (0, y * 16), (20 * 16, y * 16))
+
 def loadLevelFile(fileName):
-    print(f'Loading {fileName}')
-    file = open(fileName, 'rt', encoding="utf-8")
-    readTankSpawnOrderFromFile(file)
-    readLevelLayoutFromFile(file)
-    file.close()
+    global level
+    level = leveldefinition.loadFromFile(fileName)
 
-def readTankSpawnOrderFromFile(file):
-    global tankSpawnOrder
-    tankSpawnOrder = file.readline()
+    initializeTankSpawns(level)
+    initializeBaseAndPlayer(level)
+    initializeMapData(level)
 
-def readLevelLayoutFromFile(file):
-    lines = file.readlines()
-    for y in range(len(lines)):
-        for x in range(playfield.width):
-            character = lines[y][x]
-            interpretLevelLayoutCharacter(character, x, y)
+def initializeTankSpawns(level):
+    for spawnDefinition in level.getTankSpawns():
+        tankSpawners.append(spawnDefinition.getLocation())
 
-def interpretLevelLayoutCharacter(character, x, y):
-    global baseLocation, playerStartLocation, tankSpawners
+def initializeBaseAndPlayer(level):
+    global baseLocation, playerStartLocation
 
-    if character == 'B':
-        playfield.setTile(x, y, brickTile)
-    elif character == 'C':
-        playfield.setTile(x, y, concreteTile)
-    elif character == '~':
-        playfield.setTile(x, y, waterTile)
-    elif character == '^':
-        playfield.setTile(x, y, treeTile)
-    elif character == 'X':
-        baseLocation = (x, y)
-    elif character == 'P':
-        playerStartLocation = (x, y)
-    elif character == 'S':
-        tankSpawners.append((x, y))
+    baseLocation = level.getBaseLocation()
+    playerStartLocation = level.getPlayerSpawnLocation()
+
+def initializeMapData(level):
+    mapData = level.getMapData()
+    for x in range(level.getSize()[0]):
+        for y in range(level.getSize()[1]):
+            mapTile = mapData[x][y]
+            if mapTile != None:
+                
+                playfield.setTile(x, y, playfield.Tile(mapTile))
+
+def convertFromTileTupleToScreenTuple(tuple):
+    return Vector.fromTuple(tuple).multiplyScalar(playfield.blockSize)
 
 def writeLevelFile(fileName):
     file = open(fileName, 'wt', encoding="utf-8")
-    file.writelines([tankSpawnOrder])
+    file.write(f'size={level.getSize()[0]},{level.getSize()[1]}\n')
+    file.write(f'spawncount={len(level.getTankSpawns())}\n')
+    for spawn in level.getTankSpawns():
+        file.write(spawn.getScheduleAsString())
+    
     writeLevelLayoutToFile(file)
     file.close()
     print(f'Saved to {fileName}')
@@ -211,16 +226,17 @@ def writeLevelLayoutToFile(file):
                 file.write('P')
             elif tankSpawner != None:
                 file.write('S')
-            elif tile == brickTile:
-                file.write('B')
-            elif tile == concreteTile:
-                file.write('C')
-            elif tile == waterTile:
-                file.write('~')
-            elif tile == treeTile:
-                file.write('^')
-            else:
+            elif tile == None:
                 file.write('_')
+            elif tile.tileType == playfield.TileType.BRICK:
+                file.write('B')
+            elif tile.tileType == playfield.TileType.CONCRETE:
+                file.write('C')
+            elif tile.tileType == playfield.TileType.WATER:
+                file.write('~')
+            elif tile.tileType == playfield.TileType.TREE:
+                file.write('^')
+
         file.write('\n')
 
 start()
