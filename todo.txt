@@ -1,43 +1,11 @@
 = Open
 
 Start screen
-[x] Fix level loading in editor
-[x] Projectiles going through walls
-[x] Explosive projectiles
 Animations for spawning and explosions
-Player navigation
-Shield visualization
 Graphics
-- Tiles
+- Powerups
 - UI
 - Different image for different projectiles
+- Shield
 More levels
 Multiplayer
-
-= Done
-
-[x]Tweak weapons
-- Basic weapon
-- Increased fire rate
-- Double power weapon
-- Destroy concrete
-
-[x] Player death crash
-
-Powerups
-- [x] Better weapon
-- Movement speed
-- [x] Repair base
-- [x] Shield
-- [x] Destroy all tanks
-- [x] Repair self
-
-Display state of base & health
-[x] Display score, lives and weapon power
-
-Different AI behaviours
-- [x] Stupid random walker
-- [x] Stalker (tracks the player)
-- [x] Bulldozer (goes straight for the base by blasting through any walls that might be in the way)
-- [x] Saboteur (finds quikest way to base and attempts to destroy it)
-

@@ -171,9 +171,6 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
         if self.destroyCallback != None:
             self.destroyCallback(self)
 
-    def getLevel(self):
-        return self.type
-
     def getHitpoints(self):
         return self.hitpoints
 

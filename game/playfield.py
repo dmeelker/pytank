@@ -105,7 +105,7 @@ class Tile:
         elif tileType == TileType.WATER:
             self.image = images.get('water')
             self.blocksMovement = True
-            self.blocksProjectiles = True
+            self.blocksProjectiles = False
         elif tileType == TileType.TREE:
             self.image = images.get('tree')
             self.layer = 1

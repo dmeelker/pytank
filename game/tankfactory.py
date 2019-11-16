@@ -23,7 +23,7 @@ def createTank(level, location):
     tank.hitpoints = tankSpec.hitpoints
     tank.setHeading(utilities.vectorDown)
     tank.setScorePoints((level + 1) * 100)
-    tank.setController(getTankController(tank))
+    tank.setController(getTankController(tank, level + 1))
 
     weapon = entities.tank.Weapon(tank, tankSpec.weaponLevel)
     weapon.setFireRateModifier(2)
@@ -41,9 +41,7 @@ def getGraphicsForTank(level):
     elif level == 4: 
         return entities.tank.TankGraphics.createEnemyTank3()
 
-def getTankController(tank):
-    tankLevel = tank.getLevel()
-
+def getTankController(tank, tankLevel):
     if tankLevel == 1:
         return tankcontroller.RandomMovementAiTankController(tank)
     elif tankLevel == 2:
