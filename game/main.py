@@ -94,7 +94,6 @@ def update():
     timePassed = time - lastUpdateTime
     lastUpdateTime = time
 
-    entities.manager.update(time, timePassed)
     gamecontroller.update(time, timePassed)
 
 def handleEvents():

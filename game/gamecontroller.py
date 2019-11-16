@@ -56,6 +56,7 @@ def loadLevel(levelNumber):
     resetLevelData()
     loadLevelFromFile(os.path.join('levels', f'level{levelNumber}.txt'))
     currentLevel = levelNumber
+    showOverlay(f'Level {levelNumber}')
 
 def resetLevelData():
     global tankSpawns, liveEnemyTanks
@@ -111,6 +112,8 @@ def createPlayerTank():
     return tank
 
 def update(time, timePassed):
+    entities.manager.update(time, timePassed)
+
     spawnNewTankIfPossible(time)
     spawnPowerupIfTimerExpired(time)
     hideOverlayIfExpired(time)
