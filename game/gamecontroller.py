@@ -107,7 +107,7 @@ def recreatePlayerTank():
     input.tankController = playerTankController
 
 def createPlayerTank():
-    tank = entities.tank.Tank(Vector(100, 100), type=1)
+    tank = entities.tank.Tank(Vector(100, 100), entities.tank.TankGraphics.createPlayerTank())
     tank.movementSpeed = 1
     return tank
 

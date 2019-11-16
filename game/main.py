@@ -80,10 +80,22 @@ def loadImages():
     images.load('powerup_destroyall.png', 'powerup_destroyall')
     images.load('powerup_repairself.png', 'powerup_repairself')
 
+    images.generateRotatedImages('tank1_base.png', 'tank1_base')
+    images.generateRotatedImages('tank1_turret.png', 'tank1_turret')
+
+    images.generateRotatedImages('tank2_base.png', 'tank2_base')
+    images.generateRotatedImages('tank2_turret.png', 'tank2_turret')
+
+    images.generateRotatedImages('tank3_base.png', 'tank3_base')
+    images.generateRotatedImages('tank3_turret.png', 'tank3_turret')
+
+    images.generateRotatedImages('tank4_base.png', 'tank4_base')
+    images.generateRotatedImages('tank4_turret.png', 'tank4_turret')
+
     images.generateRotatedImages('tank1.png', 'tank1')
-    images.generateRotatedImages('tank1.png', 'tank2')
-    images.generateRotatedImages('tank1.png', 'tank3')
-    images.generateRotatedImages('tank1.png', 'tank4')
+    #images.generateRotatedImages('tank1.png', 'tank2_base')
+    # images.generateRotatedImages('tank1.png', 'tank3_base')
+    # images.generateRotatedImages('tank1.png', 'tank4_base')
     
 def update():
     global lastUpdateTime
@@ -114,15 +126,17 @@ def render():
     pygame.display.flip()
 
 def renderToSurface(targetSurface):
-    targetSurface.fill((0, 0, 0))
-
+    
+    targetSurface.fill((86, 79, 68))
     playfield.renderLayer(0, targetSurface, (8, 0))
     entities.manager.render(targetSurface, (8, 0), pygame.time.get_ticks())
     playfield.renderLayer(1, targetSurface, (8, 0))
 
+    targetSurface.fill((0, 0, 0), rect=pygame.Rect(0, 240 - 16, 320, 16))
     scoreSurface = font.render(f'SCORE: {gamecontroller.getScore()}', pygame.color.Color(255, 255, 255, 255))
     targetSurface.blit(scoreSurface[0], (75, 240 - 12))
 
+    
     renderLives(targetSurface)
     renderWeaponPower(targetSurface)
     renderPlayerHitpoints(targetSurface)

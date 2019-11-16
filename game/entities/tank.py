@@ -1,3 +1,4 @@
+import enum
 import math
 import pygame
 
@@ -12,20 +13,19 @@ from utilities import Vector
 from utilities import Timer
 
 class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
-    def __init__(self, location, type, heading = Vector(1, 0)):
+    def __init__(self, location, graphics, heading = Vector(1, 0)):
         super().__init__()
-        self.imageNorth = images.get(f'tank{type}_north')
-        self.imageEast = images.get(f'tank{type}_east')
-        self.imageSouth = images.get(f'tank{type}_south')
-        self.imageWest = images.get(f'tank{type}_west')
+        self.graphics = graphics
 
         self.heading = Vector(0, -1)
+        self.direction = Direction.NORTH
         self.moving = False
         self.type = type
 
         self.maxHitPoints = 10
         self.hitpoints = self.maxHitPoints
         self.movementSpeed = 1
+        self.scorePoints = 0
 
         self.shielded = False
         self.shieldEndTime = 0
@@ -45,8 +45,11 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
         self.destroyCallback = None
         self.destroyed = False
 
+    def setScorePoints(self, points):
+        self.scorePoints = points
+
     def getScorePoints(self):
-        return self.type * 100
+        return self.scorePoints
 
     def setMaxHitpoints(self, hitpoints):
         self.maxHitPoints = hitpoints
@@ -84,8 +87,8 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
         if not self.lastHitTime == None and time - self.lastHitTime > 50:
             extraOffset = self.lastHitVector.multiplyScalar(-1).toUnit()
         
-        screen.blit(self.image, (offset[0] + extraOffset.x + self.location.x, offset[1] + extraOffset.y + self.location.y))
-
+        drawOffset = Vector(offset[0], offset[1])
+        self.graphics.render(screen, drawOffset.add(self.location).add(extraOffset), self.direction)
         self.controller.render(screen)
 
     def moveSingleStep(self, direction):
@@ -135,17 +138,24 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
 
     def setHeading(self, newHeading):
         self.heading = newHeading
-        self.updateImageBasedOnHeading()
+        self.updateDirectionBasedOnHeading()
+        self.setGraphics(self.direction)
 
-    def updateImageBasedOnHeading(self):
+    def updateDirectionBasedOnHeading(self):
         if self.heading.y < 0:
-            self.setImage(self.imageNorth)
+            self.direction = Direction.NORTH
         elif self.heading.y > 0:
-            self.setImage(self.imageSouth)
+            self.direction = Direction.SOUTH
         elif self.heading.x < 0:
-            self.setImage(self.imageWest)
+            self.direction = Direction.WEST
         elif self.heading.x > 0:
-            self.setImage(self.imageEast)
+            self.direction = Direction.EAST
+
+    def setGraphics(self, direction):
+        self.setImage(self.graphics.baseImages[direction])
+        self.turretImage = self.graphics.turretImages[direction]
+        self.turretOffset = self.graphics.turretOffsets[direction]
+
 
     def getWeapon(self):
         return self.weapon
@@ -226,3 +236,73 @@ class Weapon:
     def setFireRateModifier(self, rate):
         self.fireRateModifier = rate
         self.setLevel(self.level)
+
+class Direction(enum.Enum):
+    NORTH = 1,
+    EAST = 2,
+    SOUTH = 3,
+    WEST = 4
+
+class TankGraphics:
+    def __init__(self, type, turretOffsets):
+        self.baseImages = { \
+            Direction.NORTH: images.get(f'tank{type}_base_north'), \
+            Direction.EAST: images.get(f'tank{type}_base_east'), \
+            Direction.SOUTH: images.get(f'tank{type}_base_south'), \
+            Direction.WEST: images.get(f'tank{type}_base_west')}
+
+        self.turretImages = { \
+            Direction.NORTH: images.get(f'tank{type}_turret_north'), \
+            Direction.EAST: images.get(f'tank{type}_turret_east'), \
+            Direction.SOUTH: images.get(f'tank{type}_turret_south'), \
+            Direction.WEST: images.get(f'tank{type}_turret_west')}
+
+        self.turretOffsets = turretOffsets
+
+    def render(self, surface, location, direction):
+        baseImage = self.baseImages[direction]
+        turretImage = self.turretImages[direction]
+        turretOffset = self.turretOffsets[direction]
+
+        surface.blit(baseImage, (location.x, location.y))
+        surface.blit(turretImage, (location.x + turretOffset.x, location.y + turretOffset.y))
+
+    @staticmethod
+    def createPlayerTank():
+        turretOffsets = { \
+            Direction.NORTH: Vector(3, -3), \
+            Direction.EAST: Vector(4, 3), \
+            Direction.SOUTH: Vector(3, 4), \
+            Direction.WEST: Vector(-3, 3)}
+
+        return TankGraphics(1, turretOffsets)
+
+    @staticmethod
+    def createEnemyTank1():
+        turretOffsets = { \
+            Direction.NORTH: Vector(3, -1), \
+            Direction.EAST: Vector(2, 3), \
+            Direction.SOUTH: Vector(3, 1), \
+            Direction.WEST: Vector(-1, 3)}
+
+        return TankGraphics(2, turretOffsets)
+
+    @staticmethod
+    def createEnemyTank2():
+        turretOffsets = { \
+            Direction.NORTH: Vector(3, -2), \
+            Direction.EAST: Vector(4, 3), \
+            Direction.SOUTH: Vector(3, 4), \
+            Direction.WEST: Vector(-2, 3)}
+
+        return TankGraphics(3, turretOffsets)
+
+    @staticmethod
+    def createEnemyTank3():
+        turretOffsets = { \
+            Direction.NORTH: Vector(3, -3), \
+            Direction.EAST: Vector(2, 3), \
+            Direction.SOUTH: Vector(3, 2), \
+            Direction.WEST: Vector(-3, 3)}
+
+        return TankGraphics(4, turretOffsets)
