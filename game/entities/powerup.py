@@ -1,4 +1,5 @@
 import enum
+import pygame
 
 import entities
 import images
@@ -10,9 +11,13 @@ class Powerup(entities.Entity):
     def __init__(self, image):
         super().__init__()
         self.setImage(image)
+        self.creationTime = pygame.time.get_ticks()
 
     def update(self, time, timePassed):
         import gamecontroller
+
+        if self.timeExpired(time):
+            self.markDisposable()
 
         if self.boundingRectangle.colliderect(gamecontroller.getPlayerTank().boundingRectangle):
             self.apply(gamecontroller.getPlayerTank())
@@ -23,6 +28,9 @@ class Powerup(entities.Entity):
 
     def apply(self, tank):
         pass
+
+    def timeExpired(self, time):
+        return time - self.creationTime > 10000
 
     def setImage(self, image):
         self.image = image
