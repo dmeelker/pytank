@@ -2,8 +2,8 @@
 
 Start screen
 Fix level loading in editor
-Projectiles going through walls
-Explosive projectiles
+[x] Projectiles going through walls
+[x] Explosive projectiles
 Animations for spawning and explosions
 Player navigation
 Shield visualization

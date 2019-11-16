@@ -19,14 +19,19 @@ class Projectile(entities.Entity, entities.ProjectileCollider):
         self.source = source
         self.power = power
         self.breaksConcrete = breaksConcrete
+        self.lastMoveTime = pygame.time.get_ticks()
 
         tileBlockedFunction = lambda tile: not tile is None and tile.blocksProjectiles
         self.movementHandler = MovementHandler(self, tileBlockedFunction, entityIgnoreFunction=self.collisionIgnoreFunction)
 
     def update(self, time, timePassed):
-        movementVector = self.directionVector.multiplyScalar(timePassed * 0.25)
-        collisions = self.movementHandler.moveEntity(movementVector)
-        self.handleCollisions(collisions, time)
+        movementSteps = int((time - self.lastMoveTime ) / 20)
+        if movementSteps > 0:
+            movementVector = self.directionVector.multiplyScalar(5)
+            for _ in range(movementSteps):
+                collisions = self.movementHandler.moveEntity(movementVector)
+                self.handleCollisions(collisions, time)
+            self.lastMoveTime = time
 
     def handleCollisions(self, collisions, time):
         if len(collisions) > 0:
