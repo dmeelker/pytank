@@ -1,5 +1,5 @@
 import os
-
+import math
 import pygame
 import pygame.joystick
 import pygame.freetype
@@ -41,14 +41,23 @@ def start():
         clock.tick(30)
 
 def initialize():
-    global screen,clock, buffer
+    global screen,clock,buffer,screenSize
     pygame.init()
+
+    for mode in  pygame.display.list_modes():
+        print(mode)
+
+    fullscreen = True
+
     pygame.joystick.init()
     pygame.display.set_caption("Pytank")
-    screen = pygame.display.set_mode((640, 480)) # , pygame.FULLSCREEN)
+
+    intializeDisplay(fullscreen)
+    buffer = pygame.Surface(bufferSize)
+
     pygame.key.set_repeat(50, 50)
 
-    buffer = pygame.Surface(bufferSize)
+    
 
     input.initialize()
     gamecontroller.initialize()
@@ -59,6 +68,36 @@ def initialize():
     PathfinderWorker.start()
 
     gamecontroller.startNewGame()
+
+def intializeDisplay(fullscreen):
+    global screenSize,screen
+    flags = 0
+
+    if fullscreen:
+        flags = pygame.FULLSCREEN
+        screenSize = getFittingDisplaySize((320, 240), pygame.display.list_modes())
+        print(f'Using resolution {screenSize}')
+
+    screen = pygame.display.set_mode(screenSize, flags=flags)
+
+def getFittingDisplaySize(baseResolution, availableSizes):
+    availableSizes.reverse()
+    
+    for mode in availableSizes:
+        if isMultipleOfBaseResolution(baseResolution, mode):
+            return mode
+    else:
+        return getLargestFittingResolution(baseResolution, availableSizes[0])
+
+def isMultipleOfBaseResolution(baseResolution, otherResolution):
+    return otherResolution[0] % baseResolution[0] == 0 and \
+        otherResolution[1] % baseResolution[1] == 0
+
+def getLargestFittingResolution(baseResolution, screenResolution):
+    horizontalFactor = int(screenResolution[0] / baseResolution[0])
+    verticalFactor = int(screenResolution[1] / baseResolution[1])
+    factor = min(horizontalFactor, verticalFactor)
+    return (baseResolution[0] * factor, baseResolution[1] * factor)
 
 def initializeFont():
     global font
@@ -115,9 +154,6 @@ def handleEvents():
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
             running = False
-        elif event.type == pygame.VIDEORESIZE:
-            screenSize = event.size
-            print(f'New screen size: {screenSize}')
         else:
             input.handleEvent(event)
 
@@ -195,4 +231,5 @@ def frameCompleted():
         fps = fpsCounter
         fpsCounter = 0
 
-start()
+if __name__ == '__main__':
+    start()
