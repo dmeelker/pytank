@@ -3,23 +3,21 @@ import entities.tank
 import tankcontroller
 
 class TankSpec:
-    def __init__(self, movementSpeed, weaponLevel, hitpoints):
-        self.movementSpeed = movementSpeed
+    def __init__(self, weaponLevel, hitpoints):
         self.weaponLevel = weaponLevel
         self.hitpoints = hitpoints
 
 tankSpecs = [
-    TankSpec(1, 1, 1),
-    TankSpec(2, 2, 2),
-    TankSpec(1, 1, 2),
-    TankSpec(1, 3, 4),
+    TankSpec(1, 1),
+    TankSpec(2, 2),
+    TankSpec(1, 2),
+    TankSpec(3, 4),
 ]
 
 def createTank(level, location):
     tankSpec = tankSpecs[level]
 
     tank = entities.tank.Tank(location, getGraphicsForTank(level + 1))
-    tank.movementSpeed = tankSpec.movementSpeed
     tank.hitpoints = tankSpec.hitpoints
     tank.setHeading(utilities.vectorDown)
     tank.setScorePoints((level + 1) * 100)

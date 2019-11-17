@@ -39,10 +39,10 @@ def initialize():
 
 def startNewGame():
     global lives, score
-    lives = 3
+    lives = 5
     score = 0
     recreatePlayerTank()
-    loadLevel(6)
+    loadLevel(7)
 
 def loadNextLevel():
     loadLevel(currentLevel + 1)

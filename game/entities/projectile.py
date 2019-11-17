@@ -3,6 +3,7 @@ import pygame
 
 import entities
 import entities.manager
+import entities.base
 from .movement import MovementHandler
 import playfield
 import images
@@ -88,8 +89,13 @@ class Projectile(entities.Entity, entities.ProjectileCollider):
             return self.shouldIgnoreTank(entity)
         elif entity == self.source:
             return True
+        elif self.playerFiringAtBase(entity):
+            return True
         
         return False
+
+    def playerFiringAtBase(self, entity):
+        return self.source.isPlayerControlled() and isinstance(entity, entities.base.Base)
 
     def shouldIgnoreTank(self, tank):
         return self.source.playerControlled == tank.playerControlled

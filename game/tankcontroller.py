@@ -52,7 +52,7 @@ class AiTankController(TankController):
         self.plannedPath = None
         self.pathPlanTime = 0
         self.searchGridFunction = SearchGridGenerator.getSearchSpaceCellValueForTile
-        
+        self.stepLength = 50
     
     def update(self, time, timePassed):
         if self.fireTimer.update(time):
@@ -80,7 +80,7 @@ class AiTankController(TankController):
         return self.hasPath() and not self.plannedPath.targetReached()
 
     def moveAlongPath(self, time):
-        movementSteps = int((time - self.lastMovementTime ) / 50)
+        movementSteps = int((time - self.lastMovementTime ) / self.stepLength)
         if movementSteps > 0:
             for _ in range(movementSteps):
                 self.stepTowardsTarget()
@@ -197,6 +197,7 @@ class PlayerChargerAiTankController(AiTankController):
 class BaseChargerAiTankController(AiTankController):
     def __init__(self, entity):
         super().__init__(entity)
+        self.stepLength = 100
         self.searchGridFunction = BaseChargerAiTankController.getSearchSpaceCellValueForTile
     
     def update(self, time, timePassed):
