@@ -65,6 +65,10 @@ class AiTankController(TankController):
             self.pendingPathSearch = None
 
     def render(self, screen):
+        pass
+        # self.renderPlannedPath(screen)
+
+    def renderPlannedPath(self, screen):
         if self.plannedPath != None:
             image = images.get('projectile')
             for step in self.plannedPath.path:

@@ -170,7 +170,7 @@ def renderToSurface(targetSurface):
 
     targetSurface.fill((0, 0, 0), rect=pygame.Rect(0, 240 - 16, 320, 16))
     scoreSurface = font.render(f'SCORE: {gamecontroller.getScore()}', pygame.color.Color(255, 255, 255, 255))
-    targetSurface.blit(scoreSurface[0], (75, 240 - 12))
+    targetSurface.blit(scoreSurface[0], (85, 240 - 12))
 
     
     renderLives(targetSurface)

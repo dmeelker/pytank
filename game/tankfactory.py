@@ -24,7 +24,12 @@ def createTank(level, location):
     tank.setController(getTankController(tank, level + 1))
 
     weapon = entities.tank.Weapon(tank, tankSpec.weaponLevel)
-    weapon.setFireRateModifier(2)
+
+    if level == 3: # Base charger
+        weapon.setFireRateModifier(4)
+    else:
+        weapon.setFireRateModifier(2)
+
     tank.setWeapon(weapon)
 
     return tank

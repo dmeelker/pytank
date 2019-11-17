@@ -42,7 +42,7 @@ def startNewGame():
     lives = 5
     score = 0
     recreatePlayerTank()
-    loadLevel(7)
+    loadLevel(1)
 
 def loadNextLevel():
     loadLevel(currentLevel + 1)
