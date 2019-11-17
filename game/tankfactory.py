@@ -10,7 +10,7 @@ class TankSpec:
 
 tankSpecs = [
     TankSpec(1, 1, 1),
-    TankSpec(2, 1, 2),
+    TankSpec(2, 2, 2),
     TankSpec(1, 1, 2),
     TankSpec(1, 3, 4),
 ]

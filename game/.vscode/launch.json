@@ -21,7 +21,7 @@
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "program": "${workspaceFolder}/editor.py",
-            "args": ["levels/level1.txt"],
+            "args": ["levels/level6.txt"],
             "console": "integratedTerminal"
         },
         {

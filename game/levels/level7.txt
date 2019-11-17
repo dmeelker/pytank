@@ -1,0 +1,33 @@
+size=38,28
+spawncount=3
+        15:0             30:0             50:0
+3:0             25:0              40:0 50:0
+        15:0             30:0             50:0
+BBS_BBBBBBBBBBBBBBS_BBBBBBBBBBBBBBS_BB
+BB__BBBBBBBBBBBBBB__BBBBBBBBBBBBBB__BB
+BB__BB__________BB__BB__________BB__BB
+BB__BB__________BB__BB__________BB__BB
+________BBBBBB______BB__BBBBBB______BB
+________BBBBBB______BB__BBBBBB______BB
+BB__BBBBBB__BBBB____________BBBBBB__BB
+BB__BBBBBB__BBBB____________BBBBBB__BB
+BB________________BBBB__BB______BB__BB
+BB________________BBBB__BB______BB__BB
+BB__BBBBBBBBBBBBBBBB________BB________
+BB__BBBBBBBBBBBBBBBB________BB________
+BB______BB____________BBBBBBBBBB__BB__
+BB______BB____________BBBBBBBBBB__BB__
+BBBBBB__BB__BBBBBBBBBBBBBB________BB__
+BBBBBB__BB__BBBBBBBBBBBBBB________BB__
+BB______BB__BB______________BB__BBBB__
+BB______BB__BB______________BB__BBBB__
+____BBBBBB__BB__BB__BBBBBB__BB__BB____
+____BBBBBB__BB__BB__BBBBBB__BB__BB____
+BB__BB______BB__BB__BB__BB__BB__BB__BB
+BB__BB______BB__BB__BB__BB__BB__BB__BB
+____BB__BBBBBB____P_____BB__BB______BB
+____BB__BBBBBB__________BB__BB______BB
+__BBBB__________BBBBBB__BB______BB____
+__BBBB__________BBBBBB__BB______BB____
+________BBBBBB__BBX_BB______BB__BBBB__
+________BBBBBB__BB__BB______BB__BBBB__
