@@ -60,6 +60,8 @@ def loadLevel(levelNumber):
 
 def resetLevelData():
     global tankSpawns, liveEnemyTanks
+
+    playerTank.repair()
     entities.manager.clear()
     entities.manager.add(playerTank)
     tankSpawns = []

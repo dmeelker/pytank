@@ -54,7 +54,7 @@ class RepairTankPowerup(Powerup):
 
 class RepairBasePowerup(Powerup):
     def __init__(self):
-        super().__init__(images.get('powerup_repairself'))
+        super().__init__(images.get('powerup_repairbase'))
 
     def apply(self, tank):
         gamecontroller.getBase().repair()

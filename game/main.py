@@ -113,9 +113,14 @@ def loadImages():
     images.load('base.png', 'base')
     images.load('tank1.png', 'tank1')
 
+    images.load('ui_weaponpower.png', 'ui_weaponpower')
+    images.load('ui_heart.png', 'ui_heart')
+    images.load('ui_basehealth.png', 'ui_basehealth')
+
     images.load('powerup_weapon.png', 'powerup_weapon')
     images.load('powerup_destroyall.png', 'powerup_destroyall')
     images.load('powerup_repairself.png', 'powerup_repairself')
+    images.load('powerup_repairbase.png', 'powerup_repairbase')
 
     images.generateRotatedImages('tank1_base.png', 'tank1_base')
     images.generateRotatedImages('tank1_turret.png', 'tank1_turret')
@@ -188,28 +193,37 @@ def renderLives(targetSurface):
         startLocation = startLocation.add(Vector(16, 0))
 
 def renderWeaponPower(targetSurface):
-    image = images.get('projectile')
-    startLocation = Vector(160, 240 - 12)
+    image = images.get('ui_weaponpower')
+    startLocation = Vector(175, 240 - 11)
 
     for _ in range(gamecontroller.getPlayerTank().getWeapon().getLevel()):
         targetSurface.blit(image, startLocation.toIntTuple())
-        startLocation = startLocation.add(Vector(4, 0))
+        startLocation = startLocation.add(Vector(7, 0))
 
 def renderPlayerHitpoints(targetSurface):
-    image = images.get('projectile')
-    startLocation = Vector(210, 240 - 12)
+    image = images.get('ui_heart')
+    startLocation = Vector(220, 240 - 11)
 
     for _ in range(gamecontroller.getPlayerTank().getHitpoints()):
         targetSurface.blit(image, startLocation.toIntTuple())
-        startLocation = startLocation.add(Vector(4, 0))
+        startLocation = startLocation.add(Vector(8, 0))
 
 def renderBaseHitpoints(targetSurface):
-    image = images.get('projectile')
-    startLocation = Vector(260, 240 - 12)
+    image = images.get('ui_basehealth')
+    startLocation = Vector(270, 240 - 15)
 
-    for _ in range(gamecontroller.getBase().getHitpoints()):
-        targetSurface.blit(image, startLocation.toIntTuple())
-        startLocation = startLocation.add(Vector(4, 0))
+    x = startLocation.x
+    y = startLocation.y
+
+    for i in range(gamecontroller.getBase().getHitpoints()):
+        targetSurface.blit(image, (x, y))
+
+        x += 10
+        if i == 4:
+            x = startLocation.x
+            y += 7
+
+        #startLocation = startLocation.add(Vector(10, 0))
 
 def renderOverlayText(targetSurface):
     if gamecontroller.overlayText != None:
