@@ -1,4 +1,5 @@
 import os
+import sys
 import math
 import pygame
 import pygame.joystick
@@ -31,7 +32,11 @@ lastFpsTime = 0
 fps = 0
 
 def start():
-    initialize()
+    fullscreen = True
+    if len(sys.argv) > 1:
+        fullscreen = sys.argv[1] == '1'
+
+    initialize(fullscreen)
 
     while running:
         update()
@@ -40,37 +45,26 @@ def start():
 
         clock.tick(30)
 
-def initialize():
-    global screen,clock,buffer,screenSize
+def initialize(fullscreen):
+    global buffer
     pygame.init()
-
-    for mode in  pygame.display.list_modes():
-        print(mode)
-
-    fullscreen = True
-
+    pygame.key.set_repeat(50, 50)
     pygame.joystick.init()
     pygame.display.set_caption("Pytank")
 
     intializeDisplay(fullscreen)
-    buffer = pygame.Surface(bufferSize)
-
-    pygame.key.set_repeat(50, 50)
-
-    
 
     input.initialize()
     gamecontroller.initialize()
 
     initializeFont()
     loadImages()
-    
     PathfinderWorker.start()
 
     gamecontroller.startNewGame()
 
 def intializeDisplay(fullscreen):
-    global screenSize,screen
+    global screenSize,screen, buffer
     flags = 0
 
     if fullscreen:
@@ -79,6 +73,10 @@ def intializeDisplay(fullscreen):
         print(f'Using resolution {screenSize}')
 
     screen = pygame.display.set_mode(screenSize, flags=flags)
+    buffer = pygame.Surface(bufferSize)
+
+    if fullscreen:
+        pygame.mouse.set_visible(False)
 
 def getFittingDisplaySize(baseResolution, availableSizes):
     availableSizes.reverse()

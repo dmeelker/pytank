@@ -13,6 +13,7 @@
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "program": "${workspaceFolder}/main.py",
+            "args": ["0"],
             "console": "integratedTerminal"
         },
         {
