@@ -1,4 +1,4 @@
-import tankspawnschedule
+import tankspawn
 import playfield
 
 class LevelDefinition():
@@ -103,7 +103,7 @@ def readSpawnCount(reader):
     return int(line[11:])
 
 def readSpawnSchedule(line):
-    return tankspawnschedule.TankSpawnSchedule.parseSpawnMomentsFromString(line)
+    return tankspawn.TankSpawnSchedule.parseSpawnMomentsFromString(line)
 
 foundTankSpawns = 0
 

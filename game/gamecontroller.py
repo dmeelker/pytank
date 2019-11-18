@@ -12,7 +12,7 @@ import leveldefinition
 
 import tankfactory
 import tankcontroller
-import tankspawnschedule
+import tankspawn
 from powerupspawner import PowerupSpawner
 
 import utilities
@@ -77,9 +77,9 @@ def loadLevelFromFile(fileName):
 
 def initializeTankSpawns(level):
     for spawnDefinition in level.getTankSpawns():
-        schedule = tankspawnschedule.TankSpawnSchedule(pygame.time.get_ticks(), spawnDefinition.getSchedule())
+        schedule = tankspawn.TankSpawnSchedule(pygame.time.get_ticks(), spawnDefinition.getSchedule())
         spawnLocation = convertFromTileTupleToScreenVector(spawnDefinition.getLocation())
-        tankSpawns.append(tankspawnschedule.TankSpawn(spawnLocation, schedule))
+        tankSpawns.append(tankspawn.TankSpawn(spawnLocation, schedule))
 
 def initializeBaseAndPlayer(level):
     global base

@@ -104,42 +104,39 @@ def initializeFont():
     font.antialiased = False
 
 def loadImages():
-    images.load('projectile.png', 'projectile')
+    images.load('projectile.png')
     
-    images.load('brick.png', 'brick')
-    images.load('concrete.png', 'concrete')
-    images.load('tree.png', 'tree')
-    images.load('water.png', 'water')
-    images.load('base.png', 'base')
-    images.load('tank1.png', 'tank1')
+    images.load('brick.png')
+    images.load('concrete.png')
+    images.load('tree.png')
+    images.load('water.png')
+    images.load('base.png')
+    images.load('tank1.png')
 
-    images.load('ui_weaponpower.png', 'ui_weaponpower')
-    images.load('ui_heart.png', 'ui_heart')
-    images.load('ui_basehealth.png', 'ui_basehealth')
+    images.load('ui_weaponpower.png')
+    images.load('ui_heart.png')
+    images.load('ui_basehealth.png')
 
-    images.load('powerup_weapon.png', 'powerup_weapon')
-    images.load('powerup_destroyall.png', 'powerup_destroyall')
-    images.load('powerup_repairself.png', 'powerup_repairself')
-    images.load('powerup_repairbase.png', 'powerup_repairbase')
+    images.load('powerup_weapon.png')
+    images.load('powerup_destroyall.png')
+    images.load('powerup_repairself.png')
+    images.load('powerup_repairbase.png')
 
-    images.generateRotatedImages('tank1_base.png', 'tank1_base')
-    images.generateRotatedImages('tank1_turret.png', 'tank1_turret')
+    images.generateRotatedImages('tank1_base.png')
+    images.generateRotatedImages('tank1_turret.png')
 
-    images.generateRotatedImages('tank2_base.png', 'tank2_base')
-    images.generateRotatedImages('tank2_turret.png', 'tank2_turret')
+    images.generateRotatedImages('tank2_base.png')
+    images.generateRotatedImages('tank2_turret.png')
 
-    images.generateRotatedImages('tank3_base.png', 'tank3_base')
-    images.generateRotatedImages('tank3_turret.png', 'tank3_turret')
+    images.generateRotatedImages('tank3_base.png')
+    images.generateRotatedImages('tank3_turret.png')
 
-    images.generateRotatedImages('tank4_base.png', 'tank4_base')
-    images.generateRotatedImages('tank4_turret.png', 'tank4_turret')
+    images.generateRotatedImages('tank4_base.png')
+    images.generateRotatedImages('tank4_turret.png')
 
-    images.generateRotatedImages('projectile.png', 'projectile')
+    images.generateRotatedImages('projectile.png')
 
-    images.generateRotatedImages('tank1.png', 'tank1')
-    #images.generateRotatedImages('tank1.png', 'tank2_base')
-    # images.generateRotatedImages('tank1.png', 'tank3_base')
-    # images.generateRotatedImages('tank1.png', 'tank4_base')
+    images.generateRotatedImages('tank1.png')
     
 def update():
     global lastUpdateTime
@@ -167,22 +164,27 @@ def render():
     pygame.display.flip()
 
 def renderToSurface(targetSurface):
-    
     targetSurface.fill((86, 79, 68))
+    renderPlayField(targetSurface)
+    renderStatBar(targetSurface)
+    renderOverlayText(targetSurface)
+
+def renderPlayField(targetSurface):
     playfield.renderLayer(0, targetSurface, (8, 0))
     entities.manager.render(targetSurface, (8, 0), pygame.time.get_ticks())
     playfield.renderLayer(1, targetSurface, (8, 0))
 
+def renderStatBar(targetSurface):
     targetSurface.fill((0, 0, 0), rect=pygame.Rect(0, 240 - 16, 320, 16))
-    scoreSurface = font.render(f'SCORE: {gamecontroller.getScore()}', pygame.color.Color(255, 255, 255, 255))
-    targetSurface.blit(scoreSurface[0], (85, 240 - 12))
-
-    
+    renderScore(targetSurface)
     renderLives(targetSurface)
     renderWeaponPower(targetSurface)
     renderPlayerHitpoints(targetSurface)
     renderBaseHitpoints(targetSurface)
-    renderOverlayText(targetSurface)
+
+def renderScore(targetSurface):
+    scoreSurface = font.render(f'SCORE: {gamecontroller.getScore()}', pygame.color.Color(255, 255, 255, 255))
+    targetSurface.blit(scoreSurface[0], (85, 240 - 12))
 
 def renderLives(targetSurface):
     startLocation = Vector(0, 240 - 12)
@@ -211,7 +213,6 @@ def renderPlayerHitpoints(targetSurface):
 def renderBaseHitpoints(targetSurface):
     image = images.get('ui_basehealth')
     startLocation = Vector(270, 240 - 15)
-
     x = startLocation.x
     y = startLocation.y
 
@@ -222,8 +223,6 @@ def renderBaseHitpoints(targetSurface):
         if i == 4:
             x = startLocation.x
             y += 7
-
-        #startLocation = startLocation.add(Vector(10, 0))
 
 def renderOverlayText(targetSurface):
     if gamecontroller.overlayText != None:

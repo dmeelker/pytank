@@ -4,8 +4,9 @@ import pygame.transform
 
 images = {}
 
-def load(fileName, key):
+def load(fileName):
     loadedImage = loadImageFile(fileName)
+    key = getKeyFromFilename(fileName)
     images[key] = loadedImage
 
 def get(key):
@@ -17,7 +18,8 @@ def set (key, image):
 def loadImageFile(fileName):
     return pygame.image.load(os.path.join('images', fileName)).convert_alpha()
 
-def generateRotatedImages(fileName, baseKey):
+def generateRotatedImages(fileName):
+    baseKey = getKeyFromFilename(fileName)
     northImage = loadImageFile(fileName)
     eastImage = pygame.transform.rotate(northImage, 270)
     southImage = pygame.transform.rotate(northImage, 180)
@@ -27,3 +29,6 @@ def generateRotatedImages(fileName, baseKey):
     images[baseKey + '_east'] = eastImage
     images[baseKey + '_south'] = southImage
     images[baseKey + '_west'] = westImage
+
+def getKeyFromFilename(fileName):
+    return os.path.splitext(fileName)[0]

@@ -3,8 +3,7 @@ import random
 import playfield
 import utilities
 from utilities import Timer
-#import pathfinder
-#from pathfinder import SearchGrid
+
 import gamecontroller
 
 from pathfinding.plannedpath import PlannedPath
