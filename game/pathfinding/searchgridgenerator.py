@@ -32,6 +32,12 @@ class SearchGridGenerator():
                     if values[1] > 0 and values[0] == 0:
                         grid.set(x, y, values[1])
 
+                if x < grid.width - 1 and y < grid.height - 1:
+                    values = [grid.get(x, y), grid.get(x + 1, y + 1)]
+                    if values[1] > 0 and values[0] == 0:
+                        grid.set(x, y, values[1])
+
+
     @staticmethod
     def getSearchSpaceCellValueForTile(tile):
         if tile is None:

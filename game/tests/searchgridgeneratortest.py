@@ -55,7 +55,7 @@ class TestSearchGridGenerator(unittest.TestCase):
             '---'])
 
         self.generateSearchGridAndAssert([ \
-            [0, 8, 0], \
+            [8, 8, 0], \
             [8, 8, 0], \
             [0, 0, 0]])
 
@@ -89,7 +89,7 @@ class TestSearchGridGenerator(unittest.TestCase):
             'BBBB'])
 
         self.generateSearchGridAndAssert([ \
-            [100, 100, 0, 100], \
+            [100, 100, 100, 100], \
             [100, 100, 100, 100], \
             [8, 8, 8, 8], \
             [8, 8, 8, 8]])
