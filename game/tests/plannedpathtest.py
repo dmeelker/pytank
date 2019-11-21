@@ -33,32 +33,33 @@ class TestPlannedPath(unittest.TestCase):
         path = self.createPath((0,0), (1,0))
 
         self.assertEqual([(0,0), (1,0)], path.getPath())
-        self.assertEqual(1, path.getTargetStepIndex())
+        self.assertEqual(0, path.getTargetStepIndex())
 
     def test_checkIfNextPathStepIsReached_no(self):
         setupEmptyPlayField(2, 2)
         path = self.createPath((0,0), (1,0))
 
-        self.assertFalse(path.checkIfNextPathStepIsReached((0, 0)))
+        self.assertFalse(path.checkIfNextPathStepIsReached((1, 0)))
 
     def test_checkIfNextPathStepIsReached_yes(self):
         setupEmptyPlayField(2, 2)
         path = self.createPath((0,0), (1,0))
 
-        self.assertTrue(path.checkIfNextPathStepIsReached((8, 0)))
+        self.assertTrue(path.checkIfNextPathStepIsReached((0, 0)))
 
     def test_tankMovedToNextStep(self):
         setupEmptyPlayField(3, 1)
         path = self.createPath((0,0), (2,0))
 
-        path.moveToNextStepIfCurrentStepIsReached((8,0))
+        path.moveToNextStepIfCurrentStepIsReached((0,0))
 
-        self.assertEqual(2, path.getTargetStepIndex())
+        self.assertEqual(1, path.getTargetStepIndex())
 
     def test_targetLocationReached(self):
         setupEmptyPlayField(2, 2)
         path = self.createPath((0,0), (1,0))
 
+        path.moveToNextStepIfCurrentStepIsReached((0,0))
         path.moveToNextStepIfCurrentStepIsReached((8,0))
 
         self.assertTrue(path.targetReached())

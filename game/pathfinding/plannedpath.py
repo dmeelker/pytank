@@ -6,7 +6,7 @@ class PlannedPath():
     def __init__(self, path):
         self.path = path
         self.targetLocation = path[-1]
-        self.targetStepIndex = 1
+        self.targetStepIndex = 0
 
     def moveToNextStepIfCurrentStepIsReached(self, currentLocation):
         if self.checkIfNextPathStepIsReached(currentLocation):

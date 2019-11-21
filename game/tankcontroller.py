@@ -65,13 +65,13 @@ class AiTankController(TankController):
 
     def render(self, screen):
         pass
-        # self.renderPlannedPath(screen)
+        #self.renderPlannedPath(screen)
 
     def renderPlannedPath(self, screen):
         if self.plannedPath != None:
             image = images.get('projectile')
             for step in self.plannedPath.path:
-                screen.blit(image, (step[0] * 8, step[1] * 8))
+                screen.blit(image, ((step[0] * 8) + 8, step[1] * 8))
 
     def pathRecalculationNeeded(self, time):
         return (not self.hasPath() and not self.isPathPlanningPending()) or self.isPlannedPathExpired(time)
