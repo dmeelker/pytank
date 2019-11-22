@@ -9,9 +9,9 @@ class TankSpec:
 
 tankSpecs = [
     TankSpec(1, 1),
-    TankSpec(2, 2),
-    TankSpec(1, 2),
-    TankSpec(3, 4),
+    TankSpec(2, 4),
+    TankSpec(1, 4),
+    TankSpec(3, 10),
 ]
 
 def createTank(level, location):
@@ -36,11 +36,11 @@ def createTank(level, location):
 
 def getGraphicsForTank(level):
     if level == 1:
-        return entities.tank.TankGraphics.createEnemyTank2()
+        return entities.tank.TankGraphics.createEnemyTank1()
     elif level == 2:
         return entities.tank.TankGraphics.createEnemyTank2()
     elif level == 3:
-        return entities.tank.TankGraphics.createEnemyTank1()
+        return entities.tank.TankGraphics.createEnemyTank2()
     elif level == 4: 
         return entities.tank.TankGraphics.createEnemyTank3()
 
