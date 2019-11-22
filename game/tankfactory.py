@@ -11,7 +11,7 @@ tankSpecs = [
     TankSpec(1, 1),
     TankSpec(2, 4),
     TankSpec(1, 4),
-    TankSpec(3, 10),
+    TankSpec(3, 6),
 ]
 
 def createTank(level, location):

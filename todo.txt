@@ -3,8 +3,6 @@
 Start screen
 Animations for spawning and explosions
 Graphics
-- Powerups
-- UI
 - Different image for different projectiles
 - Shield
 More levels
