@@ -1,8 +1,17 @@
 import pygame
 import pygame.joystick
 
+class ButtonStates():
+    def __init__(self):
+        self.left = False
+        self.right = False
+        self.up = False
+        self.down = False
+        self.fire = False
+
 tankController = None
 joystick = None
+buttonStates = ButtonStates()
 
 def initialize():
     global joystick
@@ -15,37 +24,37 @@ def initialize():
 def handleEvent(event):
     if event.type == pygame.KEYDOWN:
         if event.key == pygame.K_LEFT:
-            tankController.moveLeft = True
+            buttonStates.left = True
         if event.key == pygame.K_RIGHT:
-            tankController.moveRight = True
+            buttonStates.right = True
         if event.key == pygame.K_UP:
-            tankController.moveUp = True
+            buttonStates.up = True
         if event.key == pygame.K_DOWN:
-            tankController.moveDown = True
+            buttonStates.down = True
         if event.key == pygame.K_SPACE:
-            tankController.fire = True
+            buttonStates.fire = True
     elif event.type == pygame.KEYUP:
         if event.key == pygame.K_LEFT:
-            tankController.moveLeft = False
+            buttonStates.left = False
         if event.key == pygame.K_RIGHT:
-            tankController.moveRight = False
+            buttonStates.right = False
         if event.key == pygame.K_UP:
-            tankController.moveUp = False
+            buttonStates.up = False
         if event.key == pygame.K_DOWN:
-            tankController.moveDown = False
+            buttonStates.down = False
         if event.key == pygame.K_SPACE:
-            tankController.fire = False
+            buttonStates.fire = False
 
 def update():
     if joystick != None:
         checkJoystickButtons()
 
 def checkJoystickButtons():
-    tankController.fire = joystick.get_button(1)
+    buttonStates.fire = joystick.get_button(1)
 
     xAxis = joystick.get_axis(0)
     yAxis = joystick.get_axis(1)
-    tankController.moveLeft = xAxis < -0.01
-    tankController.moveRight = xAxis > 0.01
-    tankController.moveUp = yAxis < -0.01
-    tankController.moveDown = yAxis > 0.01
+    buttonStates.left = xAxis < -0.01
+    buttonStates.right = xAxis > 0.01
+    buttonStates.up = yAxis < -0.01
+    buttonStates.down = yAxis > 0.01

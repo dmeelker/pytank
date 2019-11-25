@@ -5,6 +5,7 @@ import utilities
 from utilities import Timer
 
 import gamecontroller
+import input
 
 from pathfinding.plannedpath import PlannedPath
 from pathfinding.searchgridgenerator import SearchGridGenerator
@@ -24,22 +25,17 @@ class TankController:
 class PlayerTankController(TankController):
     def __init__(self, entity):
         self.entity = entity
-        self.moveLeft = False
-        self.moveRight = False
-        self.moveUp = False
-        self.moveDown = False
-        self.fire = False
     
     def update(self, time, timePassed):
-        if self.moveLeft:
+        if input.buttonStates.left:
             self.entity.moveInDirection(utilities.vectorLeft)
-        elif self.moveRight:
+        elif input.buttonStates.right:
             self.entity.moveInDirection(utilities.vectorRight)
-        if self.moveUp:
+        if input.buttonStates.up:
             self.entity.moveInDirection(utilities.vectorUp)
-        elif self.moveDown:
+        elif input.buttonStates.down:
             self.entity.moveInDirection(utilities.vectorDown)
-        if self.fire:
+        if input.buttonStates.fire:
             self.entity.fire(time)
 
 class AiTankController(TankController):

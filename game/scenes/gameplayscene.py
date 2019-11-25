@@ -30,6 +30,9 @@ class GameplayScene(scenes.Scene):
         self.renderOverlayText(surface)
 
     def renderPlayField(self, targetSurface):
+        targetSurface.fill((0, 0, 0), rect=pygame.Rect(0, 0, 8, 240 - 16))
+        targetSurface.fill((0, 0, 0), rect=pygame.Rect(320 - 8, 0, 8, 240 - 16))
+
         playfield.renderLayer(0, targetSurface, (8, 0))
         entities.manager.render(targetSurface, (8, 0), pygame.time.get_ticks())
         playfield.renderLayer(1, targetSurface, (8, 0))
