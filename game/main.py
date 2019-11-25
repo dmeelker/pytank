@@ -11,6 +11,7 @@ import utilities
 from utilities import Vector
 
 import scenes
+import scenes.titlescreen
 import scenes.gameplayscene
 
 import input
@@ -44,15 +45,14 @@ def start():
 
 def initialize(fullscreen):
     initializePygame(fullscreen)
-    initializeFont()
-    loadImages()
-    input.initialize()
+    initializeResources()
+    initializeInput()
+    initializePathfinder()
 
-    PathfinderWorker.start()
-
-    scenes.setScene(scenes.gameplayscene.GameplayScene())
+    scenes.setScene(scenes.titlescreen.TitleScene())
 
 def initializePygame(fullscreen):
+    print('Initializing pygame')
     pygame.init()
     pygame.key.set_repeat(50, 50)
     pygame.joystick.init()
@@ -94,12 +94,24 @@ def getLargestFittingResolution(baseResolution, screenResolution):
     factor = min(horizontalFactor, verticalFactor)
     return (baseResolution[0] * factor, baseResolution[1] * factor)
 
+def initializeInput():
+    input.initialize()
+
+def initializePathfinder():
+    PathfinderWorker.start()
+
+def initializeResources():
+    initializeFont()
+    initializeImages()
+
 def initializeFont():
+    print('Initializing font')
     pygame.freetype.init()
     fonts.defaultFont = pygame.freetype.Font(os.path.join('fonts', 'DTM-Sans.otf'), size=13)
     fonts.defaultFont.antialiased = False
 
-def loadImages():
+def initializeImages():
+    print('Loading images')
     images.load('projectile.png')
     
     images.load('brick.png')
