@@ -34,9 +34,6 @@ powerupTimer = Timer(40000)
 overlayText = None
 overlayHideTime = None
 
-def initialize():
-    pass
-
 def startNewGame():
     global lives, score
     lives = 5

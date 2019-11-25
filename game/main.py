@@ -6,25 +6,22 @@ import pygame.joystick
 import pygame.freetype
 
 import images
+import fonts
 import utilities
 from utilities import Vector
 
-import playfield
-import gamecontroller
-import entities
-import entities.manager
+import scenes
+import scenes.gameplayscene
+
 import input
 
 import pathfinding.pathfindingbackgroundworker as PathfinderWorker
 
-
-# Pygame objects
 screen = None
 screenSize = (640, 480)
 bufferSize = (320, 240)
 buffer = None
 clock = pygame.time.Clock()
-font = None
 running = True
 lastUpdateTime = 0
 fpsCounter = 0
@@ -46,25 +43,25 @@ def start():
         clock.tick(30)
 
 def initialize(fullscreen):
-    global buffer
+    initializePygame(fullscreen)
+    initializeFont()
+    loadImages()
+    input.initialize()
+
+    PathfinderWorker.start()
+
+    scenes.setScene(scenes.gameplayscene.GameplayScene())
+
+def initializePygame(fullscreen):
     pygame.init()
     pygame.key.set_repeat(50, 50)
     pygame.joystick.init()
     pygame.display.set_caption("Pytank")
 
     intializeDisplay(fullscreen)
-
-    input.initialize()
-    gamecontroller.initialize()
-
-    initializeFont()
-    loadImages()
-    PathfinderWorker.start()
-
-    gamecontroller.startNewGame()
-
+    
 def intializeDisplay(fullscreen):
-    global screenSize,screen, buffer
+    global screenSize, screen, buffer
     flags = 0
 
     if fullscreen:
@@ -98,10 +95,9 @@ def getLargestFittingResolution(baseResolution, screenResolution):
     return (baseResolution[0] * factor, baseResolution[1] * factor)
 
 def initializeFont():
-    global font
     pygame.freetype.init()
-    font = pygame.freetype.Font(os.path.join('fonts', 'DTM-Sans.otf'), size=13)
-    font.antialiased = False
+    fonts.defaultFont = pygame.freetype.Font(os.path.join('fonts', 'DTM-Sans.otf'), size=13)
+    fonts.defaultFont.antialiased = False
 
 def loadImages():
     images.load('projectile.png')
@@ -147,7 +143,7 @@ def update():
     timePassed = time - lastUpdateTime
     lastUpdateTime = time
 
-    gamecontroller.update(time, timePassed)
+    scenes.getActiveScene().update(time, timePassed)
 
 def handleEvents():
     global running, screenSize
@@ -158,81 +154,12 @@ def handleEvents():
             input.handleEvent(event)
 
 def render():
-    renderToSurface(buffer)
-    pygame.transform.scale(buffer, screenSize, screen)
-
+    scenes.getActiveScene().render(buffer)
+    renderBufferToScreen()
     pygame.display.flip()
 
-def renderToSurface(targetSurface):
-    targetSurface.fill((86, 79, 68))
-    renderPlayField(targetSurface)
-    renderStatBar(targetSurface)
-    renderOverlayText(targetSurface)
-
-def renderPlayField(targetSurface):
-    playfield.renderLayer(0, targetSurface, (8, 0))
-    entities.manager.render(targetSurface, (8, 0), pygame.time.get_ticks())
-    playfield.renderLayer(1, targetSurface, (8, 0))
-
-def renderStatBar(targetSurface):
-    targetSurface.fill((0, 0, 0), rect=pygame.Rect(0, 240 - 16, 320, 16))
-    renderScore(targetSurface)
-    renderLives(targetSurface)
-    renderWeaponPower(targetSurface)
-    renderPlayerHitpoints(targetSurface)
-    renderBaseHitpoints(targetSurface)
-
-def renderScore(targetSurface):
-    scoreSurface = font.render(f'SCORE: {gamecontroller.getScore()}', pygame.color.Color(255, 255, 255, 255))
-    targetSurface.blit(scoreSurface[0], (85, 240 - 12))
-
-def renderLives(targetSurface):
-    startLocation = Vector(0, 240 - 12)
-    tankImage = images.get('tank1')
-
-    for _ in range(gamecontroller.getLives()):
-        targetSurface.blit(tankImage, startLocation.toIntTuple())    
-        startLocation = startLocation.add(Vector(16, 0))
-
-def renderWeaponPower(targetSurface):
-    image = images.get('ui_weaponpower')
-    startLocation = Vector(175, 240 - 11)
-
-    for _ in range(gamecontroller.getPlayerTank().getWeapon().getLevel()):
-        targetSurface.blit(image, startLocation.toIntTuple())
-        startLocation = startLocation.add(Vector(7, 0))
-
-def renderPlayerHitpoints(targetSurface):
-    image = images.get('ui_heart')
-    startLocation = Vector(220, 240 - 11)
-
-    for _ in range(gamecontroller.getPlayerTank().getHitpoints()):
-        targetSurface.blit(image, startLocation.toIntTuple())
-        startLocation = startLocation.add(Vector(8, 0))
-
-def renderBaseHitpoints(targetSurface):
-    image = images.get('ui_basehealth')
-    startLocation = Vector(270, 240 - 15)
-    x = startLocation.x
-    y = startLocation.y
-
-    for i in range(gamecontroller.getBase().getHitpoints()):
-        targetSurface.blit(image, (x, y))
-
-        x += 10
-        if i == 4:
-            x = startLocation.x
-            y += 7
-
-def renderOverlayText(targetSurface):
-    if gamecontroller.overlayText != None:
-        age = gamecontroller.overlayHideTime - pygame.time.get_ticks()
-
-        if int(age / 500) % 2 == 1:
-            overlay = font.render(gamecontroller.overlayText, pygame.color.Color(255,255,0))
-            overlaySize = overlay[1]
-            location = ((bufferSize[0] / 2) - (overlaySize.width / 2), (bufferSize[1] / 2) - (overlaySize.height / 2))
-            targetSurface.blit(overlay[0], location)
+def renderBufferToScreen():
+    pygame.transform.scale(buffer, screenSize, screen)
 
 def frameCompleted():
     global fpsCounter, fps, lastFpsTime
