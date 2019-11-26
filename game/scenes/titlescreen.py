@@ -1,4 +1,5 @@
 import pygame
+import pygame.time
 
 import images
 import fonts
@@ -19,6 +20,7 @@ class TitleScene(scenes.Scene):
     def update(self, time, timePassed):
         if input.buttonStates.fire:
             scenes.setScene(scenes.gameplayscene.GameplayScene())
+            pygame.time.wait(200)
 
     def render(self, surface):
         surface.fill((86, 79, 68))
