@@ -1,6 +1,5 @@
 = Open
 
-Start screen
 Animations for spawning and explosions
 Graphics
 - Different image for different projectiles

@@ -113,6 +113,7 @@ def initializeFont():
 def initializeImages():
     print('Loading images')
     images.load('projectile.png')
+    images.load('explosion.png')
     
     images.load('brick.png')
     images.load('concrete.png')

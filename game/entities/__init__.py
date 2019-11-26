@@ -21,7 +21,7 @@ class Entity:
         pass
 
     def render(self, screen, offset, time):
-        pass
+        screen.blit(self.image, (int(offset[0] + self.location.x), int(offset[1] + self.location.y)))
 
     def getLocation(self):
         return self.location
@@ -32,6 +32,9 @@ class Entity:
 
     def getCenterLocation(self):
         return self.location.add(self.size.multiplyScalar(0.5))
+
+    def centerOn(self, location):
+        self.move(location.subtract(self.size.multiplyScalar(0.5)))
 
     def move(self, movementVector):
         self.setLocation(self.location.add(movementVector))

@@ -5,6 +5,7 @@ import pygame
 import entities
 from entities import Direction
 import entities.projectile
+import entities.effect
 from entities.movement import MovementHandler
 import playfield
 import tankcontroller
@@ -176,8 +177,13 @@ class Tank(entities.Entity, entities.ProjectileCollider, entities.Blocking):
 
     def destroy(self):
         self.destroyed = True
+        self.createExplosion()
         self.fireDestroyCallback()
         self.markDisposable()
+
+    def createExplosion(self):
+        image = images.get('explosion')
+        entities.manager.add(entities.effect.Effect(image, self.getCenterLocation(), 300))
 
     def isDestroyed(self):
         return self.destroyed
