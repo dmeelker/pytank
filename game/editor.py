@@ -68,16 +68,16 @@ def setActiveTile(tile):
     activeTile = tile
 
 def loadImages():
-    images.load('projectile.png', 'projectile')
+    images.load('projectile.png')
     
-    images.load('brick.png', 'brick')
-    images.load('concrete.png', 'concrete')
-    images.load('tree.png', 'tree')
-    images.load('water.png', 'water')
-    images.load('base.png', 'base')
+    images.load('brick.png')
+    images.load('concrete.png')
+    images.load('tree.png')
+    images.load('water.png')
+    images.load('base.png')
 
-    images.load('tank1.png', 'tank1')
-    images.load('tank3.png', 'tank3')
+    images.load('tank1_base.png')
+    images.load('tank3_base.png')
     
 def update():
     handleEvents()
@@ -155,9 +155,9 @@ def render():
     playfield.renderLayer(1, buffer, (0, 0))
 
     for tankSpawner in tankSpawners:
-        buffer.blit(images.get('tank1'), (tankSpawner[0] * playfield.blockSize, tankSpawner[1] * playfield.blockSize))
+        buffer.blit(images.get('tank1_base'), (tankSpawner[0] * playfield.blockSize, tankSpawner[1] * playfield.blockSize))
 
-    buffer.blit(images.get('tank3'), (playerStartLocation[0] * playfield.blockSize, playerStartLocation[1] * playfield.blockSize))
+    buffer.blit(images.get('tank3_base'), (playerStartLocation[0] * playfield.blockSize, playerStartLocation[1] * playfield.blockSize))
     drawGrid(buffer)
 
     pygame.transform.scale(buffer, (640, 480), screen)
